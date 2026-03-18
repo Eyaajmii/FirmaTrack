@@ -1,7 +1,11 @@
 package com.firmatrack.model;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 @Entity
 @Table(name="categories")
+@Getter
+@Setter
 public class Categorie {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -11,17 +15,4 @@ public class Categorie {
 	public Categorie() {
 		
 	}
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getNom() {
-		return nom;
-	}
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	
 }
