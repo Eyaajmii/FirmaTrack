@@ -1,9 +1,14 @@
 package com.firmatrack.model;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="users")
+@Getter
+@Setter
 public class user {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,54 +25,4 @@ public class user {
     public user() {
     	this.createdAt=LocalDateTime.now();
     }
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
-		this.role = role;
-	}
-	public String getPhone() {
-		return telephone;
-	}
-	public void setPhone(String telephone) {
-		this.telephone = telephone;
-	}
-	public String getAddress() {
-		return adresse;
-	}
-	public void setAddress(String adresse) {
-		this.adresse = adresse;
-	}
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-    
-	
 }
