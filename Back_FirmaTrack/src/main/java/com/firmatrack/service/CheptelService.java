@@ -2,42 +2,42 @@ package com.firmatrack.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.firmatrack.model.cheptel;
+import com.firmatrack.model.Cheptel;
 import com.firmatrack.repository.cheptelRepository;
 
 @Service
 public class CheptelService {
 	@Autowired
 	private cheptelRepository cheptelrepository;
-	public List<cheptel> getAllAnimals() {
+	public List<Cheptel> getAllAnimals() {
         return cheptelrepository.findAll();
     }
 
-    public cheptel getAnimalById(Long id) {
+    public Cheptel getAnimalById(Long id) {
         return cheptelrepository.findById(id).orElse(null);
     }
 
-    public cheptel getAnimalByTag(String chepnumber) {
-        return cheptelrepository.findByCheptelNumber(chepnumber);
+    public Cheptel getAnimalByTag(String chepnumber) {
+        return cheptelrepository.findByChepnumber(chepnumber);
     }
 
-    public List<cheptel> getAnimalsByStatus(String statut) {
+    public List<Cheptel> getAnimalsByStatus(String statut) {
         return cheptelrepository.findByStatut(statut);
     }
 
-    public List<cheptel> getAnimalsByLot(Long lotId) {
+    public List<Cheptel> getAnimalsByLot(Long lotId) {
         return cheptelrepository.findByLotId(lotId);
     }
 
-    public List<cheptel> getAnimalsByZone(Long zoneId) {
+    public List<Cheptel> getAnimalsByZone(Long zoneId) {
         return cheptelrepository.findByZoneId(zoneId);
     }
 
-    public List<cheptel> getAnimalsByCategory(Long categoryId) {
-        return cheptelrepository.findByCategoryId(categoryId);
+    public List<Cheptel> getAnimalsByCategory(Long categoryId) {
+        return cheptelrepository.findByCategorieId(categoryId);
     }
 
-    public cheptel saveAnimal(cheptel ch) {
+    public Cheptel saveAnimal(Cheptel ch) {
         return cheptelrepository.save(ch);
     }
 
