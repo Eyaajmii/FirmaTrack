@@ -26,14 +26,14 @@ public class CheptelController {
         return cheptelservice.getAnimalById(id);
     }
 
-    @GetMapping("/tag/{tag}")
-    public Cheptel getAnimalByTag(@PathVariable String tag) {
-        return cheptelservice.getAnimalByTag(tag);
+    @GetMapping("/number/{chepnumber}")
+    public Cheptel getAnimalByNumber(@PathVariable String chepnumber) {
+        return cheptelservice.getAnimalByNumber(chepnumber);
     }
 
-    @GetMapping("/status/{status}")
-    public List<Cheptel> getAnimalsByStatus(@PathVariable String status) {
-        return cheptelservice.getAnimalsByStatus(status);
+    @GetMapping("/status/{statut}")
+    public List<Cheptel> getAnimalsByStatus(@PathVariable String statut) {
+        return cheptelservice.getAnimalsByStatus(statut);
     }
 
     @GetMapping("/lot/{lotId}")
