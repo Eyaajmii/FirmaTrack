@@ -17,7 +17,7 @@ public class CheptelService {
         return cheptelrepository.findById(id).orElse(null);
     }
 
-    public Cheptel getAnimalByTag(String chepnumber) {
+    public Cheptel getAnimalByNumber(String chepnumber) {
         return cheptelrepository.findByChepnumber(chepnumber);
     }
 
