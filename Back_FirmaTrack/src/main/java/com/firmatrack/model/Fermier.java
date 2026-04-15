@@ -9,13 +9,13 @@ import lombok.Setter;
 @Table(name = "fermier")
 @Getter
 @Setter
-public class fermier  {
+public class Fermier  {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne
     @JoinColumn(name = "user_id")
-    private user user;
+    private User user;
     // nom de la ferme
     private String nomFerme;
     // localisation
@@ -25,7 +25,7 @@ public class fermier  {
     // date création ferme
     private LocalDate DateCreationFerme;
 
-    public fermier() {
+    public Fermier() {
     }
 
 }

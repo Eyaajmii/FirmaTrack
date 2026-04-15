@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Table(name="users")
 @Getter
 @Setter
-public class user {
+public class User {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,7 +22,7 @@ public class user {
     private String telephone;
     private String adresse;
     private LocalDateTime createdAt;
-    public user() {
+    public User() {
     	this.createdAt=LocalDateTime.now();
     }
 }
