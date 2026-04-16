@@ -26,6 +26,13 @@ public class ProductionLaitController {
     }
     
     
+    @GetMapping("/{id}")                                        
+    public ResponseEntity<ProductionLait> getById(@PathVariable Long id) {
+        return productionLaitService.getById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+    
     @GetMapping
     public ResponseEntity<List<ProductionLait>> getToutesLesProductions() {
         return ResponseEntity.ok(productionLaitService.getToutesLesProductions());
@@ -41,5 +48,16 @@ public class ProductionLaitController {
     @GetMapping("/lot/{lotId}")
     public ResponseEntity<List<ProductionLait>> getParLot(@PathVariable Long lotId) {
         return ResponseEntity.ok(productionLaitService.getProductionParLot(lotId));
+    }
+    
+    @PutMapping("/{id}")                                         
+    public ResponseEntity<ProductionLait> updateProduction(@PathVariable Long id, @RequestBody ProductionLait production) {
+        return ResponseEntity.ok(productionLaitService.updateProduction(id, production));
+    }
+
+    @DeleteMapping("/{id}")                                      
+    public ResponseEntity<Void> deleteProduction(@PathVariable Long id) {
+        productionLaitService.deleteProduction(id);
+        return ResponseEntity.noContent().build();
     }
 }
