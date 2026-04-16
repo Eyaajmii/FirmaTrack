@@ -2,8 +2,8 @@ package com.firmatrack.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.firmatrack.model.fermier;
+import com.firmatrack.model.Fermier;
 
-public interface FermierRepository extends JpaRepository <fermier,Long> {
-	fermier findByNomFerme(String nomFerme);
+public interface FermierRepository extends JpaRepository <Fermier,Long> {
+	Fermier findByNomFerme(String nomFerme);
 }

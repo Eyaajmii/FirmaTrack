@@ -1,5 +1,5 @@
 package com.firmatrack.Controller;
-import com.firmatrack.model.fermier;
+import com.firmatrack.model.Fermier;
 import com.firmatrack.service.FermierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +14,12 @@ public class FermierController {
 	    private FermierService fermierservice;
 
 	    @GetMapping
-	    public List<fermier> getAllFarmers() {
+	    public List<Fermier> getAllFarmers() {
 	        return fermierservice.getAllFarmers();
 	    }
 
 	    @PostMapping
-	    public fermier createFarmer(@RequestBody fermier fermier) {
+	    public Fermier createFarmer(@RequestBody Fermier fermier) {
 	        return fermierservice.saveFarmer(fermier);
 	    }
 

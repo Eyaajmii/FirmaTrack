@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+
 @Entity
 @Table(name="cheptels")
 @Getter
@@ -10,9 +11,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cheptel {
-	@Id
+	
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     // numéro d'identification unique
     @Column(unique = true)
     private String chepnumber;
@@ -30,7 +33,7 @@ public class Cheptel {
     private String gender;
 
     // date de naissance
-    private LocalDate datenaissance;
+    private LocalDate dateNaissance; // <-- CORRIGÉ : d minuscule, N majuscule
 
     // poids actuel
     private Double poids;
@@ -39,7 +42,7 @@ public class Cheptel {
     private String couleur;
 
     // statut de santé
-    private String StatutSante;
+    private String statutSante; // <-- CORRIGÉ : s minuscule
 
     // statut de l'animal
     // ALIVE / SOLD / DEAD / ARCHIVED
@@ -49,7 +52,7 @@ public class Cheptel {
     private String qrCode;
 
     // date entrée dans la ferme
-    private LocalDate Dateentre;
+    private LocalDate dateEntre; // <-- CORRIGÉ : d minuscule
 
     // notes supplémentaires
     @Column(length = 500)
@@ -58,7 +61,7 @@ public class Cheptel {
     // catégorie animal
     @ManyToOne
     @JoinColumn(name = "categorie_id")
-    private Categorie Categorie;
+    private Categorie categorie;
 
     // zone dans la ferme
     @ManyToOne
@@ -73,7 +76,5 @@ public class Cheptel {
     // ferme
     @ManyToOne
     @JoinColumn(name = "fermier_id")
-    private fermier fermier;
+    private Fermier fermier;
 }
-
-
