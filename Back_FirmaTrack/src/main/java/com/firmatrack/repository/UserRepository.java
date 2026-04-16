@@ -2,8 +2,8 @@ package com.firmatrack.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.firmatrack.model.user;
+import com.firmatrack.model.User;
 
-public interface UserRepository extends JpaRepository <user,Long> {
-	user findByEmail(String email);
+public interface UserRepository extends JpaRepository <User,Long> {
+	User findByEmail(String email);
 }
