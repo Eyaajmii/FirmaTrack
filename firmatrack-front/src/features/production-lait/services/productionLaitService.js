@@ -19,7 +19,15 @@ export const productionLaitService = {
   getProductionsByLot: (lotId) => 
     API.get(`${BASE_URL}/lot/${lotId}`),
 
-  // (Optionnel - à ajouter plus tard)
-  // deleteProduction: (id) => API.delete(`${BASE_URL}/${id}`),
-  // updateProduction: (id, data) => API.put(`${BASE_URL}/${id}`, data),
+  // READ ONE  
+  getProductionById: (id) =>
+    API.get(`${BASE_URL}/${id}`),
+
+  // UPDATE  
+  updateProduction: (id, data) =>
+    API.put(`${BASE_URL}/${id}`, data),
+
+  // DELETE  
+  deleteProduction: (id) =>
+    API.delete(`${BASE_URL}/${id}`),
 };

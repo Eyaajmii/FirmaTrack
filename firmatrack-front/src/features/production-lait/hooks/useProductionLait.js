@@ -64,16 +64,83 @@ export const useProductionLait = () => {
     }
   };
 
+  // ✅ NOUVEAU
+  const updateProduction = useCallback(async (id, data) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await productionLaitService.updateProduction(id, data);
+      // Met à jour uniquement la ligne modifiée dans le state
+      setProductions(prev => prev.map(p => p.id === id ? res.data : p));
+      return res.data;
+    } catch (err) {
+      const msg = err.response?.data?.message || "Erreur lors de la mise à jour";
+      setError(msg);
+      throw new Error(msg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // ✅ NOUVEAU
+  const deleteProduction = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await productionLaitService.deleteProduction(id);
+      // Retire la ligne supprimée du state sans recharger toute la liste
+      setProductions(prev => prev.filter(p => p.id !== id));
+    } catch (err) {
+      const msg = err.response?.data?.message || "Erreur lors de la suppression";
+      setError(msg);
+      throw new Error(msg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // ✅ NOUVEAU : Récupérer par Animal
+  const fetchProductionsByAnimal = useCallback(async (cheptelId) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await productionLaitService.getProductionsByCheptel(cheptelId);
+      setProductions(res.data);
+    } catch (err) {
+      setError("Erreur lors du chargement des productions de cet animal.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // ✅ NOUVEAU : Récupérer par Lot
+  const fetchProductionsByLot = useCallback(async (lotId) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await productionLaitService.getProductionsByLot(lotId);
+      setProductions(res.data);
+    } catch (err) {
+      setError("Erreur lors du chargement des productions de ce lot.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     productions,
     cheptels,
     lots,
     loading,
     error,
+    setError,
     fetchAllProductions,
     fetchCheptels,
     fetchLots,
     addProduction,
-    setError,
+    updateProduction,  
+    deleteProduction,
+    fetchProductionsByAnimal, // N'oublie pas de les exporter ici !
+    fetchProductionsByLot,    // N'oublie pas de les exporter ici !
   };
 };
