@@ -1,5 +1,5 @@
 package com.firmatrack.Controller;
-import com.firmatrack.model.user;
+import com.firmatrack.model.User;
 import com.firmatrack.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +14,12 @@ public class UserController {
 	    private UserService userService;
 
 	    @GetMapping
-	    public List<user> getAllUsers() {
+	    public List<User> getAllUsers() {
 	        return userService.getAllUsers();
 	    }
 
 	    @PostMapping
-	    public user createUser(@RequestBody user user) {
+	    public User createUser(@RequestBody User user) {
 	        return userService.saveUser(user);
 	    }
 
