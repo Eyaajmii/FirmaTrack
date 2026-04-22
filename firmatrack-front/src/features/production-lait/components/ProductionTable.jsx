@@ -3,6 +3,30 @@ import { useProductionLait } from '../hooks/useProductionLait';
 
 const ITEMS_PER_PAGE = 5;
 
+const badge = (isAnimal) => ({
+  display: 'inline-flex', padding: '3px 9px', borderRadius: '20px',
+  fontSize: '10px', fontWeight: '500',
+  ...(isAnimal
+    ? { background: '#f1f0ec', color: '#4a4a47', border: '0.5px solid #dddcd7' }
+    : { background: '#e8f0fe', color: '#185FA5', border: '0.5px solid #b5d4f4' }),
+});
+
+const actionBtn = (variant = 'default') => ({
+  padding: '4px 10px', borderRadius: '7px', fontSize: '11px', fontWeight: '500',
+  cursor: 'pointer', border: '0.5px solid',
+  ...(variant === 'danger'
+    ? { borderColor: '#f7c1c1', background: '#fff', color: '#A32D2D' }
+    : variant === 'primary'
+    ? { borderColor: '#1a1a18', background: '#1a1a18', color: '#fff' }
+    : { borderColor: '#e8e7e2', background: '#fff', color: '#4a4a47' }),
+});
+
+const inputStyle = {
+  border: '0.5px solid #e8e7e2', borderRadius: '7px',
+  padding: '4px 8px', fontSize: '12px', outline: 'none',
+  background: '#fff', color: '#1a1a18',
+};
+
 const ProductionTable = ({ productions, loading }) => {
   const { deleteProduction, updateProduction } = useProductionLait();
   const [currentPage, setCurrentPage] = useState(1);
@@ -11,11 +35,19 @@ const ProductionTable = ({ productions, loading }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   if (loading) return (
-    <div className="text-center py-10 text-gray-400 text-sm">Chargement...</div>
+    <div style={{ textAlign: 'center', padding: '2.5rem', fontSize: '12px', color: '#b0afa9' }}>
+      Chargement...
+    </div>
   );
 
   if (!productions || productions.length === 0) return (
-    <div className="text-center py-10 text-gray-400 text-sm">Aucune production enregistrée.</div>
+    <div style={{
+      textAlign: 'center', padding: '2.5rem',
+      border: '1.5px dashed #e8e7e2', borderRadius: '10px',
+      fontSize: '12px', color: '#b0afa9',
+    }}>
+      Aucune production enregistrée.
+    </div>
   );
 
   const totalPages = Math.ceil(productions.length / ITEMS_PER_PAGE);
@@ -41,21 +73,22 @@ const ProductionTable = ({ productions, loading }) => {
     setConfirmDeleteId(null);
   };
 
+  const th = { fontSize: '10px', fontWeight: '500', color: '#b0afa9', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '8px 12px', borderBottom: '0.5px solid #f0efe9', textAlign: 'left' };
+  const td = { fontSize: '12px', padding: '11px 12px', borderBottom: '0.5px solid #f7f6f4', color: '#1a1a18', verticalAlign: 'middle' };
+
   return (
     <div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full">
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr className="border-b border-gray-200">
+            <tr>
               {['Date', 'Animal / Lot', 'Quantité', 'Type', 'Actions'].map(h => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  {h}
-                </th>
+                <th key={h} style={th}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {paginated.map((prod, index) => {
+            {paginated.map((prod) => {
               const isAnimal = !!prod.cheptel;
               const name = isAnimal
                 ? `${prod.cheptel.nom} (${prod.cheptel.chepnumber || ''})`
@@ -64,77 +97,50 @@ const ProductionTable = ({ productions, loading }) => {
               const isConfirmDelete = confirmDeleteId === prod.id;
 
               return (
-                <tr key={prod.id} className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                  
-                  {/* Date */}
-                  <td className="px-4 py-3 text-sm text-gray-500">
+                <tr key={prod.id} style={{ transition: 'background 0.1s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#faf9f7'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <td style={{ ...td, color: '#9a9a96' }}>
                     {isEditing ? (
                       <input type="date" value={editData.dateProduction}
                         onChange={e => setEditData(p => ({ ...p, dateProduction: e.target.value }))}
-                        className="border border-gray-200 rounded-lg px-2 py-1 text-xs w-32 focus:outline-none focus:border-gray-900" />
-                    ) : (
-                      new Date(prod.dateProduction).toLocaleDateString('fr-FR')
-                    )}
+                        style={{ ...inputStyle, width: '130px' }} />
+                    ) : new Date(prod.dateProduction).toLocaleDateString('fr-FR')}
                   </td>
 
-                  {/* Nom */}
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900">{name}</td>
+                  <td style={{ ...td, fontWeight: '500' }}>{name}</td>
 
-                  {/* Quantité */}
-                  <td className="px-4 py-3 text-sm font-semibold text-gray-900">
+                  <td style={td}>
                     {isEditing ? (
                       <input type="number" step="0.1" min="0" value={editData.quantiteLitre}
                         onChange={e => setEditData(p => ({ ...p, quantiteLitre: e.target.value }))}
-                        className="border border-gray-200 rounded-lg px-2 py-1 text-xs w-20 focus:outline-none focus:border-gray-900" />
+                        style={{ ...inputStyle, width: '80px' }} />
                     ) : (
-                      `${prod.quantiteLitre} L`
+                      <span style={{ fontWeight: '500' }}>{prod.quantiteLitre} L</span>
                     )}
                   </td>
 
-                  {/* Badge type */}
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full border ${
-                      isAnimal ? 'bg-white text-gray-700 border-gray-300' : 'bg-gray-900 text-white border-gray-900'
-                    }`}>
-                      {isAnimal ? 'Animal' : 'Lot'}
-                    </span>
+                  <td style={td}>
+                    <span style={badge(isAnimal)}>{isAnimal ? 'Animal' : 'Lot'}</span>
                   </td>
 
-                  {/* Actions */}
-                  <td className="px-4 py-3">
+                  <td style={td}>
                     {isEditing ? (
-                      <div className="flex gap-2">
-                        <button onClick={() => handleEditSave(prod)}
-                          className="px-3 py-1 text-xs font-semibold bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition">
-                          Sauvegarder
-                        </button>
-                        <button onClick={() => setEditingId(null)}
-                          className="px-3 py-1 text-xs font-medium text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                          Annuler
-                        </button>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <button onClick={() => handleEditSave(prod)} style={actionBtn('primary')}>Sauvegarder</button>
+                        <button onClick={() => setEditingId(null)} style={actionBtn()}>Annuler</button>
                       </div>
                     ) : isConfirmDelete ? (
-                      <div className="flex gap-2 items-center">
-                        <span className="text-xs text-gray-500">Confirmer ?</span>
-                        <button onClick={() => handleDelete(prod.id)}
-                          className="px-3 py-1 text-xs font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                          Oui
-                        </button>
-                        <button onClick={() => setConfirmDeleteId(null)}
-                          className="px-3 py-1 text-xs text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                          Non
-                        </button>
+                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                        <span style={{ fontSize: '11px', color: '#9a9a96' }}>Confirmer ?</span>
+                        <button onClick={() => handleDelete(prod.id)} style={{ ...actionBtn('danger'), background: '#A32D2D', color: '#fff', borderColor: '#A32D2D' }}>Oui</button>
+                        <button onClick={() => setConfirmDeleteId(null)} style={actionBtn()}>Non</button>
                       </div>
                     ) : (
-                      <div className="flex gap-2">
-                        <button onClick={() => handleEditClick(prod)}
-                          className="px-3 py-1 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
-                          Modifier
-                        </button>
-                        <button onClick={() => setConfirmDeleteId(prod.id)}
-                          className="px-3 py-1 text-xs font-medium text-red-500 border border-red-100 rounded-lg hover:bg-red-50 transition">
-                          Supprimer
-                        </button>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <button onClick={() => handleEditClick(prod)} style={actionBtn()}>Modifier</button>
+                        <button onClick={() => setConfirmDeleteId(prod.id)} style={actionBtn('danger')}>Supprimer</button>
                       </div>
                     )}
                   </td>
@@ -145,25 +151,24 @@ const ProductionTable = ({ productions, loading }) => {
         </table>
       </div>
 
-      {/* Pagination — identique à l'original */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-          <span className="text-xs text-gray-400">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem', paddingTop: '1rem', borderTop: '0.5px solid #f1f0ec' }}>
+          <span style={{ fontSize: '11px', color: '#b0afa9' }}>
             {start + 1}–{Math.min(start + ITEMS_PER_PAGE, productions.length)} sur {productions.length}
           </span>
-          <div className="flex items-center gap-1">
+          <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
             <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
-              className="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition">
+              style={{ ...actionBtn(), opacity: currentPage === 1 ? 0.3 : 1, cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}>
               ← Précédent
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
               <button key={page} onClick={() => setCurrentPage(page)}
-                className={`w-8 h-8 text-xs font-medium rounded-lg transition ${page === currentPage ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
+                style={{ width: '28px', height: '28px', borderRadius: '7px', fontSize: '11px', fontWeight: '500', cursor: 'pointer', border: '0.5px solid', borderColor: page === currentPage ? '#1a1a18' : '#e8e7e2', background: page === currentPage ? '#1a1a18' : '#fff', color: page === currentPage ? '#fff' : '#4a4a47' }}>
                 {page}
               </button>
             ))}
             <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
-              className="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition">
+              style={{ ...actionBtn(), opacity: currentPage === totalPages ? 0.3 : 1, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}>
               Suivant →
             </button>
           </div>

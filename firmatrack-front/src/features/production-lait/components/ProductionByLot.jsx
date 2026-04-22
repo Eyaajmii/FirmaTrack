@@ -5,21 +5,24 @@ const ProductionByLot = ({ lots, productions, loading, fetchByLot }) => {
   const [selectedId, setSelectedId] = useState('');
 
   useEffect(() => {
-    if (selectedId) {
-      fetchByLot(selectedId);
-    }
+    if (selectedId) fetchByLot(selectedId);
   }, [selectedId, fetchByLot]);
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center gap-4 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
-        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">
-          Filtrer par Groupe
-        </label>
-        <select 
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      {/* Filtre */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: '12px',
+        background: '#faf9f7', borderRadius: '10px', padding: '10px 14px',
+        border: '0.5px solid #e8e7e2',
+      }}>
+        <span style={{ fontSize: '10px', fontWeight: '500', color: '#b0afa9', textTransform: 'uppercase', letterSpacing: '0.07em', whiteSpace: 'nowrap' }}>
+          Filtrer par lot
+        </span>
+        <select
           value={selectedId}
           onChange={(e) => setSelectedId(e.target.value)}
-          className="w-full bg-transparent border-none text-sm font-semibold text-gray-700 focus:ring-0 cursor-pointer"
+          style={{ flex: 1, background: 'transparent', border: 'none', fontSize: '13px', fontWeight: '500', color: '#1a1a18', outline: 'none', cursor: 'pointer' }}
         >
           <option value="">-- Sélectionnez un lot --</option>
           {lots.map(l => (
@@ -28,8 +31,13 @@ const ProductionByLot = ({ lots, productions, loading, fetchByLot }) => {
         </select>
       </div>
 
+      {/* Contenu */}
       {!selectedId ? (
-        <div className="text-center py-12 text-xs font-medium text-gray-400 border-2 border-dashed border-gray-100 rounded-2xl">
+        <div style={{
+          textAlign: 'center', padding: '2.5rem',
+          border: '1.5px dashed #e8e7e2', borderRadius: '10px',
+          fontSize: '12px', color: '#b0afa9',
+        }}>
           Sélectionnez un lot pour analyser la production du groupe.
         </div>
       ) : (

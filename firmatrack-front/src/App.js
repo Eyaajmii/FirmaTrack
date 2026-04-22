@@ -1,21 +1,23 @@
-import { BrowserRouter as Router } from 'react-router-dom';
-import AppRoutes from './routes/AppRoutes';
-import Navbar from './components/layout/Navbar';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Sidebar from './components/layout/Sidebar';
+// Importe tes pages ici
+import CheptelPage from './features/cheptel/pages/CheptelPage';
+import ProductionListPage from './features/production-lait/pages/ProductionListPage';
+
 
 function App() {
   return (
     <Router>
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
-        {/* Contenu principal */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Barre de navigation supérieure */}
-          <Navbar />
-
-          {/* Zone principale où s'affichent les différentes pages */}
-          <main className="flex-1 overflow-auto p-6 bg-gray-50">
-            <AppRoutes />
-          </main>
-        </div>
+      <div style={{ display: 'flex', minHeight: '100vh', background: '#f7f6f4' }}>
+        <Sidebar />
+        <main style={{ flex: 1, overflowY: 'auto' }}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/production-lait" replace />} />
+            { <Route path="/cheptel" element={<CheptelPage />} /> }
+            { <Route path="/production-lait" element={<ProductionListPage />} /> }
+            
+          </Routes>
+        </main>
       </div>
     </Router>
   );
