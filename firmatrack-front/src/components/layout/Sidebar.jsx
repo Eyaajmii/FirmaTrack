@@ -29,6 +29,9 @@ const Sidebar = () => {
         { to: '/production-lait', label: 'Production Lait', icon: (
           <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2h8l1 4H3L4 2z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/><path d="M3 6v7a1 1 0 001 1h8a1 1 0 001-1V6" stroke="currentColor" strokeWidth="1.3"/><path d="M6 10h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
         )},
+        { to: '/production-oeufs', label: 'Production Oeufs', icon: (
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="currentColor" strokeWidth="1.3"/><path d="M4 8h8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+        )},
       ]
     },
   ];

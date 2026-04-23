@@ -1,29 +1,32 @@
 import { useState, useCallback } from 'react';
 import { productionLaitService } from '../services/productionLaitService';
+import * as cheptelService from '../../cheptel/services/CheptelService';
+import { lotService } from '../../cheptel/Lot/Services/LotService';
 
-// On garde un seul import pour Cheptel et on corrige le chemin vers Lot
-import * as cheptelService from '../../cheptel/services/CheptelService'; 
-import { lotService } from '../../cheptel/Lot/Services/LotService'; 
+// Défini EN DEHORS du hook pour éviter le warning exhaustive-deps
+const TYPES_LAITIERS = ['vache', 'chevre', 'brebis', 'bufflonne', 'chamelle'];
+const isLaitier = (animal) => {
+  if (!animal.type) return false;
+  return TYPES_LAITIERS.some(t => animal.type.toLowerCase().includes(t));
+};
 
 export const useProductionLait = () => {
   const [productions, setProductions] = useState([]);
-  const [cheptels, setCheptels] = useState([]);
-  const [lots, setLots] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [cheptels, setCheptels]       = useState([]);
+  const [lots, setLots]               = useState([]);
+  const [loading, setLoading]         = useState(false);
+  const [error, setError]             = useState(null);
 
-  // Charger tous les cheptels (animaux)
+  // Utilise cheptelService (déjà importé) au lieu de API directement
   const fetchCheptels = useCallback(async () => {
     try {
       const res = await cheptelService.getAllAnimals();
-      setCheptels(res.data);
-    } catch (err) {
-      console.error("Erreur chargement cheptels:", err);
-      setError("Impossible de charger les animaux");
+      setCheptels(res.data.filter(isLaitier));
+    } catch (e) {
+      console.error("Erreur chargement animaux", e);
     }
   }, []);
 
-  // Charger tous les lots
   const fetchLots = useCallback(async () => {
     try {
       const res = await lotService.getAll();
@@ -34,7 +37,6 @@ export const useProductionLait = () => {
     }
   }, []);
 
-  // Charger toutes les productions
   const fetchAllProductions = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -64,13 +66,11 @@ export const useProductionLait = () => {
     }
   };
 
-  // ✅ NOUVEAU
   const updateProduction = useCallback(async (id, data) => {
     setLoading(true);
     setError(null);
     try {
       const res = await productionLaitService.updateProduction(id, data);
-      // Met à jour uniquement la ligne modifiée dans le state
       setProductions(prev => prev.map(p => p.id === id ? res.data : p));
       return res.data;
     } catch (err) {
@@ -82,13 +82,11 @@ export const useProductionLait = () => {
     }
   }, []);
 
-  // ✅ NOUVEAU
   const deleteProduction = useCallback(async (id) => {
     setLoading(true);
     setError(null);
     try {
       await productionLaitService.deleteProduction(id);
-      // Retire la ligne supprimée du state sans recharger toute la liste
       setProductions(prev => prev.filter(p => p.id !== id));
     } catch (err) {
       const msg = err.response?.data?.message || "Erreur lors de la suppression";
@@ -99,7 +97,6 @@ export const useProductionLait = () => {
     }
   }, []);
 
-  // ✅ NOUVEAU : Récupérer par Animal
   const fetchProductionsByAnimal = useCallback(async (cheptelId) => {
     setLoading(true);
     setError(null);
@@ -113,7 +110,6 @@ export const useProductionLait = () => {
     }
   }, []);
 
-  // ✅ NOUVEAU : Récupérer par Lot
   const fetchProductionsByLot = useCallback(async (lotId) => {
     setLoading(true);
     setError(null);
@@ -128,19 +124,15 @@ export const useProductionLait = () => {
   }, []);
 
   return {
-    productions,
-    cheptels,
-    lots,
-    loading,
-    error,
-    setError,
+    productions, cheptels, lots,
+    loading, error, setError,
     fetchAllProductions,
     fetchCheptels,
     fetchLots,
     addProduction,
-    updateProduction,  
+    updateProduction,
     deleteProduction,
-    fetchProductionsByAnimal, // N'oublie pas de les exporter ici !
-    fetchProductionsByLot,    // N'oublie pas de les exporter ici !
+    fetchProductionsByAnimal,
+    fetchProductionsByLot,
   };
 };
