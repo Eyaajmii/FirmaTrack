@@ -1,4 +1,4 @@
-package com.firmatrack.Controller;
+package com.firmatrack.controller;
 
 import java.util.List;
 

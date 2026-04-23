@@ -1,4 +1,4 @@
-package com.firmatrack.Controller;
+package com.firmatrack.controller;
 import com.firmatrack.model.Zone;
 import com.firmatrack.service.ZoneService;
 import org.springframework.beans.factory.annotation.Autowired;

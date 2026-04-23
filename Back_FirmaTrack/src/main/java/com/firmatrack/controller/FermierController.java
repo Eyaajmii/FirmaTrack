@@ -1,4 +1,4 @@
-package com.firmatrack.Controller;
+package com.firmatrack.controller;
 import com.firmatrack.model.Fermier;
 import com.firmatrack.service.FermierService;
 import org.springframework.beans.factory.annotation.Autowired;
