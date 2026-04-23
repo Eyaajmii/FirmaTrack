@@ -3,6 +3,8 @@ import Sidebar from './components/layout/Sidebar';
 // Importe tes pages ici
 import CheptelPage from './features/cheptel/pages/CheptelPage';
 import ProductionListPage from './features/production-lait/pages/ProductionListPage';
+import ProductionOeufPage from './features/production-oeufs/pages/ProductionOeufPage';
+// ...
 
 
 function App() {
@@ -15,7 +17,7 @@ function App() {
             <Route path="/" element={<Navigate to="/production-lait" replace />} />
             { <Route path="/cheptel" element={<CheptelPage />} /> }
             { <Route path="/production-lait" element={<ProductionListPage />} /> }
-            
+            { <Route path="/production-oeufs" element={<ProductionOeufPage />} /> }
           </Routes>
         </main>
       </div>
