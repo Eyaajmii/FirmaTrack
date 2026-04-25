@@ -1,4 +1,4 @@
-package com.firmatrack.Controller;
+package com.firmatrack.controller;
 
 import com.firmatrack.model.Categorie;
 import com.firmatrack.service.CategorieService;

@@ -4,24 +4,25 @@ import ProductionTable from './ProductionTable';
 const ProductionByAnimal = ({ cheptels, productions, loading, fetchByAnimal }) => {
   const [selectedId, setSelectedId] = useState('');
 
-  // Quand on choisit un animal, on déclenche la recherche API
   useEffect(() => {
-    if (selectedId) {
-      fetchByAnimal(selectedId);
-    }
+    if (selectedId) fetchByAnimal(selectedId);
   }, [selectedId, fetchByAnimal]);
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Sélecteur au design épuré */}
-      <div className="flex items-center gap-4 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
-        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">
-          Filtrer par Sujet
-        </label>
-        <select 
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      {/* Filtre */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: '12px',
+        background: '#faf9f7', borderRadius: '10px', padding: '10px 14px',
+        border: '0.5px solid #e8e7e2',
+      }}>
+        <span style={{ fontSize: '10px', fontWeight: '500', color: '#b0afa9', textTransform: 'uppercase', letterSpacing: '0.07em', whiteSpace: 'nowrap' }}>
+          Filtrer par animal
+        </span>
+        <select
           value={selectedId}
           onChange={(e) => setSelectedId(e.target.value)}
-          className="w-full bg-transparent border-none text-sm font-semibold text-gray-700 focus:ring-0 cursor-pointer"
+          style={{ flex: 1, background: 'transparent', border: 'none', fontSize: '13px', fontWeight: '500', color: '#1a1a18', outline: 'none', cursor: 'pointer' }}
         >
           <option value="">-- Sélectionnez un animal --</option>
           {cheptels.map(a => (
@@ -30,9 +31,13 @@ const ProductionByAnimal = ({ cheptels, productions, loading, fetchByAnimal }) =
         </select>
       </div>
 
-      {/* Affichage conditionnel */}
+      {/* Contenu */}
       {!selectedId ? (
-        <div className="text-center py-12 text-xs font-medium text-gray-400 border-2 border-dashed border-gray-100 rounded-2xl">
+        <div style={{
+          textAlign: 'center', padding: '2.5rem',
+          border: '1.5px dashed #e8e7e2', borderRadius: '10px',
+          fontSize: '12px', color: '#b0afa9',
+        }}>
           Sélectionnez un animal pour voir son rendement.
         </div>
       ) : (

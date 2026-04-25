@@ -1,0 +1,38 @@
+package com.firmatrack.model;
+
+import java.util.List;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "carnetsante")
+@Getter
+@Setter
+public class Carnetsante {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String groupeSanguin;
+
+    private String allergies;
+
+    private String observationsGenerales;
+
+    @OneToOne
+    @JoinColumn(name = "animal_id")
+    private Cheptel animal;
+    @OneToMany(mappedBy = "carnetSante")
+    private List<Maladie> maladies;
+
+    @OneToMany(mappedBy = "carnetSante")
+    private List<Vaccination> vaccinations;
+
+    // @OneToMany(mappedBy = "carnetSante")
+    // private List<SuiviEtatSante> suivis;
+    public Carnetsante() {
+    }
+
+}
