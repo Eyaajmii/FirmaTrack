@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.firmatrack.model.Carnetsante;
 import com.firmatrack.service.CarnetsanteService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-
+import org.springframework.web.bind.annotation.RequestBody;
 import java.util.*;
 @RestController
 @RequestMapping("/api/carnetsante")
