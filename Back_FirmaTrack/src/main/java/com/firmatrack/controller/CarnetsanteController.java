@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.*;
 @RestController
 @RequestMapping("/api/carnetsante")
+
 @CrossOrigin(origins="*")
 public class CarnetsanteController {
     @Autowired
