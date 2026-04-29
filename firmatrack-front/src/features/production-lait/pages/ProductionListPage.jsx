@@ -211,7 +211,7 @@ const ProductionListPage = () => {
             zIndex: 50, padding: '1rem',
           }}
         >
-          <div style={{ width: '100%', maxWidth: '420px', position: 'relative' }}>
+          <div style={{ width: '100%', maxWidth: '400px', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
             <button
               onClick={() => setShowForm(false)}
               style={{
