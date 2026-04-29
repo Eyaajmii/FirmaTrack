@@ -1,13 +1,59 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useProductionLait } from '../hooks/useProductionLait';
 import ProductionForm from '../components/ProductionForm';
 import ProductionTable from '../components/ProductionTable';
 import ProductionByAnimal from '../components/ProductionByAnimal';
 import ProductionByLot from '../components/ProductionByLot';
 
+// ── Helpers stats ─────────────────────────────────────────────────────────────
+const getWeekRange = (offsetWeeks = 0) => {
+  const now = new Date();
+  const day = now.getDay(); // 0=dim
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((day + 6) % 7) + offsetWeeks * 7);
+  monday.setHours(0, 0, 0, 0);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
+  return { start: monday, end: sunday };
+};
+
+const getMonthRange = (offsetMonths = 0) => {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth() + offsetMonths, 1);
+  const end   = new Date(now.getFullYear(), now.getMonth() + offsetMonths + 1, 0, 23, 59, 59, 999);
+  return { start, end };
+};
+
+const sumLitres = (prods, start, end) =>
+  prods
+    .filter(p => { const d = new Date(p.dateProduction); return d >= start && d <= end; })
+    .reduce((acc, p) => acc + (p.quantiteLitre || 0), 0);
+
+const countDistinct = (prods, key, start, end) => {
+  const ids = new Set();
+  prods
+    .filter(p => { const d = new Date(p.dateProduction); return d >= start && d <= end; })
+    .forEach(p => { if (p[key]) ids.add(typeof p[key] === 'object' ? p[key].id : p[key]); });
+  return ids.size;
+};
+
+const fmt = (n) => Number.isInteger(n) ? `${n}` : `${n.toFixed(1)}`;
+
+const pct = (curr, prev) => {
+  if (prev === 0 && curr === 0) return null;
+  if (prev === 0) return '+100%';
+  const delta = ((curr - prev) / prev) * 100;
+  const sign = delta >= 0 ? '+' : '';
+  return `${sign}${delta.toFixed(1)}%`;
+};
+
+const signed = (n) => n === 0 ? '0 ce mois' : n > 0 ? `+${n} ce mois` : `${n} ce mois`;
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 const ProductionListPage = () => {
   const [activeTab, setActiveTab] = useState('all');
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm]   = useState(false);
 
   const {
     productions, loading, error,
@@ -18,6 +64,46 @@ const ProductionListPage = () => {
 
   useEffect(() => { fetchCheptels(); fetchLots(); }, [fetchCheptels, fetchLots]);
   useEffect(() => { if (activeTab === 'all') fetchAllProductions(); }, [activeTab, fetchAllProductions]);
+
+  // ── Calculs stats ────────────────────────────────────────────────────────
+  const stats = useMemo(() => {
+    const thisWeek = getWeekRange(0);
+    const lastWeek = getWeekRange(-1);
+    const thisMonth = getMonthRange(0);
+    const lastMonth = getMonthRange(-1);
+
+    // Production totale (toutes données)
+    const totalLitres = productions.reduce((acc, p) => acc + (p.quantiteLitre || 0), 0);
+
+    // Cette semaine vs semaine dernière
+    const litresThisWeek = sumLitres(productions, thisWeek.start, thisWeek.end);
+    const litresLastWeek = sumLitres(productions, lastWeek.start, lastWeek.end);
+    const weekTrend = pct(litresThisWeek, litresLastWeek);
+
+    // Animaux distincts ce mois vs mois dernier
+    const animalsThisMonth = countDistinct(productions, 'cheptel', thisMonth.start, thisMonth.end);
+    const animalsLastMonth = countDistinct(productions, 'cheptel', lastMonth.start, lastMonth.end);
+    const animalsDelta = animalsThisMonth - animalsLastMonth;
+
+    // Lots distincts ce mois vs mois dernier
+    const lotsThisMonth = countDistinct(productions, 'lot', thisMonth.start, thisMonth.end);
+    const lotsLastMonth = countDistinct(productions, 'lot', lastMonth.start, lastMonth.end);
+    const lotsDelta = lotsThisMonth - lotsLastMonth;
+
+    return {
+      totalLitres,
+      weekTrend,
+      weekTrendPositive: litresThisWeek >= litresLastWeek,
+      animalsThisMonth,
+      animalsDelta,
+      lotsThisMonth,
+      lotsDelta,
+    };
+  }, [productions]);
+
+  const refresh = () => {
+    if (activeTab === 'all') fetchAllProductions();
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: '#f7f6f4', padding: '2rem' }}>
@@ -34,7 +120,6 @@ const ProductionListPage = () => {
             <h1 style={{ fontSize: '22px', fontWeight: '500', color: '#1a1a18', letterSpacing: '-0.4px' }}>
               Production Lait
             </h1>
-            {/* Bouton + ouvre le formulaire */}
             <button
               onClick={() => setShowForm(true)}
               style={{
@@ -52,19 +137,35 @@ const ProductionListPage = () => {
           </div>
         </div>
 
-        {/* Stat cards */}
+        {/* Stat cards — données réelles */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0,1fr))', gap: '12px', marginBottom: '1.5rem' }}>
-          <StatCard icon="green" label="Production totale" value="642 L" sub="+7.8% cette semaine" subColor="#2f7c4d" />
-          <StatCard icon="blue" label="Total animaux" value={`${cheptels.length || 24}`} sub="+2 ce mois" subColor="#185FA5" />
-          <StatCard icon="amber" label="Lots actifs" value={`${lots.length || 8}`} sub="-1 ce mois" subColor="#854F0B" />
+          <StatCard
+            icon="green"
+            label="Production totale"
+            value={`${fmt(stats.totalLitres)} L`}
+            sub={stats.weekTrend
+              ? `${stats.weekTrend} cette semaine`
+              : 'Aucune donnée cette semaine'}
+            subColor={stats.weekTrendPositive ? '#2f7c4d' : '#A32D2D'}
+          />
+          <StatCard
+            icon="blue"
+            label="Animaux actifs"
+            value={`${stats.animalsThisMonth}`}
+            sub={signed(stats.animalsDelta)}
+            subColor={stats.animalsDelta >= 0 ? '#185FA5' : '#A32D2D'}
+          />
+          <StatCard
+            icon="amber"
+            label="Lots actifs"
+            value={`${stats.lotsThisMonth}`}
+            sub={signed(stats.lotsDelta)}
+            subColor={stats.lotsDelta >= 0 ? '#854F0B' : '#A32D2D'}
+          />
         </div>
 
         {/* Table card */}
-        <div style={{
-          background: '#fff', borderRadius: '14px',
-          border: '0.5px solid #e8e7e2', padding: '1.5rem',
-        }}>
-          {/* Header */}
+        <div style={{ background: '#fff', borderRadius: '14px', border: '0.5px solid #e8e7e2', padding: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
             <span style={{ fontSize: '14px', fontWeight: '500', color: '#1a1a18' }}>Historique</span>
             <div style={{ display: 'flex', gap: '6px' }}>
@@ -94,9 +195,9 @@ const ProductionListPage = () => {
             </div>
           )}
 
-          {activeTab === 'all' && <ProductionTable productions={productions} loading={loading} />}
+          {activeTab === 'all'    && <ProductionTable productions={productions} loading={loading} onRefresh={refresh} />}
           {activeTab === 'animal' && <ProductionByAnimal cheptels={cheptels} productions={productions} loading={loading} fetchByAnimal={fetchProductionsByAnimal} />}
-          {activeTab === 'lot' && <ProductionByLot lots={lots} productions={productions} loading={loading} fetchByLot={fetchProductionsByLot} />}
+          {activeTab === 'lot'    && <ProductionByLot lots={lots} productions={productions} loading={loading} fetchByLot={fetchProductionsByLot} />}
         </div>
       </div>
 
@@ -122,7 +223,7 @@ const ProductionListPage = () => {
                 zIndex: 1,
               }}
             >×</button>
-            <ProductionForm onSuccess={() => { setShowForm(false); if (activeTab === 'all') fetchAllProductions(); }} />
+            <ProductionForm onSuccess={() => { setShowForm(false); fetchAllProductions(); }} />
           </div>
         </div>
       )}
@@ -130,6 +231,7 @@ const ProductionListPage = () => {
   );
 };
 
+// ── StatCard ──────────────────────────────────────────────────────────────────
 const StatCard = ({ icon, label, value, sub, subColor }) => {
   const icons = {
     green: { bg: '#EAF3DE', stroke: '#3B6D11' },
