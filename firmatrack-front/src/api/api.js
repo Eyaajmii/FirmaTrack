@@ -1,5 +1,15 @@
-import axios from "axios";
-const API = axios.create({
-  baseURL: "http://localhost:8888/api",
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'http://localhost:8888/api', // Thabbet fel Port mta3ek
 });
-export default API;
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('user_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default api;
