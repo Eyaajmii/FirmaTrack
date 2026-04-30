@@ -5,6 +5,7 @@ import ProductionListPage from './features/production-lait/pages/ProductionListP
 import ProductionOeufPage from './features/production-oeufs/pages/ProductionOeufPage';
 import StockListPage from './features/stock/pages/StockListPage'; 
 import StockAddPage from './features/stock/pages/StockAddPage';
+import CarnetsantePage from './features/carnetsante/pages/CarnetsantePage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/production-oeufs" element={<ProductionOeufPage />} />
             <Route path="/stock" element={<StockListPage />} />
             <Route path="/stock/nouveau" element={<StockAddPage />} />
+            <Route path="/carnetsante" element={<CarnetsantePage />} />
           </Routes>
         </main>
       </div>

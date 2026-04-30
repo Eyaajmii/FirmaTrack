@@ -19,10 +19,17 @@ function CarnetsantePage() {
   }, []);
 
   // 🟢 ADD CARNET
-  const handleAdd = async (data) => {
+  // Dans CarnetsantePage.js — remplace handleAdd par :
+const handleAdd = async (data) => {
+  try {
     await service.createCarnet(data);
     fetchCarnets();
-  };
+    return { success: true };
+  } catch (err) {
+    const msg = err.response?.data || "Erreur lors de l'ajout";
+    return { success: false, message: msg };
+  }
+};
 
   // 🔴 DELETE
   const handleDelete = async (id) => {

@@ -1,5 +1,7 @@
 package com.firmatrack.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +27,7 @@ public class Medicament {
     private String voieAdministration;
 
     @ManyToOne
+    @JsonIgnore
     private Traitement traitement;
 
     public Medicament() {}
