@@ -4,6 +4,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name="cheptels")
 @Getter
@@ -33,7 +35,7 @@ public class Cheptel {
     private String gender;
 
     // date de naissance
-    private LocalDate dateNaissance; // <-- CORRIGÉ : d minuscule, N majuscule
+    private LocalDate dateNaissance;
 
     // poids actuel
     private Double poids;
@@ -42,7 +44,7 @@ public class Cheptel {
     private String couleur;
 
     // statut de santé
-    private String statutSante; // <-- CORRIGÉ : s minuscule
+    private String statutSante; 
 
     // statut de l'animal
     // ALIVE / SOLD / DEAD / ARCHIVED
@@ -52,7 +54,7 @@ public class Cheptel {
     private String qrCode;
 
     // date entrée dans la ferme
-    private LocalDate dateEntre; // <-- CORRIGÉ : d minuscule
+    private LocalDate dateEntre;
 
     // notes supplémentaires
     @Column(length = 500)
@@ -77,4 +79,7 @@ public class Cheptel {
     @ManyToOne
     @JoinColumn(name = "fermier_id")
     private Fermier fermier;
+    @OneToOne(mappedBy = "animal")
+    @JsonBackReference
+    private Carnetsante carnetSante;
 }

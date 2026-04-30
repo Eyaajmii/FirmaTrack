@@ -1,4 +1,4 @@
-function CheptelItem({ animal, onDelete }) {
+function CheptelItem({ animal, onDelete, onSelect }) {
   return (
     <div>
       <p>

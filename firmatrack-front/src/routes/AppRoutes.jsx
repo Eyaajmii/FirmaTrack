@@ -3,6 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 // Imports corrects des pages
 import CheptelPage from '../features/cheptel/pages/CheptelPage';
 import ProductionListPage from '../features/production-lait/pages/ProductionListPage';
+import CarnetsantePage from '../features/carnetsante/pages/CarnetsantePage';
+import ProductionOeufPage from './features/production-oeufs/pages/ProductionOeufPage';
+
 
 const AppRoutes = () => {
   return (
@@ -19,10 +22,11 @@ const AppRoutes = () => {
 
       {/* Cheptel */}
       <Route path="/cheptel" element={<CheptelPage />} />
-
+      {/* Carnet sante */}
+      <Route path="/carnetsante" element={<CarnetsantePage />} />
       {/* Production Lait */}
       <Route path="/production-lait" element={<ProductionListPage />} />
-
+      
       {/* 404 */}
       <Route 
         path="*" 

@@ -9,9 +9,9 @@ import StockAddPage from './features/stock/pages/StockAddPage';
 function App() {
   return (
     <Router>
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#f7f6f4' }}>
+      <div style={{ display: "flex", minHeight: "100vh", background: "#f7f6f4" }}>
         <Sidebar />
-        <main style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}> {/* ← minWidth: 0 ajouté */}
+        <main style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
           <Routes>
             <Route path="/" element={<Navigate to="/production-lait" replace />} />
             <Route path="/cheptel" element={<CheptelPage />} />
@@ -25,5 +25,4 @@ function App() {
     </Router>
   );
 }
-
 export default App;

@@ -1,25 +1,9 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-const statutBadge = (statut) => {
-  const map = {
-    ALIVE: { bg: '#EAF3DE', color: '#27500A', border: '#C0DD97' },
-    SOLD:  { bg: '#FAEEDA', color: '#633806', border: '#FAC775' },
-    DEAD:  { bg: '#FCEBEB', color: '#791F1F', border: '#F7C1C1' },
-  };
-  const s = map[statut] || map['ALIVE'];
-  return {
-    display: 'inline-flex', padding: '3px 9px', borderRadius: '20px',
-    fontSize: '10px', fontWeight: '500', letterSpacing: '0.02em',
-    background: s.bg, color: s.color, border: `0.5px solid ${s.border}`,
-  };
-};
-
-const statutLabel = { ALIVE: 'Vivant', SOLD: 'Vendu', DEAD: 'Décédé' };
-
-const CheptelList = ({ animals, onDelete, onSelect }) => {
+const CarnetSanteList = ({ carnets, onDelete, onSelect }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
-  if (!animals || animals.length === 0) {
+  if (!carnets || carnets.length === 0) {
     return (
       <div
         style={{
@@ -31,7 +15,7 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
           color: "#b0afa9",
         }}
       >
-        Aucun animal trouvé.
+        Aucun carnet de santé trouvé.
       </div>
     );
   }
@@ -46,6 +30,7 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
     borderBottom: "0.5px solid #f0efe9",
     textAlign: "left",
   };
+
   const td = {
     fontSize: "12px",
     padding: "11px 12px",
@@ -53,6 +38,7 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
     color: "#1a1a18",
     verticalAlign: "middle",
   };
+
   const actionBtn = (variant = "default") => ({
     padding: "4px 10px",
     borderRadius: "7px",
@@ -74,10 +60,11 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
           <tr>
             {[
               "Animal",
-              "Numéro",
-              "Type / Race",
-              "Genre",
-              "Statut",
+              "Groupe sanguin",
+              "Allergies",
+              "Observations",
+              "Maladies",
+              "Vaccinations",
               "Actions",
             ].map((h) => (
               <th key={h} style={th}>
@@ -86,24 +73,28 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
             ))}
           </tr>
         </thead>
+
         <tbody>
-          {animals.map((animal) => {
-            const isConfirm = confirmDeleteId === animal.id;
+          {carnets.map((carnet) => {
+            const isConfirm = confirmDeleteId === carnet.id;
+
             return (
               <tr
-                key={animal.id}
-                onClick={() => onSelect(animal)}
+                key={carnet.id}
+                onClick={() => onSelect && onSelect(carnet)}
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.background = "#faf9f7")
                 }
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.background = "transparent")
                 }
-                style={{ transition: "background 0.1s" }}
               >
+                {/* Animal */}
                 <td style={{ ...td, fontWeight: "500" }}>
-                  {animal.nom || "—"}
+                  {carnet.animal?.nom || "—"}
                 </td>
+
+                {/* Groupe sanguin */}
                 <td style={td}>
                   <span
                     style={{
@@ -115,46 +106,52 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
                       color: "#4a4a47",
                     }}
                   >
-                    {animal.chepnumber}
+                    {carnet.groupeSanguin || "—"}
                   </span>
                 </td>
+
+                {/* Allergies */}
                 <td style={{ ...td, color: "#6b6b67" }}>
-                  {animal.type}
-                  {animal.race ? ` — ${animal.race}` : ""}
+                  {carnet.allergies || "Aucune"}
                 </td>
+
+                {/* Observations */}
                 <td style={{ ...td, color: "#6b6b67" }}>
-                  {animal.gender === "F"
-                    ? "Femelle"
-                    : animal.gender === "M"
-                    ? "Mâle"
-                    : "—"}
+                  {carnet.observationsGenerales || "—"}
                 </td>
+
+                {/* Maladies */}
                 <td style={td}>
-                  <span style={statutBadge(animal.statut)}>
-                    {statutLabel[animal.statut] || animal.statut}
-                  </span>
+                  {carnet.maladies?.length > 0
+                    ? `${carnet.maladies.length} maladie(s)`
+                    : "Aucune"}
                 </td>
+
+                {/* Vaccinations */}
+                <td style={td}>
+                  {carnet.vaccinations?.length > 0
+                    ? `${carnet.vaccinations.length} vaccin(s)`
+                    : "Aucun"}
+                </td>
+
+                {/* Actions */}
                 <td style={td}>
                   {isConfirm ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "6px",
-                        alignItems: "center",
-                      }}
-                    >
+                    <div style={{ display: "flex", gap: "6px" }}>
                       <span style={{ fontSize: "11px", color: "#9a9a96" }}>
                         Confirmer ?
                       </span>
+
                       <button
                         onClick={() => {
-                          onDelete(animal.id);
+                          onDelete(carnet.id);
                           setConfirmDeleteId(null);
                         }}
                         style={actionBtn("confirm")}
                       >
                         Oui
                       </button>
+
                       <button
                         onClick={() => setConfirmDeleteId(null)}
                         style={actionBtn()}
@@ -163,12 +160,21 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => setConfirmDeleteId(animal.id)}
-                      style={actionBtn("danger")}
-                    >
-                      Supprimer
-                    </button>
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <button
+                        onClick={() => onSelect && onSelect(carnet)}
+                        style={actionBtn()}
+                      >
+                        Voir
+                      </button>
+
+                      <button
+                        onClick={() => setConfirmDeleteId(carnet.id)}
+                        style={actionBtn("danger")}
+                      >
+                        Supprimer
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -180,4 +186,4 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
   );
 };
 
-export default CheptelList;
+export default CarnetSanteList;
