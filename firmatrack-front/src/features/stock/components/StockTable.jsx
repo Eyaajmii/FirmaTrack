@@ -28,10 +28,13 @@ const StockTable = ({ stocks, loading }) => {
               <td style={tdStyle}>{item.type}</td>
               <td style={tdStyle}>{item.quantite} {item.unite}</td>
               <td style={tdStyle}>
-                {isLow ? (
-                  <span style={badgeStyle('#FCEBEB', '#A32D2D')}>Critique</span>
+                {/* Logique de statut avec tes styles CSS conservés */}
+                {isExpired ? (
+                  <span style={badgeStyle('#FCEBEB', '#A32D2D')}>Périmé</span>
+                ) : isLow ? (
+                  <span style={badgeStyle('#FCEBEB', '#A32D2D')}>Stock Faible</span>
                 ) : (
-                  <span style={badgeStyle('#EAF3DE', '#3B6D11')}>Correct</span>
+                  <span style={badgeStyle('#EAF3DE', '#3B6D11')}>Optimal</span>
                 )}
               </td>
               <td style={tdStyle}>
@@ -47,6 +50,7 @@ const StockTable = ({ stocks, loading }) => {
   );
 };
 
+// --- TES STYLES CONSERVÉS À L'IDENTIQUE ---
 const thStyle = { padding: '12px 8px', fontSize: '11px', fontWeight: '500', color: '#b0afa9', textTransform: 'uppercase' };
 const tdStyle = { padding: '12px 8px', fontSize: '13px', color: '#6b6b67' };
 const badgeStyle = (bg, color) => ({

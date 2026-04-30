@@ -4,6 +4,7 @@ import CheptelPage from './features/cheptel/pages/CheptelPage';
 import ProductionListPage from './features/production-lait/pages/ProductionListPage';
 import ProductionOeufPage from './features/production-oeufs/pages/ProductionOeufPage';
 import StockListPage from './features/stock/pages/StockListPage'; 
+import StockAddPage from './features/stock/pages/StockAddPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/production-lait" element={<ProductionListPage />} />
             <Route path="/production-oeufs" element={<ProductionOeufPage />} />
             <Route path="/stock" element={<StockListPage />} />
+            <Route path="/stock/nouveau" element={<StockAddPage />} />
           </Routes>
         </main>
       </div>

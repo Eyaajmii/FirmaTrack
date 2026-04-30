@@ -33,7 +33,14 @@ const navItems = [
           { to: '/lots/issues', label: 'Issues' },
         ]
       },
-      { to: '/stock', label: 'Stocks', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 4l6-2 6 2v8l-6 2-6-2V4z" stroke="currentColor" strokeWidth="1.3"/><path d="M2 4l6 2 6-2M8 6v8" stroke="currentColor" strokeWidth="1.3"/></svg> },
+      {
+  to: '/stock', label: 'Stocks',
+  icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 4l6-2 6 2v8l-6 2-6-2V4z" stroke="currentColor" strokeWidth="1.3"/><path d="M2 4l6 2 6-2M8 6v8" stroke="currentColor" strokeWidth="1.3"/></svg>,
+  children: [
+    { to: '/stock', label: 'Inventaire' },
+    { to: '/stock/nouveau', label: 'Ajouter un intrant' },
+  ]
+},
     ]
   },
   {
