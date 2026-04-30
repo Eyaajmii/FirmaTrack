@@ -13,16 +13,19 @@ public class Medicament {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nom;
+    // Au lieu de String nom, on lie au Stock
+    @ManyToOne
+    @JoinColumn(name = "stock_id")
+    private Stock stockItem; 
 
-    private String dosage;
-
+    private Double quantiteUtilisee; // Ex: 2 (unités/ml/doses)
+    
+    private String dosage; // Ex: "5ml par jour"
     private String frequence;
-
     private String voieAdministration;
 
     @ManyToOne
     private Traitement traitement;
-    public Medicament() {
-    }
+
+    public Medicament() {}
 }
