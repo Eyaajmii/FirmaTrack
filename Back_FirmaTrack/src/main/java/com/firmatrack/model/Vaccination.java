@@ -2,6 +2,8 @@ package com.firmatrack.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.*;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,8 +30,11 @@ public class Vaccination {
     private String observations;
 
     @ManyToOne
+    @JsonIgnore
     private Veterinaire veterinaire;
     @ManyToOne
+    @JoinColumn(name = "carnet_sante_id")
+    @JsonBackReference
     private Carnetsante carnetSante;
     public Vaccination() {
     }

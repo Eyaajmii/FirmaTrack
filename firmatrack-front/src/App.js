@@ -4,20 +4,32 @@ import Sidebar from './components/layout/Sidebar';
 import CheptelPage from './features/cheptel/pages/CheptelPage';
 import ProductionListPage from './features/production-lait/pages/ProductionListPage';
 import ProductionOeufPage from './features/production-oeufs/pages/ProductionOeufPage';
+import CarnetsantePage from './features/carnetsante/pages/CarnetsantePage';
 // ...
 
 
 function App() {
   return (
     <Router>
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#f7f6f4' }}>
+      <div
+        style={{ display: "flex", minHeight: "100vh", background: "#f7f6f4" }}
+      >
         <Sidebar />
-        <main style={{ flex: 1, overflowY: 'auto' }}>
+        <main style={{ flex: 1, overflowY: "auto" }}>
           <Routes>
-            <Route path="/" element={<Navigate to="/production-lait" replace />} />
-            { <Route path="/cheptel" element={<CheptelPage />} /> }
-            { <Route path="/production-lait" element={<ProductionListPage />} /> }
-            { <Route path="/production-oeufs" element={<ProductionOeufPage />} /> }
+            <Route
+              path="/"
+              element={<Navigate to="/production-lait" replace />}
+            />
+            {<Route path="/cheptel" element={<CheptelPage />} />}
+            {<Route path="/carnetsante" element={<CarnetsantePage />} />}
+            {<Route path="/production-lait" element={<ProductionListPage />} />}
+            {
+              <Route
+                path="/production-oeufs"
+                element={<ProductionOeufPage />}
+              />
+            }
           </Routes>
         </main>
       </div>
