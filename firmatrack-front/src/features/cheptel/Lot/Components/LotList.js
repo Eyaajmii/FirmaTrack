@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LotList = ({ lots, onDelete, onSelect }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-
+  const navigate = useNavigate();
   if (!lots || lots.length === 0) {
     return (
       <div
@@ -111,50 +112,71 @@ const LotList = ({ lots, onDelete, onSelect }) => {
 
                 {/* ACTIONS */}
                 <td style={td}>
-                  {isConfirm ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "6px",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span style={{ fontSize: "11px", color: "#9a9a96" }}>
-                        Confirmer ?
-                      </span>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDelete(lot.id);
-                          setConfirmDeleteId(null);
-                        }}
-                        style={actionBtn("confirm")}
-                      >
-                        Oui
-                      </button>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setConfirmDeleteId(null);
-                        }}
-                        style={actionBtn()}
-                      >
-                        Non
-                      </button>
-                    </div>
-                  ) : (
+                  <div style={{ display: "flex", gap: "6px" }}>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setConfirmDeleteId(lot.id);
+                        navigate(`/lots/edit/${lot.id}`, {
+                          state: lot,
+                        });
                       }}
-                      style={actionBtn("danger")}
+                      style={{
+                        padding: "4px 10px",
+                        borderRadius: "7px",
+                        fontSize: "11px",
+                        border: "0.5px solid #e8e7e2",
+                        background: "#fff",
+                        cursor: "pointer",
+                        color: "green",
+                      }}
                     >
-                      Supprimer
+                      Update
                     </button>
-                  )}
+                    {isConfirm ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "6px",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span style={{ fontSize: "11px", color: "#9a9a96" }}>
+                          Confirmer ?
+                        </span>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(lot.id);
+                            setConfirmDeleteId(null);
+                          }}
+                          style={actionBtn("confirm")}
+                        >
+                          Oui
+                        </button>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setConfirmDeleteId(null);
+                          }}
+                          style={actionBtn()}
+                        >
+                          Non
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirmDeleteId(lot.id);
+                        }}
+                        style={actionBtn("danger")}
+                      >
+                        Supprimer
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             );

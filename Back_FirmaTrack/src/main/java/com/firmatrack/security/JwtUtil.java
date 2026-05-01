@@ -32,6 +32,9 @@ public class JwtUtil {
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
 
     // 3. Vérifier si le Token est encore valide (pas expiré)
     public boolean isTokenValid(String token) {

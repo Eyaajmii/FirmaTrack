@@ -17,5 +17,8 @@ public class Lot {
     private String description;
     @OneToMany(mappedBy = "lot")
     private List<Cheptel> cheptels = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "fermier_id")
+    private Fermier fermier;
     public Lot() {}
 }

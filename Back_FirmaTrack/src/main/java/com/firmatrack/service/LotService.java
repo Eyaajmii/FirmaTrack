@@ -56,4 +56,7 @@ public class LotService {
 
         return savedLot;
     }
+    public List<Lot> getLotsByFermier(Long fermierId) {
+        return lotRepository.findByFermierId(fermierId);
+    }
 }

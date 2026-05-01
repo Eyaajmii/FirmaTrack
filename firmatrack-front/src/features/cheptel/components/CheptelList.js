@@ -1,21 +1,27 @@
-import { useState } from 'react';
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const statutBadge = (statut) => {
   const map = {
-    ALIVE: { bg: '#EAF3DE', color: '#27500A', border: '#C0DD97' },
-    SOLD:  { bg: '#FAEEDA', color: '#633806', border: '#FAC775' },
-    DEAD:  { bg: '#FCEBEB', color: '#791F1F', border: '#F7C1C1' },
+    ALIVE: { bg: "#EAF3DE", color: "#27500A", border: "#C0DD97" },
+    SOLD: { bg: "#FAEEDA", color: "#633806", border: "#FAC775" },
+    DEAD: { bg: "#FCEBEB", color: "#791F1F", border: "#F7C1C1" },
   };
-  const s = map[statut] || map['ALIVE'];
+  const s = map[statut] || map["ALIVE"];
   return {
-    display: 'inline-flex', padding: '3px 9px', borderRadius: '20px',
-    fontSize: '10px', fontWeight: '500', letterSpacing: '0.02em',
-    background: s.bg, color: s.color, border: `0.5px solid ${s.border}`,
+    display: "inline-flex",
+    padding: "3px 9px",
+    borderRadius: "20px",
+    fontSize: "10px",
+    fontWeight: "500",
+    letterSpacing: "0.02em",
+    background: s.bg,
+    color: s.color,
+    border: `0.5px solid ${s.border}`,
   };
 };
 
-const statutLabel = { ALIVE: 'Vivant', SOLD: 'Vendu', DEAD: 'Décédé' };
+const statutLabel = { ALIVE: "Vivant", SOLD: "Vendu", DEAD: "Décédé" };
 
 const CheptelList = ({ animals, onDelete, onSelect }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
@@ -138,12 +144,11 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
 
                 <td style={td}>
                   <div style={{ display: "flex", gap: "6px" }}>
-                    {/* UPDATE BUTTON */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate(`/cheptels/edit/${animal.id}`, {
-                          state: animal, // ✅ on passe data direct
+                          state: animal,
                         });
                       }}
                       style={{
@@ -158,18 +163,24 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
                     >
                       Update
                     </button>
-
-                    {/* DELETE (ton code existant) */}
                     {isConfirm ? (
                       <>
                         <button onClick={() => onDelete(animal.id)}>Oui</button>
-                        <button onClick={(e) => {e.stopPropagation();setConfirmDeleteId(null)}}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setConfirmDeleteId(null);
+                          }}
+                        >
                           Non
                         </button>
                       </>
                     ) : (
                       <button
-                        onClick={(e) => {e.stopPropagation();setConfirmDeleteId(animal.id)}}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirmDeleteId(animal.id);
+                        }}
                         style={{
                           padding: "4px 10px",
                           borderRadius: "7px",
@@ -194,4 +205,4 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
   );
 };
 
-export default CheptelList; 
+export default CheptelList;

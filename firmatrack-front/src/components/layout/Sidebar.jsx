@@ -8,19 +8,20 @@ const ChevronIcon = ({ open }) => (
   </svg>
 );
 
-// Cow pattern SVG encodé en data URI
-// Taches noires organiques sur fond crème — légères pour garder la lisibilité
 const COW_PATTERN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Crect width='140' height='140' fill='%23faf9f6'/%3E%3Cellipse cx='25' cy='20' rx='16' ry='11' fill='%231a1a18' opacity='0.14' transform='rotate(-25 25 20)'/%3E%3Cellipse cx='95' cy='32' rx='20' ry='13' fill='%231a1a18' opacity='0.13' transform='rotate(18 95 32)'/%3E%3Cellipse cx='55' cy='68' rx='24' ry='15' fill='%231a1a18' opacity='0.12' transform='rotate(-12 55 68)'/%3E%3Cellipse cx='12' cy='88' rx='11' ry='18' fill='%231a1a18' opacity='0.11' transform='rotate(28 12 88)'/%3E%3Cellipse cx='118' cy='90' rx='15' ry='10' fill='%231a1a18' opacity='0.06' transform='rotate(-35 118 90)'/%3E%3Cellipse cx='72' cy='118' rx='18' ry='11' fill='%231a1a18' opacity='0.065' transform='rotate(12 72 118)'/%3E%3Cellipse cx='32' cy='122' rx='9' ry='13' fill='%231a1a18' opacity='0.055' transform='rotate(-18 32 122)'/%3E%3Cellipse cx='125' cy='55' rx='10' ry='7' fill='%231a1a18' opacity='0.06' transform='rotate(42 125 55)'/%3E%3C/svg%3E")`;
 
-const navItems = [
+// Tous les items de nav
+const allNavItems = [
   {
     section: null,
+    roles: ['FERMIER', 'ADMIN'],
     items: [
       { to: '/dashboard', label: 'Dashboard', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/></svg> },
     ]
   },
   {
     section: 'Gestion',
+    roles: ['FERMIER', 'ADMIN'],
     items: [
       { to: '/cheptel', label: 'Cheptel', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg> },
       {
@@ -34,34 +35,38 @@ const navItems = [
         ]
       },
       {
-  to: '/stock', label: 'Stocks',
-  icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 4l6-2 6 2v8l-6 2-6-2V4z" stroke="currentColor" strokeWidth="1.3"/><path d="M2 4l6 2 6-2M8 6v8" stroke="currentColor" strokeWidth="1.3"/></svg>,
-  children: [
-    { to: '/stock', label: 'Inventaire' },
-    { to: '/stock/nouveau', label: 'Ajouter un intrant' },
-  ]
-},
+        to: '/stock', label: 'Stocks',
+        icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 4l6-2 6 2v8l-6 2-6-2V4z" stroke="currentColor" strokeWidth="1.3"/><path d="M2 4l6 2 6-2M8 6v8" stroke="currentColor" strokeWidth="1.3"/></svg>,
+        children: [
+          { to: '/stock', label: 'Inventaire' },
+          { to: '/stock/nouveau', label: 'Ajouter un intrant' },
+        ]
+      },
     ]
   },
   {
     section: 'Production',
+    roles: ['FERMIER', 'ADMIN'],
     items: [
       { to: '/production-lait', label: 'Production Lait', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2h8l1 4H3L4 2z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/><path d="M3 6v7a1 1 0 001 1h8a1 1 0 001-1V6" stroke="currentColor" strokeWidth="1.3"/><path d="M6 10h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg> },
       { to: '/production-oeufs', label: 'Production Oeufs', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="8.5" rx="4.5" ry="5.5" stroke="currentColor" strokeWidth="1.3"/><path d="M5.5 7c.5-2 5-2 5 0" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/></svg> },
     ]
   },
   {
-    section: 'Carnet de santé',
+    section: 'Santé',
+    roles: ['FERMIER', 'ADMIN', 'VETERINAIRE'],
     items: [
-      { to: '/carnetsante', label: 'Carnet de Santé', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 00-5 5v3l-1 1.5h12L13 10V7a5 5 0 00-5-5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/><path d="M6.5 13a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.3"/></svg> },
+      { to: '/carnetsante', label: 'Carnet de Santé', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><path d="M5 5h6M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg> },
     ]
   },
   {
     section: 'Paramètres',
+    roles: ['FERMIER', 'ADMIN'],
     items: [
       { to: '/members', label: 'Membres', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="currentColor" strokeWidth="1.3"/><path d="M1 13c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/><circle cx="12" cy="5" r="2" stroke="currentColor" strokeWidth="1.1"/><path d="M14 13c0-1.8-1-3-2.5-3.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/></svg> },
       { to: '/notifications', label: 'Notifications', badge: '02', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 00-5 5v3l-1 1.5h12L13 10V7a5 5 0 00-5-5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/><path d="M6.5 13a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.3"/></svg> },
-      { to: '/messages', label: 'Messages', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.3"/><path d="M1 5l7 5 7-5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg> },    ]
+      { to: '/messages', label: 'Messages', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.3"/><path d="M1 5l7 5 7-5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg> },
+    ]
   }
 ];
 
@@ -96,134 +101,19 @@ const W_CLOSED = 56;
 
 const Sidebar = () => {
   const location = useLocation();
-
-  // ✅ Récupération des infos utilisateur
   const userName = localStorage.getItem('user_name') || 'Utilisateur';
-  const userRole = localStorage.getItem('user_role') || 'VISITEUR';
-
-  // ✅ Logout
-  const handleLogout = () => {
-    localStorage.clear();
-    window.location.href = '/login';
-  };
-
-  // --- MENU FERMIER ---
-  const fermierItems = [
-    {
-      section: null,
-      items: [
-        { to: '/dashboard', label: 'Dashboard', icon: (
-          <svg width="15" height="15" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6"/><rect x="9" y="1" width="6" height="6"/><rect x="1" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/></svg>
-        )},
-      ]
-    },
-    {
-      section: 'Gestion',
-      items: [
-        { to: '/cheptel', label: 'Cheptel', icon: (
-          <svg width="15" height="15"><circle cx="8" cy="5" r="3"/></svg>
-        )},
-        { to: '/lots', label: 'Lots', icon: (
-          <svg width="15" height="15"><rect x="1" y="4" width="14" height="10"/></svg>
-        )},
-      ]
-    },
-    {
-      section: 'Production',
-      items: [
-        { to: '/production-lait', label: 'Production Lait' },
-        { to: '/production-oeufs', label: 'Production Oeufs' },
-      ]
-    },
-  ];
+  const userRole = (localStorage.getItem('user_role') || 'VISITEUR').toUpperCase();
   const [collapsed, setCollapsed] = useState(false);
   const [openMenus, setOpenMenus] = useState({ '/lots': true });
   const toggleMenu = (key) => setOpenMenus(prev => ({ ...prev, [key]: !prev[key] }));
 
-  // --- MENU VETERINAIRE ---
-  const vetoItems = [
-    {
-      section: null,
-      items: [
-        { to: '/veterinaire-dashboard', label: 'Mon Forum' },
-      ]
-    },
-    {
-      section: 'Services',
-      items: [
-        { to: '/consultations', label: 'Mes Visites' },
-        { to: '/carte', label: 'Carte Interventions' },
-      ]
-    },
-  ];
+  // Filtrer les groupes selon le rôle
+  const navItems = allNavItems.filter(group => group.roles.includes(userRole));
 
-  // ✅ Choix du menu selon rôle
-  const navItems =
-    (userRole === 'FERMIER' || userRole === 'ELEVEUR')
-      ? fermierItems
-      : vetoItems;
+  // Initiale de l'utilisateur pour l'avatar
+  const userInitial = userName.charAt(0).toUpperCase();
 
   return (
-    <aside style={{
-      width: '220px',
-      minHeight: '100vh',
-      background: '#fff',
-      borderRight: '0.5px solid #e8e7e2',
-      display: 'flex',
-      flexDirection: 'column',
-      padding: '1.5rem 0',
-    }}>
-
-      {/* Header */}
-      <div style={{ padding: '0 1.25rem', marginBottom: '2rem' }}>
-        <div style={{
-          fontSize: '15px',
-          fontWeight: '600',
-          color: '#1a1a18',
-          textTransform: 'uppercase'
-        }}>
-          FirmaTrack
-        </div>
-
-        <div style={{
-          fontSize: '12px',
-          color: '#16a34a',
-          marginTop: '4px'
-        }}>
-          {userName} • {userRole}
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav style={{ flex: 1, padding: '0 0.75rem' }}>
-        {navItems.map((group, gi) => (
-          <div key={gi} style={{ marginBottom: '1.5rem' }}>
-
-            {group.section && (
-              <div style={{
-                fontSize: '10px',
-                color: '#c0bfb9',
-                textTransform: 'uppercase',
-                marginBottom: '4px'
-              }}>
-                {group.section}
-              </div>
-            )}
-
-            {group.items.map(item => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                style={({ isActive }) => ({
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '9px',
-                  padding: '7px 10px',
-                  borderRadius: '8px',
-                  fontSize: '13px',
-                  color: isActive ? '#fff' : '#6b6b67',
-                  background: isActive ? '#1a1a18' : 'transparent',
-                  textDecoration: 'none',
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -256,13 +146,11 @@ const Sidebar = () => {
         position: 'relative',
       }}>
 
-        {/* Voile semi-transparent pour adoucir le pattern et garder lisibilité */}
         <div style={{
           position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
           background: 'rgba(250,249,246,0.35)',
         }}/>
 
-        {/* Contenu principal — au-dessus du voile */}
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
 
           {/* ── Header ── */}
@@ -387,25 +275,6 @@ const Sidebar = () => {
                 })}
               </div>
             ))}
-
-          </div>
-        ))}
-      </nav>
-
-      {/* Logout */}
-      <div style={{ padding: '1rem 0.75rem', borderTop: '1px solid #eee' }}>
-        <button onClick={handleLogout} style={{
-          width: '100%',
-          padding: '8px',
-          color: '#ef4444',
-          border: 'none',
-          cursor: 'pointer'
-        }}>
-          Déconnexion
-        </button>
-      </div>
-
-    </aside>
           </nav>
 
           {/* ── Footer ── */}
@@ -416,11 +285,15 @@ const Sidebar = () => {
               justifyContent: collapsed ? 'center' : 'flex-start',
               borderRadius: '7px', cursor: 'pointer', transition: 'background 0.12s',
             }}>
-              <div style={{ width: '26px', height: '26px', borderRadius: '7px', background: '#1a1a18', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '700', color: '#fff', flexShrink: 0 }}>A</div>
+              <div style={{ width: '26px', height: '26px', borderRadius: '7px', background: '#1a1a18', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '700', color: '#fff', flexShrink: 0 }}>
+                {userInitial}
+              </div>
               {!collapsed && (
                 <div style={{ overflow: 'hidden', minWidth: 0 }}>
-                  <div style={{ fontSize: '11.5px', fontWeight: '500', color: '#1a1a18', whiteSpace: 'nowrap' }}>Admin</div>
-                  <div style={{ fontSize: '10px', color: '#a0a098', whiteSpace: 'nowrap' }}>Connecté</div>
+                  <div style={{ fontSize: '11.5px', fontWeight: '500', color: '#1a1a18', whiteSpace: 'nowrap' }}>{userName}</div>
+                  <div style={{ fontSize: '10px', color: '#a0a098', whiteSpace: 'nowrap' }}>
+                    {userRole.charAt(0) + userRole.slice(1).toLowerCase()}
+                  </div>
                 </div>
               )}
             </div>

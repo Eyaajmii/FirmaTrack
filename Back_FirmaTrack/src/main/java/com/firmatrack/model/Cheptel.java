@@ -77,6 +77,7 @@ public class Cheptel {
         // ferme
         @ManyToOne
         @JoinColumn(name = "fermier_id")
+        @JsonIgnoreProperties({"user", "cheptels"})
         private Fermier fermier;
         @OneToOne(mappedBy = "animal")
         @JsonIgnore

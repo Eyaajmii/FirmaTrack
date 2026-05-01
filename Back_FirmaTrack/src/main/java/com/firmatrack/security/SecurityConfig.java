@@ -39,7 +39,8 @@ public class SecurityConfig {
             	    
             	    // 3. On laisse ouvert les API des filles PROVISOIREMENT le temps du développement
             	    .requestMatchers("/api/users/**", "/api/fermier/**", "/api/veterinaires/**").permitAll() 
-            	    
+                    .requestMatchers("/api/cheptel/**").hasAnyRole("ADMIN", "FERMIER")
+                    .requestMatchers("/api/lots/**").hasAnyRole("ADMIN", "FERMIER")
             	    // 4. Seul le reste (ce qui n'est pas listé au-dessus) sera bloqué
             	    .anyRequest().authenticated()
             	)
