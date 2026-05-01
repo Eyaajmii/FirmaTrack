@@ -1,9 +1,5 @@
 package com.firmatrack.model;
-
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.*;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,15 +21,12 @@ public class Carnetsante {
 
     @OneToOne
     @JoinColumn(name = "animal_id")
-    @JsonManagedReference
     private Cheptel animal;
     @OneToMany(mappedBy = "carnetSante")
-    @JsonManagedReference
-    private List<Vaccination> vaccinations;
+    private List<Maladie> maladies;
 
     @OneToMany(mappedBy = "carnetSante")
-    @JsonManagedReference
-    private List<Maladie> maladies;
+    private List<Vaccination> vaccinations;
 
     // @OneToMany(mappedBy = "carnetSante")
     // private List<SuiviEtatSante> suivis;

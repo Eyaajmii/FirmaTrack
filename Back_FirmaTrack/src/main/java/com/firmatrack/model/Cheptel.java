@@ -1,10 +1,8 @@
 package com.firmatrack.model;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDate;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.*;
 
 @Entity
 @Table(name="cheptels")
@@ -60,26 +58,27 @@ public class Cheptel {
     @Column(length = 500)
     private String notes;
 
-    // catégorie animal
-    @ManyToOne
-    @JoinColumn(name = "categorie_id")
-    private Categorie categorie;
-
-    // zone dans la ferme
-    @ManyToOne
-    @JoinColumn(name = "zone_id")
-    private Zone zone;
-
-    // lot
-    @ManyToOne
-    @JoinColumn(name = "lot_id")
-    private Lot lot;
-
-    // ferme
-    @ManyToOne
-    @JoinColumn(name = "fermier_id")
-    private Fermier fermier;
-    @OneToOne(mappedBy = "animal")
-    @JsonBackReference
-    private Carnetsante carnetSante;
-}
+        // catégorie animal
+        @ManyToOne
+        @JoinColumn(name = "categorie_id")
+        private Categorie categorie;
+    
+        // zone dans la ferme
+        @ManyToOne
+        @JoinColumn(name = "zone_id")
+        private Zone zone;
+    
+        // lot
+        @ManyToOne
+        @JoinColumn(name = "lot_id", nullable = true)
+        @JsonIgnore
+        private Lot lot;
+    
+        // ferme
+        @ManyToOne
+        @JoinColumn(name = "fermier_id")
+        private Fermier fermier;
+        @OneToOne(mappedBy = "animal")
+        @JsonIgnore
+        private Carnetsante carnetSante;
+    }

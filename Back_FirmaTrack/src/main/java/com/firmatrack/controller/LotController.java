@@ -11,21 +11,26 @@ import java.util.List;
 @RequestMapping("/api/lots")
 @CrossOrigin(origins = "*")
 public class LotController {
-	    @Autowired
-	    private LotService lotService;
+	@Autowired
+	private LotService lotService;
 
-	    @GetMapping
-	    public List<Lot> getAllLots() {
-	        return lotService.getAllLots();
-	    }
-
-	    @PostMapping
-	    public Lot createLot(@RequestBody Lot lot) {
-	        return lotService.saveLot(lot);
-	    }
-
-	    @DeleteMapping("/{id}")
-	    public void deleteLot(@PathVariable Long id) {
-	        lotService.deleteLot(id);
-	    }
+	@GetMapping
+	public List<Lot> getAllLots() {
+		return lotService.getAllLots();
 	}
+
+	@PostMapping
+	public Lot createLot(@RequestBody Lot lot) {
+		return lotService.saveLot(lot);
+	}
+
+	@DeleteMapping("/{id}")
+	public void deleteLot(@PathVariable Long id) {
+		lotService.deleteLot(id);
+	}
+
+	@PostMapping("/with-cheptels")
+	public Lot createLotWithCheptels(@RequestBody Lot lot) {
+		return lotService.createLotWithCheptels(lot, lot.getCheptels());
+	}
+}

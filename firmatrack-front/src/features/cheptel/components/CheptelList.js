@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const statutBadge = (statut) => {
   const map = {
@@ -18,7 +19,7 @@ const statutLabel = { ALIVE: 'Vivant', SOLD: 'Vendu', DEAD: 'Décédé' };
 
 const CheptelList = ({ animals, onDelete, onSelect }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-
+  const navigate = useNavigate();
   if (!animals || animals.length === 0) {
     return (
       <div
@@ -134,42 +135,55 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
                     {statutLabel[animal.statut] || animal.statut}
                   </span>
                 </td>
+
                 <td style={td}>
-                  {isConfirm ? (
-                    <div
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    {/* UPDATE BUTTON */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/cheptels/edit/${animal.id}`, {
+                          state: animal, // ✅ on passe data direct
+                        });
+                      }}
                       style={{
-                        display: "flex",
-                        gap: "6px",
-                        alignItems: "center",
+                        padding: "4px 10px",
+                        borderRadius: "7px",
+                        fontSize: "11px",
+                        border: "0.5px solid #e8e7e2",
+                        background: "#fff",
+                        cursor: "pointer",
+                        color: "green",
                       }}
                     >
-                      <span style={{ fontSize: "11px", color: "#9a9a96" }}>
-                        Confirmer ?
-                      </span>
-                      <button
-                        onClick={() => {
-                          onDelete(animal.id);
-                          setConfirmDeleteId(null);
-                        }}
-                        style={actionBtn("confirm")}
-                      >
-                        Oui
-                      </button>
-                      <button
-                        onClick={() => setConfirmDeleteId(null)}
-                        style={actionBtn()}
-                      >
-                        Non
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => setConfirmDeleteId(animal.id)}
-                      style={actionBtn("danger")}
-                    >
-                      Supprimer
+                      Update
                     </button>
-                  )}
+
+                    {/* DELETE (ton code existant) */}
+                    {isConfirm ? (
+                      <>
+                        <button onClick={() => onDelete(animal.id)}>Oui</button>
+                        <button onClick={(e) => {e.stopPropagation();setConfirmDeleteId(null)}}>
+                          Non
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={(e) => {e.stopPropagation();setConfirmDeleteId(animal.id)}}
+                        style={{
+                          padding: "4px 10px",
+                          borderRadius: "7px",
+                          fontSize: "11px",
+                          border: "0.5px solid #e8e7e2",
+                          background: "#fff",
+                          cursor: "pointer",
+                          color: "red",
+                        }}
+                      >
+                        Supprimer
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             );
@@ -180,4 +194,4 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
   );
 };
 
-export default CheptelList;
+export default CheptelList; 

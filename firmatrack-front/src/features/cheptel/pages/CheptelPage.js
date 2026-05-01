@@ -7,7 +7,6 @@ import CheptelList from "../components/CheptelList";
 function CheptelPage() {
   const [animals, setAnimals] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [selectedAnimal, setSelectedAnimal] = useState(null);
 
   const fetchAnimals = async () => {
     const res = await service.getAllAnimals();
@@ -191,17 +190,12 @@ function CheptelPage() {
           />
 
           <div style={{ marginTop: "1.25rem" }}>
-            <CheptelList
-              animals={animals}
-              onDelete={handleDelete}
-              onSelect={setSelectedAnimal}
-            />
+            <CheptelList animals={animals} onDelete={handleDelete} />
           </div>
         </div>
       </div>
 
       {/* Modal formulaire */}
-
       {showForm && (
         <div
           onClick={(e) => {
@@ -249,102 +243,6 @@ function CheptelPage() {
                 setShowForm(false);
               }}
             />
-          </div>
-        </div>
-      )}
-      {selectedAnimal && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedAnimal(null);
-          }}
-          style={{
-            position: "fixed",
-
-            inset: 0,
-
-            background: "rgba(26,26,24,.35)",
-
-            display: "flex",
-
-            alignItems: "center",
-
-            justifyContent: "center",
-
-            zIndex: 80,
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              width: "100%",
-              maxWidth: "500px",
-              borderRadius: "14px",
-              padding: "1.5rem",
-            }}
-          >
-            <h2
-              style={{
-                marginBottom: "1rem",
-              }}
-            >
-              🐄 Détail Animal
-            </h2>
-
-            <p>
-              <strong>ID :</strong> {selectedAnimal.id}
-            </p>
-
-            <p>
-              <strong>Nom :</strong> {selectedAnimal.nom || "—"}
-            </p>
-
-            <p>
-              <strong>Numéro :</strong> {selectedAnimal.chepnumber}
-            </p>
-
-            <p>
-              <strong>Type :</strong> {selectedAnimal.type}
-            </p>
-
-            <p>
-              <strong>Race :</strong> {selectedAnimal.race || "—"}
-            </p>
-
-            <p>
-              <strong>Genre :</strong>
-              {selectedAnimal.gender === "F"
-                ? " Femelle"
-                : selectedAnimal.gender === "M"
-                ? " Mâle"
-                : " —"}
-            </p>
-
-            <p>
-              <strong>Statut :</strong> {selectedAnimal.statut}
-            </p>
-
-            <p>
-              <strong>Poids :</strong> {selectedAnimal.poids || "—"}
-            </p>
-
-            <p>
-              <strong>Date naissance :</strong>{" "}
-              {selectedAnimal.dateNaissance || "—"}
-            </p>
-
-            <button
-              onClick={() => setSelectedAnimal(null)}
-              style={{
-                marginTop: "15px",
-                padding: "8px 15px",
-                borderRadius: "8px",
-                border: "0.5px solid #e8e7e2",
-                background: "#fff",
-                cursor: "pointer",
-              }}
-            >
-              Fermer
-            </button>
           </div>
         </div>
       )}

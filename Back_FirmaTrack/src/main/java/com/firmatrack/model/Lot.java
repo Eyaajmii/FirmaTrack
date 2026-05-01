@@ -1,4 +1,6 @@
 package com.firmatrack.model;
+import java.util.*;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +15,7 @@ public class Lot {
     private Long id;
     private String nom;
     private String description;
-
+    @OneToMany(mappedBy = "lot")
+    private List<Cheptel> cheptels = new ArrayList<>();
     public Lot() {}
 }
