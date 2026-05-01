@@ -1,10 +1,7 @@
 package com.firmatrack.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.firmatrack.model.ProductionLait;
 import com.firmatrack.repository.ProductionLaitRepository;

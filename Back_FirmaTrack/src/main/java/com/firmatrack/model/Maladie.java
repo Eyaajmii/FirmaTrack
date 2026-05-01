@@ -2,6 +2,8 @@ package com.firmatrack.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.*;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,8 +32,10 @@ public class Maladie {
     private LocalDate dateDetection;
 
     @ManyToOne
+    @JsonIgnore
     private Veterinaire veterinaire;
     @ManyToOne
+    @JsonBackReference
     private Carnetsante carnetSante;
     public Maladie() {
     }

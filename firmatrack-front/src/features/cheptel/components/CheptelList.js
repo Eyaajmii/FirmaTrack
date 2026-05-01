@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const statutBadge = (statut) => {
   const map = {
@@ -16,47 +17,73 @@ const statutBadge = (statut) => {
 
 const statutLabel = { ALIVE: 'Vivant', SOLD: 'Vendu', DEAD: 'Décédé' };
 
-const CheptelList = ({ animals, onDelete }) => {
+const CheptelList = ({ animals, onDelete, onSelect }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-
+  const navigate = useNavigate();
   if (!animals || animals.length === 0) {
     return (
-      <div style={{
-        textAlign: 'center', padding: '2.5rem',
-        border: '1.5px dashed #e8e7e2', borderRadius: '10px',
-        fontSize: '12px', color: '#b0afa9',
-      }}>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "2.5rem",
+          border: "1.5px dashed #e8e7e2",
+          borderRadius: "10px",
+          fontSize: "12px",
+          color: "#b0afa9",
+        }}
+      >
         Aucun animal trouvé.
       </div>
     );
   }
 
   const th = {
-    fontSize: '10px', fontWeight: '500', color: '#b0afa9',
-    textTransform: 'uppercase', letterSpacing: '0.06em',
-    padding: '8px 12px', borderBottom: '0.5px solid #f0efe9', textAlign: 'left',
+    fontSize: "10px",
+    fontWeight: "500",
+    color: "#b0afa9",
+    textTransform: "uppercase",
+    letterSpacing: "0.06em",
+    padding: "8px 12px",
+    borderBottom: "0.5px solid #f0efe9",
+    textAlign: "left",
   };
   const td = {
-    fontSize: '12px', padding: '11px 12px',
-    borderBottom: '0.5px solid #f7f6f4', color: '#1a1a18', verticalAlign: 'middle',
+    fontSize: "12px",
+    padding: "11px 12px",
+    borderBottom: "0.5px solid #f7f6f4",
+    color: "#1a1a18",
+    verticalAlign: "middle",
   };
-  const actionBtn = (variant = 'default') => ({
-    padding: '4px 10px', borderRadius: '7px', fontSize: '11px', fontWeight: '500',
-    cursor: 'pointer', border: '0.5px solid',
-    ...(variant === 'danger'
-      ? { borderColor: '#f7c1c1', background: '#fff', color: '#A32D2D' }
-      : variant === 'confirm'
-      ? { borderColor: '#A32D2D', background: '#A32D2D', color: '#fff' }
-      : { borderColor: '#e8e7e2', background: '#fff', color: '#4a4a47' }),
+  const actionBtn = (variant = "default") => ({
+    padding: "4px 10px",
+    borderRadius: "7px",
+    fontSize: "11px",
+    fontWeight: "500",
+    cursor: "pointer",
+    border: "0.5px solid",
+    ...(variant === "danger"
+      ? { borderColor: "#f7c1c1", background: "#fff", color: "#A32D2D" }
+      : variant === "confirm"
+      ? { borderColor: "#A32D2D", background: "#A32D2D", color: "#fff" }
+      : { borderColor: "#e8e7e2", background: "#fff", color: "#4a4a47" }),
   });
 
   return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
-            {['Animal', 'Numéro', 'Type / Race', 'Genre', 'Statut', 'Actions'].map(h => (
-              <th key={h} style={th}>{h}</th>
+            {[
+              "Animal",
+              "Numéro",
+              "Type / Race",
+              "Genre",
+              "Statut",
+              "Actions",
+            ].map((h) => (
+              <th key={h} style={th}>
+                {h}
+              </th>
             ))}
           </tr>
         </thead>
@@ -64,43 +91,99 @@ const CheptelList = ({ animals, onDelete }) => {
           {animals.map((animal) => {
             const isConfirm = confirmDeleteId === animal.id;
             return (
-              <tr key={animal.id}
-                onMouseEnter={e => e.currentTarget.style.background = '#faf9f7'}
-                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                style={{ transition: 'background 0.1s' }}
+              <tr
+                key={animal.id}
+                onClick={() => onSelect(animal)}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#faf9f7")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
+                style={{ transition: "background 0.1s" }}
               >
-                <td style={{ ...td, fontWeight: '500' }}>{animal.nom || '—'}</td>
+                <td style={{ ...td, fontWeight: "500" }}>
+                  {animal.nom || "—"}
+                </td>
                 <td style={td}>
-                  <span style={{
-                    fontFamily: 'monospace', fontSize: '11px',
-                    background: '#f1f0ec', padding: '3px 8px', borderRadius: '6px', color: '#4a4a47',
-                  }}>
+                  <span
+                    style={{
+                      fontFamily: "monospace",
+                      fontSize: "11px",
+                      background: "#f1f0ec",
+                      padding: "3px 8px",
+                      borderRadius: "6px",
+                      color: "#4a4a47",
+                    }}
+                  >
                     {animal.chepnumber}
                   </span>
                 </td>
-                <td style={{ ...td, color: '#6b6b67' }}>
-                  {animal.type}{animal.race ? ` — ${animal.race}` : ''}
+                <td style={{ ...td, color: "#6b6b67" }}>
+                  {animal.type}
+                  {animal.race ? ` — ${animal.race}` : ""}
                 </td>
-                <td style={{ ...td, color: '#6b6b67' }}>
-                  {animal.gender === 'F' ? 'Femelle' : animal.gender === 'M' ? 'Mâle' : '—'}
+                <td style={{ ...td, color: "#6b6b67" }}>
+                  {animal.gender === "F"
+                    ? "Femelle"
+                    : animal.gender === "M"
+                    ? "Mâle"
+                    : "—"}
                 </td>
                 <td style={td}>
                   <span style={statutBadge(animal.statut)}>
                     {statutLabel[animal.statut] || animal.statut}
                   </span>
                 </td>
+
                 <td style={td}>
-                  {isConfirm ? (
-                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                      <span style={{ fontSize: '11px', color: '#9a9a96' }}>Confirmer ?</span>
-                      <button onClick={() => { onDelete(animal.id); setConfirmDeleteId(null); }} style={actionBtn('confirm')}>Oui</button>
-                      <button onClick={() => setConfirmDeleteId(null)} style={actionBtn()}>Non</button>
-                    </div>
-                  ) : (
-                    <button onClick={() => setConfirmDeleteId(animal.id)} style={actionBtn('danger')}>
-                      Supprimer
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    {/* UPDATE BUTTON */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/cheptels/edit/${animal.id}`, {
+                          state: animal, // ✅ on passe data direct
+                        });
+                      }}
+                      style={{
+                        padding: "4px 10px",
+                        borderRadius: "7px",
+                        fontSize: "11px",
+                        border: "0.5px solid #e8e7e2",
+                        background: "#fff",
+                        cursor: "pointer",
+                        color: "green",
+                      }}
+                    >
+                      Update
                     </button>
-                  )}
+
+                    {/* DELETE (ton code existant) */}
+                    {isConfirm ? (
+                      <>
+                        <button onClick={() => onDelete(animal.id)}>Oui</button>
+                        <button onClick={(e) => {e.stopPropagation();setConfirmDeleteId(null)}}>
+                          Non
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={(e) => {e.stopPropagation();setConfirmDeleteId(animal.id)}}
+                        style={{
+                          padding: "4px 10px",
+                          borderRadius: "7px",
+                          fontSize: "11px",
+                          border: "0.5px solid #e8e7e2",
+                          background: "#fff",
+                          cursor: "pointer",
+                          color: "red",
+                        }}
+                      >
+                        Supprimer
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             );
@@ -111,4 +194,4 @@ const CheptelList = ({ animals, onDelete }) => {
   );
 };
 
-export default CheptelList;
+export default CheptelList; 

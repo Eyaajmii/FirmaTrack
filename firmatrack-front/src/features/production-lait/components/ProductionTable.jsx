@@ -30,7 +30,7 @@ const inputStyle = {
   background: '#fff', color: '#1a1a18',
 };
 
-const ProductionTable = ({ productions, loading }) => {
+const ProductionTable = ({ productions, loading, onRefresh }) => {
   const { deleteProduction, updateProduction } = useProductionLait();
   const { toasts, removeToast, toast } = useToast();
 
@@ -84,6 +84,7 @@ const ProductionTable = ({ productions, loading }) => {
       });
       toast.success(`Production modifiée — ${editData.quantiteLitre} L`);
       setEditingId(null);
+      onRefresh?.();
     } catch (err) {
       toast.error("Échec de la modification. Veuillez réessayer.");
     }
@@ -95,6 +96,7 @@ const ProductionTable = ({ productions, loading }) => {
       const name = prod.cheptel?.nom || prod.lot?.nom || 'production';
       toast.success(`Production supprimée (${name})`);
       setConfirmDeleteId(null);
+      onRefresh?.();
     } catch (err) {
       toast.error("Échec de la suppression. Veuillez réessayer.");
     }
