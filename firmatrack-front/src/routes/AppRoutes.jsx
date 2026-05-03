@@ -11,6 +11,8 @@ import CarnetsantePage from "../features/carnetsante/pages/CarnetsantePage";
 import LotPage from "../features/cheptel/Lot/Page/LotPage";
 import LotAddPage from "../features/cheptel/Lot/Page/LotAddPage";
 import LotEditPage from '../features/cheptel/Lot/Page/LotEditPage';
+import CarnetsanteEditPage from '../features/carnetsante/pages/CarnetsanteEditPage';
+import CarnetSanteDetail from '../features/carnetsante/pages/CarnetsanteDetailPage';
 
 const AppRoutes = () => {
   const userRole = localStorage.getItem('user_role');
@@ -58,7 +60,14 @@ const AppRoutes = () => {
         path="/carnetsante"
         element={isFermier ? <CarnetsantePage /> : <Navigate to="/" />}
       />
-
+      <Route
+        path="/carnetsante/:id"
+        element={isFermier ? <CarnetSanteDetail /> : <Navigate to="/" />}
+      />
+      <Route
+        path="/carnetsante/edit/:id"
+        element={isFermier ? <CarnetsanteEditPage /> : <Navigate to="/" />}
+      />
       <Route
         path="/lots"
         element={isFermier ? <LotPage /> : <Navigate to="/" />}

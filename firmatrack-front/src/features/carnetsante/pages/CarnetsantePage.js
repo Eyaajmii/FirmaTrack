@@ -179,52 +179,6 @@ const handleAdd = async (data) => {
           </div>
         </div>
       )}
-
-      {/* 🔵 DETAIL MODAL */}
-      {selectedCarnet && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedCarnet(null);
-          }}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.35)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 80,
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              width: "100%",
-              maxWidth: "520px",
-              borderRadius: "14px",
-              padding: "1.5rem",
-            }}
-          >
-            <h2>🩺 Carnet de santé</h2>
-
-            <p>
-              <strong>Animal :</strong> {selectedCarnet.animal?.nom}
-            </p>
-            <p>
-              <strong>Groupe :</strong> {selectedCarnet.groupeSanguin}
-            </p>
-            <p>
-              <strong>Allergies :</strong> {selectedCarnet.allergies || "—"}
-            </p>
-            <p>
-              <strong>Obs :</strong>{" "}
-              {selectedCarnet.observationsGenerales || "—"}
-            </p>
-
-            <button onClick={() => setSelectedCarnet(null)}>Fermer</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

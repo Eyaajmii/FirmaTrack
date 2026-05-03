@@ -18,9 +18,14 @@ public class CarnetsanteService {
     private CarnetsanteRepository carnetsanteRepository;
 
     public Carnetsante saveCarnet(Carnetsante c) {
-        if (c.getAnimal() != null && carnetsanteRepository.findByAnimalId(c.getAnimal().getId()).isPresent()) {
-            throw new RuntimeException("Cet animal possède déjà un carnet");
+
+        if (c.getId() == null) {
+            // CREATE ONLY
+            if (carnetsanteRepository.existsById(c.getAnimal().getId())) {
+                throw new RuntimeException("Cet animal possède déjà un carnet");
+            }
         }
+
         return carnetsanteRepository.save(c);
     }
 

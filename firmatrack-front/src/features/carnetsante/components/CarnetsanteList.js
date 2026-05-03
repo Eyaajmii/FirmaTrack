@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CarnetSanteList = ({ carnets, onDelete, onSelect }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+    const navigate = useNavigate();
 
   if (!carnets || carnets.length === 0) {
     return (
@@ -81,7 +83,7 @@ const CarnetSanteList = ({ carnets, onDelete, onSelect }) => {
             return (
               <tr
                 key={carnet.id}
-                onClick={() => onSelect && onSelect(carnet)}
+                onClick={() => navigate(`/carnetsante/${carnet.id}`)}
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.background = "#faf9f7")
                 }
@@ -133,49 +135,59 @@ const CarnetSanteList = ({ carnets, onDelete, onSelect }) => {
                     ? `${carnet.vaccinations.length} vaccin(s)`
                     : "Aucun"}
                 </td>
-
-                {/* Actions */}
                 <td style={td}>
-                  {isConfirm ? (
-                    <div style={{ display: "flex", gap: "6px" }}>
-                      <span style={{ fontSize: "11px", color: "#9a9a96" }}>
-                        Confirmer ?
-                      </span>
-
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/carnetsante/edit/${carnet.id}`, {
+                          state: carnet,
+                        });
+                      }}
+                      style={{
+                        padding: "4px 10px",
+                        borderRadius: "7px",
+                        fontSize: "11px",
+                        border: "0.5px solid #e8e7e2",
+                        background: "#fff",
+                        cursor: "pointer",
+                        color: "green",
+                      }}
+                    >
+                      Update
+                    </button>
+                    {isConfirm ? (
+                      <>
+                        <button onClick={() => onDelete(carnet.id)}>Oui</button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setConfirmDeleteId(null);
+                          }}
+                        >
+                          Non
+                        </button>
+                      </>
+                    ) : (
                       <button
-                        onClick={() => {
-                          onDelete(carnet.id);
-                          setConfirmDeleteId(null);
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirmDeleteId(carnet.id);
                         }}
-                        style={actionBtn("confirm")}
-                      >
-                        Oui
-                      </button>
-
-                      <button
-                        onClick={() => setConfirmDeleteId(null)}
-                        style={actionBtn()}
-                      >
-                        Non
-                      </button>
-                    </div>
-                  ) : (
-                    <div style={{ display: "flex", gap: "6px" }}>
-                      <button
-                        onClick={() => onSelect && onSelect(carnet)}
-                        style={actionBtn()}
-                      >
-                        Voir
-                      </button>
-
-                      <button
-                        onClick={() => setConfirmDeleteId(carnet.id)}
-                        style={actionBtn("danger")}
+                        style={{
+                          padding: "4px 10px",
+                          borderRadius: "7px",
+                          fontSize: "11px",
+                          border: "0.5px solid #e8e7e2",
+                          background: "#fff",
+                          cursor: "pointer",
+                          color: "red",
+                        }}
                       >
                         Supprimer
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </td>
               </tr>
             );

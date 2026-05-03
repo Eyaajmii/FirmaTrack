@@ -57,6 +57,12 @@ const allNavItems = [
     roles: ['FERMIER', 'ADMIN', 'VETERINAIRE'],
     items: [
       { to: '/carnetsante', label: 'Carnet de Santé', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><path d="M5 5h6M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg> },
+      { to: '/rendezvous', label: 'Rendez-vous vétérinaire', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M3 9H21" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M8 3V7M16 3V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg> },
+
     ]
   },
   {
