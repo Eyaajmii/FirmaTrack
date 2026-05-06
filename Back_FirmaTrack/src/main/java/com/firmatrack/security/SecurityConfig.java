@@ -40,8 +40,13 @@ public class SecurityConfig {
             	    // 3. On laisse ouvert les API des filles PROVISOIREMENT le temps du développement
             	    .requestMatchers("/api/users/**", "/api/fermier/**", "/api/veterinaires/**").permitAll() 
             	    
+            	    // --- AJOUTE CETTE LIGNE ICI POUR TON MODULE ---
+            	    .requestMatchers("/api/finance/**").permitAll() 
+            	    // ----------------------------------------------
+            	    
+            	    
             	    // 4. Seul le reste (ce qui n'est pas listé au-dessus) sera bloqué
-            	    .anyRequest().authenticated()
+            	    .anyRequest().permitAll()
             	)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
  
