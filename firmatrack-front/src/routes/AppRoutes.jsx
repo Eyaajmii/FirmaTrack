@@ -14,6 +14,9 @@ import StockListPage from "../features/stock/pages/StockListPage";
 import StockAddPage from "../features/stock/pages/StockAddPage";
 import RendezVousPage from "../features/carnetsante/RendezVous/pages/RendezVousPage";
 
+// 1. AJOUT DE L'IMPORT FINANCE
+import FinancePage from "../features/finance/pages/FinancePage";
+
 const AppRoutes = () => {
   const userRole = localStorage.getItem("user_role");
 
@@ -95,6 +98,13 @@ const AppRoutes = () => {
         path="/lots/edit/:id"
         element={isFermier ? <LotEditPage /> : <Navigate to="/" />}
       />
+
+      {/* 2. AJOUT DE LA ROUTE FINANCE (SÉCURISÉE) */}
+      <Route
+        path="/finance"
+        element={isFermier ? <FinancePage /> : <Navigate to="/" />}
+      />
+
       <Route
         path="*"
         element={
@@ -103,7 +113,9 @@ const AppRoutes = () => {
           </h1>
         }
       />
+      
     </Routes>
+
   );
 };
 

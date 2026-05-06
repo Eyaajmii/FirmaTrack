@@ -56,9 +56,12 @@ public class FinanceService {
                 }
                 // Si liée à un Lot (Logique d'Aya : on cherche le proprio d'un animal du lot)
                 if (p.getLot() != null) {
-                    List<Cheptel> animauxDuLot = cheptelRepo.findByLotId(p.getLot().getId());
-                    if (!animauxDuLot.isEmpty()) {
-                        return animauxDuLot.get(0).getFermier().getId().equals(fermierId);
+                    // On utilise la liste qu'Aya a ajoutée dans le Model Lot
+                    List<Cheptel> animaux = p.getLot().getCheptels(); 
+                    
+                    if (animaux != null && !animaux.isEmpty()) {
+                        // On vérifie le premier animal du lot pour savoir à quel fermier il appartient
+                        return animaux.get(0).getFermier().getId().equals(fermierId);
                     }
                 }
                 return false;

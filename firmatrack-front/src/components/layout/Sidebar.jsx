@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const ChevronIcon = ({ open }) => (
   <svg width="13" height="13" viewBox="0 0 16 16" fill="none"
@@ -59,7 +59,17 @@ const allNavItems = [
       { to: '/rendezvous', label: 'Rendez-vous vétérinaire', 
         icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M3 9H21" stroke="currentColor" strokeWidth="1.5"/><path d="M8 3V7M16 3V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
       },
-
+    ]
+  },
+  {
+    section: 'Économie',
+    roles: ['FERMIER', 'ADMIN'],
+    items: [
+      { to: '/finance', label: 'Analyse Financière', icon: (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+        </svg>
+      )},
     ]
   },
   {
@@ -104,6 +114,13 @@ const W_CLOSED = 56;
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = '/login';
+  };
+
   const userName = localStorage.getItem('user_name') || 'Utilisateur';
   const userRole = (localStorage.getItem('user_role') || 'VISITEUR').toUpperCase();
   const [collapsed, setCollapsed] = useState(false);
@@ -122,6 +139,7 @@ const Sidebar = () => {
         .sb-prnt:hover  { background: rgba(255,255,255,0.72) !important; color: #1a1a18 !important; }
         .sb-sub:hover   { background: rgba(255,255,255,0.72) !important; color: #1a1a18 !important; }
         .sb-foot:hover  { background: rgba(255,255,255,0.72) !important; }
+        .sb-logout:hover { background: rgba(239, 68, 68, 0.08) !important; }
         .sb-ibtn:hover  { opacity: 0.75 !important; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: rgba(26,26,24,0.1); border-radius: 4px; }
@@ -279,13 +297,20 @@ const Sidebar = () => {
 
           {/* ── Footer ── */}
           <div style={{ padding: '9px 7px', borderTop: '1px solid rgba(26,26,24,0.07)', flexShrink: 0 }}>
-            <div className="sb-foot" style={{
+            
+            {/* 1. Bloc Profil */}
+            <div style={{
               display: 'flex', alignItems: 'center', gap: '8px',
               padding: collapsed ? '7px 0' : '7px 7px',
               justifyContent: collapsed ? 'center' : 'flex-start',
-              borderRadius: '7px', cursor: 'pointer', transition: 'background 0.12s',
+              marginBottom: '4px'
             }}>
-              <div style={{ width: '26px', height: '26px', borderRadius: '7px', background: '#1a1a18', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '700', color: '#fff', flexShrink: 0 }}>
+              <div style={{ 
+                width: '26px', height: '26px', borderRadius: '7px', 
+                background: '#1a1a18', 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                fontSize: '10px', fontWeight: '700', color: '#fff', flexShrink: 0 
+              }}>
                 {userInitial}
               </div>
               {!collapsed && (
@@ -295,6 +320,29 @@ const Sidebar = () => {
                     {userRole.charAt(0) + userRole.slice(1).toLowerCase()}
                   </div>
                 </div>
+              )}
+            </div>
+
+            {/* 2. Bouton Déconnexion */}
+            <div className="sb-logout" 
+                 onClick={handleLogout}
+                 title="Se déconnecter"
+                 style={{
+                   display: 'flex', alignItems: 'center', gap: '8px',
+                   padding: collapsed ? '8px 0' : '7px 7px',
+                   justifyContent: collapsed ? 'center' : 'flex-start',
+                   borderRadius: '7px', cursor: 'pointer', transition: 'all 0.12s',
+                   color: '#ef4444',
+                 }}>
+              <div style={{ width: '26px', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+              </div>
+              {!collapsed && (
+                <span style={{ fontSize: '11.5px', fontWeight: '600' }}>Déconnexion</span>
               )}
             </div>
           </div>

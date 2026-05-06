@@ -11,33 +11,38 @@ const Login = () => {
   e.preventDefault();
   setError(''); // On vide l'erreur précédente
 
-  try {
-    // ⚠️ ATTENTION : Port 8888 pour Spring Boot et /api/auth/login
-    const response = await axios.post('http://localhost:8888/api/auth/login', {
-      email,
-      password
-    });
+   try {
+      const response = await axios.post('http://localhost:8888/api/auth/login', {
+        email,
+        password
+      });
 
-    // Stockage des infos (Vérifie bien les noms des champs envoyés par ton Java)
-    localStorage.setItem('user_token', response.data.token);
-    localStorage.setItem('user_role', response.data.role); // Doit être 'FERMIER' ou 'VETERINAIRE'
-    
-    // Si ton Java n'envoie pas 'userName', utilise l'email ou 'Utilisateur' pour l'instant
-    localStorage.setItem('user_name', response.data.userName || email.split('@')[0]);
-    localStorage.setItem('user_id', response.data.userId);
+      // 1. Stockage des infos (On utilise "nom" comme on a fait dans Java)
+      localStorage.setItem('user_token', response.data.token);
+      localStorage.setItem('user_role', response.data.role); 
+      localStorage.setItem('user_name', response.data.nom); // On utilise "nom" (Back-end)
+      localStorage.setItem('user_id', response.data.userId);
 
-    // ✅ Redirection et rafraîchissement
-    window.location.href = '/';
+      // 2. Redirection vers l'accueil (App.js va détecter le token et afficher la Sidebar)
+      window.location.href = '/';
 
-  } catch (err) {
-    console.error("Erreur login :", err);
-    if (err.response) {
-      setError(err.response.data); // Affiche le message d'erreur du serveur (ex: "Mot de passe incorrect")
-    } else {
-      setError('Impossible de contacter le serveur (Vérifie s\'il est lancé sur 8080)');
+    } catch (err) {
+      console.error("Erreur login :", err);
+      
+      // FIX DE L'ERREUR "Objects are not valid"
+      if (err.response && err.response.data) {
+        const serverError = err.response.data;
+        // Si le serveur renvoie un objet {message: "..."}, on prend juste le texte
+        if (typeof serverError === 'object' && serverError.message) {
+          setError(serverError.message);
+        } else {
+          setError(serverError.toString());
+        }
+      } else {
+        setError('Impossible de contacter le serveur (Port 8888)');
+      }
     }
-  }
-};
+  };
 
    return (
     <div style={styles.container}>
