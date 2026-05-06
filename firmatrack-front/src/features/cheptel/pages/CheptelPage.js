@@ -183,7 +183,7 @@ function CheptelPage() {
             <span
               style={{ fontSize: "14px", fontWeight: "500", color: "#1a1a18" }}
             >
-              Inventaire
+              Cheptels
             </span>
             <span
               style={{

@@ -8,6 +8,7 @@ export const getAllRendezVous = (id) => API.get("/rendezvous");
 
 // Actions métier
 export const confirmerRendezVous = (id) =>API.put(`/rendezvous/confirmer/${id}`);
+export const annulerRendezVous = (id) =>API.put(`/rendezvous/annuler/${id}`);
 export const terminerRendezVous = (id) => API.put(`/rendezvous/terminer/${id}`);
 // Filtres
 export const getRendezVousByVeterinaire = (vetId) =>API.get(`/rendezvous/veterinaire/${vetId}`);

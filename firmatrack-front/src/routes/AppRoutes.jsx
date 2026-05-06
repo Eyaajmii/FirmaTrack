@@ -66,19 +66,19 @@ const AppRoutes = () => {
       <Route path="/stock/nouveau" element={isFermier ? <StockAddPage />: <Navigate to ="/"/>} />
       <Route
         path="/carnetsante"
-        element={isFermier ? <CarnetsantePage /> : <Navigate to="/" />}
+        element={isFermier || isVeterinaire || userRole === "ADMIN" ?<CarnetsantePage /> : <Navigate to="/" />}
       />
       <Route
         path="/carnetsante/:id"
-        element={isFermier ? <CarnetSanteDetail /> : <Navigate to="/" />}
+        element={isFermier || isVeterinaire || userRole === "ADMIN" ? <CarnetSanteDetail /> : <Navigate to="/" />}
       />
       <Route
         path="/carnetsante/edit/:id"
-        element={isFermier ? <CarnetsanteEditPage /> : <Navigate to="/" />}
+        element={isFermier || isVeterinaire || userRole === "ADMIN" ? <CarnetsanteEditPage /> : <Navigate to="/" />}
       />
       <Route
         path="/rendezvous"
-        element={isFermier ? <RendezVousPage /> : <Navigate to="/" />}
+        element={ isFermier || isVeterinaire || userRole === "ADMIN"? <RendezVousPage /> : <Navigate to="/" />}
       />
       <Route
         path="/lots"

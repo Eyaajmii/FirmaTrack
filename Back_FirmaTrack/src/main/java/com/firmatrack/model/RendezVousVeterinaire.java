@@ -28,10 +28,8 @@ public class RendezVousVeterinaire {
     private String symptomes;
 
     private String remarques;
-
-    private String statut;
-    // demandé, confirmé, terminé
-
+    @Enumerated(EnumType.STRING)
+    private StatutRendezVous statut;
     //@ManyToOne
     //@JoinColumn(name = "fermier_id")
     //@JsonIgnoreProperties({"cheptels", "user"})
