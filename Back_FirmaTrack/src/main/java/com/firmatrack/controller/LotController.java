@@ -62,12 +62,10 @@ public class LotController {
         existing.setNom(lot.getNom());
         existing.setDescription(lot.getDescription());
 
-        // 🔥 IMPORTANT : charger les vrais cheptels
         List<Cheptel> newCheptels = cheptelrepository.findAllById(
             lot.getCheptels().stream().map(Cheptel::getId).toList()
         );
 
-        // 🔥 CLEAR ancien lien + reset relation OWNER
         for (Cheptel c : existing.getCheptels()) {
             c.setLot(null);
         }

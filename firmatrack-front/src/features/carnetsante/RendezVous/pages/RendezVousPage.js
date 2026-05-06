@@ -8,6 +8,8 @@ function RendezVousPage() {
   const [rendezvous, setRendezvous] = useState([]);
   const [selectedRdv, setSelectedRdv] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [editRdv, setEditRdv] = useState(null);
+  const currentUser = localStorage.getItem("user_role");
 
   const fetchRendezVous = async () => {
     try {
@@ -23,7 +25,6 @@ function RendezVousPage() {
     fetchRendezVous();
   }, []);
 
-  // ✅ ADD
   const handleAdd = async (data) => {
     try {
       await service.createRendezVous(data);
@@ -35,17 +36,49 @@ function RendezVousPage() {
     }
   };
 
-  // ❌ DELETE
   const handleDelete = async (id) => {
     await service.deleteRendezVous(id);
     fetchRendezVous();
   };
 
-  // 🔍 FILTER
+  const handleConfirmer = async (id) => {
+    try {
+      await service.confirmerRendezVous(id);
+      fetchRendezVous();
+    } catch (err) {
+      console.error("Erreur confirmation:", err);
+    }
+  };
+
+  const handleTerminer = async (id) => {
+    try {
+      await service.terminerRendezVous(id);
+      fetchRendezVous();
+    } catch (err) {
+      console.error("Erreur terminer:", err);
+    }
+  };
+
+  const handleAnnuler = async (id) => {
+    try {
+      await service.annulerRendezVous(id);
+      fetchRendezVous();
+    } catch (err) {
+      console.error("Erreur annulation:", err);
+    }
+  };
+
+  const handleEditer = (id) => {
+    const rdv = rendezvous.find((r) => r.id === id);
+    if (rdv) {
+      setEditRdv(rdv);
+      setShowForm(true);
+    }
+  };
+
   const handleFilter = async (status) => {
     try {
       if (!status) return fetchRendezVous();
-
       const res = await service.getRendezVousByStatut(status);
       setRendezvous(Array.isArray(res.data) ? res.data : []);
     } catch {
@@ -53,10 +86,8 @@ function RendezVousPage() {
     }
   };
 
-  // 🔎 SEARCH
   const handleSearch = async (value) => {
     if (!value) return fetchRendezVous();
-
     try {
       const res = await service.getRendezVousById(value);
       setRendezvous(res?.data ? [res.data] : []);
@@ -65,7 +96,6 @@ function RendezVousPage() {
     }
   };
 
-  // 📊 STATS (corrigé status → statut)
   const statuts = {
     Demande: rendezvous.filter((r) => r.statut === "Demande").length,
     Confirme: rendezvous.filter((r) => r.statut === "Confirme").length,
@@ -89,7 +119,10 @@ function RendezVousPage() {
             <h1 style={{ fontSize: "22px", fontWeight: "500" }}>Rendez-vous</h1>
 
             <button
-              onClick={() => setShowForm(true)}
+              onClick={() => {
+                setEditRdv(null);
+                setShowForm(true);
+              }}
               style={{
                 width: "36px",
                 height: "36px",
@@ -160,17 +193,25 @@ function RendezVousPage() {
           <div style={{ marginTop: "1rem" }}>
             <RendezVousList
               rdvs={rendezvous}
+              role={currentUser}
               onDelete={handleDelete}
-              onSelect={setSelectedRdv}
+              onConfirmer={handleConfirmer}
+              onTerminer={handleTerminer}
+              onAnnuler={handleAnnuler}
+              onEditer={handleEditer}
             />
           </div>
         </div>
       </div>
 
-      {/* 🟢 FORM MODAL */}
       {showForm && (
         <div
-          onClick={(e) => e.target === e.currentTarget && setShowForm(false)}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowForm(false);
+              setEditRdv(null);
+            }
+          }}
           style={{
             position: "fixed",
             inset: 0,
@@ -183,9 +224,27 @@ function RendezVousPage() {
         >
           <div style={{ width: "100%", maxWidth: "480px" }}>
             <RendezVousForm
+              initialData={editRdv}
               onAdd={async (data) => {
-                const res = await handleAdd(data);
-                if (res.success) setShowForm(false);
+                let res;
+                if (editRdv) {
+                  try {
+                    await service.updateRendezVous(editRdv.id, data);
+                    fetchRendezVous();
+                    res = { success: true };
+                  } catch (err) {
+                    res = {
+                      success: false,
+                      message: err.response?.data || "Erreur",
+                    };
+                  }
+                } else {
+                  res = await handleAdd(data);
+                }
+                if (res.success) {
+                  setShowForm(false);
+                  setEditRdv(null);
+                }
                 return res;
               }}
             />
@@ -215,17 +274,15 @@ function RendezVousPage() {
             }}
           >
             <h2>Détail Rendez-vous</h2>
-
             <p>
               <strong>ID :</strong> {selectedRdv.id}
             </p>
             <p>
-              <strong>Date :</strong> {selectedRdv.dateRDv}
+              <strong>Date :</strong> {selectedRdv.dateRdv}
             </p>
             <p>
               <strong>Statut :</strong> {selectedRdv.statut}
             </p>
-
             <button onClick={() => setSelectedRdv(null)}>Fermer</button>
           </div>
         </div>

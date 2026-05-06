@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.firmatrack.model.RendezVousVeterinaire;
+import com.firmatrack.model.StatutRendezVous;
 import com.firmatrack.repository.RendezVousVeterinaireRepository;
 
 @Service
@@ -15,7 +16,7 @@ public class RendezVousVeterinaireService {
     private RendezVousVeterinaireRepository rdvRepository;
 
     public RendezVousVeterinaire prendreRendezVous(RendezVousVeterinaire rdv) {
-        rdv.setStatut("Demande");
+        rdv.setStatut(StatutRendezVous.Demande);
         return rdvRepository.save(rdv);
     }
     public List<RendezVousVeterinaire> getAll() {
@@ -62,7 +63,15 @@ public class RendezVousVeterinaireService {
     public RendezVousVeterinaire confirmer(Long id) {
         return rdvRepository.findById(id)
                 .map(rdv -> {
-                    rdv.setStatut("Confirme");
+                    rdv.setStatut(StatutRendezVous.Confirme);
+                    return rdvRepository.save(rdv);
+                })
+                .orElseThrow(() -> new RuntimeException("RDV introuvable : " + id));
+    }
+    public RendezVousVeterinaire annuler(Long id) {
+        return rdvRepository.findById(id)
+                .map(rdv -> {
+                    rdv.setStatut(StatutRendezVous.Annule);
                     return rdvRepository.save(rdv);
                 })
                 .orElseThrow(() -> new RuntimeException("RDV introuvable : " + id));
@@ -71,7 +80,7 @@ public class RendezVousVeterinaireService {
     public RendezVousVeterinaire terminer(Long id) {
         return rdvRepository.findById(id)
                 .map(rdv -> {
-                    rdv.setStatut("Termine");
+                    rdv.setStatut(StatutRendezVous.Termine);
                     return rdvRepository.save(rdv);
                 })
                 .orElseThrow(() -> new RuntimeException("RDV introuvable : " + id));

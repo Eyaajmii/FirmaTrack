@@ -120,7 +120,7 @@ public class CarnetsanteController {
         if ("VETERINAIRE".equalsIgnoreCase(user.getRole())) {
 
             return ResponseEntity.ok(
-                carnetsanteservice.getAllCarnetsByVeterinaire(user.getId())
+                carnetsanteservice.getAllCarnetsByVeterinaire(user.getVeterinaire().getId())
             );
         }
         return ResponseEntity.status(403).body("Accès refusé !");
