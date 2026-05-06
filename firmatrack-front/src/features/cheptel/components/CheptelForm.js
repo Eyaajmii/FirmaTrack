@@ -14,7 +14,6 @@ function CheptelForm({ onAdd }) {
     lotId: "",
   });
 
-  // 🔄 LOAD LOTS
   useEffect(() => {
     const loadLots = async () => {
       try {
@@ -28,11 +27,10 @@ function CheptelForm({ onAdd }) {
     loadLots();
   }, []);
 
-  // 📌 CHANGE INPUT
+ 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // 🚀 SUBMIT
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -44,7 +42,6 @@ function CheptelForm({ onAdd }) {
       gender: form.gender,
       statut: form.statut,
 
-      // ✅ IMPORTANT: backend relation
       lot: form.lotId ? { id: Number(form.lotId) } : null,
     };
 
@@ -96,7 +93,6 @@ function CheptelForm({ onAdd }) {
         onSubmit={handleSubmit}
         style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
       >
-        {/* ID + NOM */}
         <div style={gridTwo}>
           <div>
             <label style={labelStyle}>Numéro ID</label>
@@ -118,8 +114,6 @@ function CheptelForm({ onAdd }) {
             />
           </div>
         </div>
-
-        {/* TYPE + RACE */}
         <div style={gridTwo}>
           <div>
             <label style={labelStyle}>Type</label>
@@ -141,8 +135,6 @@ function CheptelForm({ onAdd }) {
             />
           </div>
         </div>
-
-        {/* GENDER + STATUT */}
         <div style={gridTwo}>
           <div>
             <label style={labelStyle}>Genre</label>
@@ -173,7 +165,6 @@ function CheptelForm({ onAdd }) {
           </div>
         </div>
 
-        {/* 🟢 LOT SELECT */}
         <div>
           <label style={labelStyle}>Lot</label>
 
@@ -193,7 +184,6 @@ function CheptelForm({ onAdd }) {
           </select>
         </div>
 
-        {/* SUBMIT */}
         <button
           type="submit"
           style={{

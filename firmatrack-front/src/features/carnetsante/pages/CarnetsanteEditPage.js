@@ -115,7 +115,6 @@ function CarnetsanteEditPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f7f6f4", padding: "2rem" }}>
-      {/* 🔙 retour */}
       <button onClick={() => navigate("/carnetsante")}>← Retour</button>
 
       <div style={{ maxWidth: "600px", margin: "0 auto" }}>

@@ -1,42 +1,46 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import CheptelPage from "../features/cheptel/pages/CheptelPage";
 import CheptelEditPage from "../features/cheptel/pages/CheptelEditPage";
-
 import ProductionListPage from "../features/production-lait/pages/ProductionListPage";
 import ProductionOeufPage from "../features/production-oeufs/pages/ProductionOeufPage";
-
 import CarnetsantePage from "../features/carnetsante/pages/CarnetsantePage";
-
 import LotPage from "../features/cheptel/Lot/Page/LotPage";
 import LotAddPage from "../features/cheptel/Lot/Page/LotAddPage";
-import LotEditPage from '../features/cheptel/Lot/Page/LotEditPage';
-import CarnetsanteEditPage from '../features/carnetsante/pages/CarnetsanteEditPage';
-import CarnetSanteDetail from '../features/carnetsante/pages/CarnetsanteDetailPage';
+import LotEditPage from "../features/cheptel/Lot/Page/LotEditPage";
+import CarnetsanteEditPage from "../features/carnetsante/pages/CarnetsanteEditPage";
+import CarnetSanteDetail from "../features/carnetsante/pages/CarnetsanteDetailPage";
+import StockListPage from "../features/stock/pages/StockListPage";
+import StockAddPage from "../features/stock/pages/StockAddPage";
+import RendezVousPage from "../features/carnetsante/RendezVous/pages/RendezVousPage";
 
 const AppRoutes = () => {
-  const userRole = localStorage.getItem('user_role');
+  const userRole = localStorage.getItem("user_role");
 
-  const isFermier = userRole === 'FERMIER' || userRole === 'ELEVEUR';
-  const isVeterinaire = userRole === 'VETERINAIRE';
+  const isFermier = userRole === "FERMIER" || userRole === "ELEVEUR";
+  const isVeterinaire = userRole === "VETERINAIRE";
 
   return (
     <Routes>
       <Route
         path="/"
         element={
-          isVeterinaire
-            ? <Navigate to="/veterinaire-dashboard" replace />
-            : <Navigate to="/cheptel" replace />
+          isVeterinaire ? (
+            <Navigate to="/veterinaire-dashboard" replace />
+          ) : (
+            <Navigate to="/cheptel" replace />
+          )
         }
       />
       {/*Vétérinaire */}
       <Route
         path="/veterinaire-dashboard"
         element={
-          isVeterinaire
-            ? <div className="p-10 text-2xl font-bold">⚕️ Espace Vétérinaire</div>
-            : <Navigate to="/" />
+          isVeterinaire ? (
+            <div className="p-10 text-2xl font-bold">⚕️ Espace Vétérinaire</div>
+          ) : (
+            <Navigate to="/" />
+          )
         }
       />
 
@@ -55,7 +59,8 @@ const AppRoutes = () => {
         path="/production-oeufs"
         element={isFermier ? <ProductionOeufPage /> : <Navigate to="/" />}
       />
-
+      <Route path="/stock" element={isFermier ?<StockListPage />: <Navigate to ="/"/>} />
+      <Route path="/stock/nouveau" element={isFermier ? <StockAddPage />: <Navigate to ="/"/>} />
       <Route
         path="/carnetsante"
         element={isFermier ? <CarnetsantePage /> : <Navigate to="/" />}
@@ -67,6 +72,10 @@ const AppRoutes = () => {
       <Route
         path="/carnetsante/edit/:id"
         element={isFermier ? <CarnetsanteEditPage /> : <Navigate to="/" />}
+      />
+      <Route
+        path="/rendezvous"
+        element={isFermier ? <RendezVousPage /> : <Navigate to="/" />}
       />
       <Route
         path="/lots"
@@ -94,7 +103,6 @@ const AppRoutes = () => {
           </h1>
         }
       />
-
     </Routes>
   );
 };

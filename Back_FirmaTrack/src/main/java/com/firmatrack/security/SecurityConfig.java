@@ -42,6 +42,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/cheptel/**").hasAnyRole("ADMIN", "FERMIER")
                     .requestMatchers("/api/lots/**").hasAnyRole("ADMIN", "FERMIER")
                     .requestMatchers("/api/carnetsante/**").hasAnyRole("ADMIN", "FERMIER", "VETERINAIRE")
+                    .requestMatchers("/api/rendezvous/**").hasAnyRole("ADMIN", "FERMIER", "VETERINAIRE")
             	    // 4. Seul le reste (ce qui n'est pas listé au-dessus) sera bloqué
             	    .anyRequest().authenticated()
             	)

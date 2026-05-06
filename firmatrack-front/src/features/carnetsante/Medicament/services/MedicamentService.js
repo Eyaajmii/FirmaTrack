@@ -1,4 +1,4 @@
-import API from "../../../api/api";
+import API from "../../../../api/api";
 export const getAllMedicaments = () => API.get("/medicaments");
 export const getMedicamentById = (id) => API.get(`/medicaments/${id}`);
 export const createMedicament = (traitementId, stockId, data) =>API.post(`/medicaments/traitement/${traitementId}/stock/${stockId}`, data);

@@ -1,4 +1,6 @@
 package com.firmatrack.service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,12 @@ public class RendezVousVeterinaireService {
         rdv.setStatut("Demande");
         return rdvRepository.save(rdv);
     }
+    public List<RendezVousVeterinaire> getAll() {
+        return rdvRepository.findAll();
+    }
+    public boolean existsByVeterinaireAndDate(Long vetId, LocalDateTime dateRdv) {
+        return rdvRepository.existsByVeterinaireIdAndDateRdv(vetId, dateRdv);
+    }
 
     // RDV d'un vet
     public List<RendezVousVeterinaire> getRdvByVeterinaire(Long vetId) {
@@ -24,7 +32,7 @@ public class RendezVousVeterinaireService {
 
     // RDV d'un fermier
     public List<RendezVousVeterinaire> getRdvByFermier(Long fermierId) {
-        return rdvRepository.findByFermierId(fermierId);
+        return rdvRepository.findByAnimal_Fermier_Id(fermierId);
     }
 
     // RDV d'un animal
@@ -43,6 +51,7 @@ public class RendezVousVeterinaireService {
                 })
                 .orElse(null);
     }
+
     public void deleteRdv(Long id) {
 
         rdvRepository.deleteById(id);
@@ -51,25 +60,22 @@ public class RendezVousVeterinaireService {
 
     // confirmer rdv
     public RendezVousVeterinaire confirmer(Long id) {
-        RendezVousVeterinaire rdv = rdvRepository.findById(id).orElse(null);
-        if (rdv != null) {
-            rdv.setStatut("Confirme");
-            return rdvRepository.save(rdv);
-        }
-        return null;
+        return rdvRepository.findById(id)
+                .map(rdv -> {
+                    rdv.setStatut("Confirme");
+                    return rdvRepository.save(rdv);
+                })
+                .orElseThrow(() -> new RuntimeException("RDV introuvable : " + id));
     }
 
     public RendezVousVeterinaire terminer(Long id) {
-
-        RendezVousVeterinaire rdv = rdvRepository.findById(id).orElse(null);
-        if (rdv != null) {
-            rdv.setStatut("Termine");
-            return rdvRepository.save(rdv);
-        }
-        return null;
-
-    }
-    public List<RendezVousVeterinaire> getRdvByStatut(String statut) {
+        return rdvRepository.findById(id)
+                .map(rdv -> {
+                    rdv.setStatut("Termine");
+                    return rdvRepository.save(rdv);
+                })
+                .orElseThrow(() -> new RuntimeException("RDV introuvable : " + id));
+    }   public List<RendezVousVeterinaire> getRdvByStatut(String statut) {
         return rdvRepository.findByStatut(statut);
     }
 }

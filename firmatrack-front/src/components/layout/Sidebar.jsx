@@ -10,7 +10,6 @@ const ChevronIcon = ({ open }) => (
 
 const COW_PATTERN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Crect width='140' height='140' fill='%23faf9f6'/%3E%3Cellipse cx='25' cy='20' rx='16' ry='11' fill='%231a1a18' opacity='0.14' transform='rotate(-25 25 20)'/%3E%3Cellipse cx='95' cy='32' rx='20' ry='13' fill='%231a1a18' opacity='0.13' transform='rotate(18 95 32)'/%3E%3Cellipse cx='55' cy='68' rx='24' ry='15' fill='%231a1a18' opacity='0.12' transform='rotate(-12 55 68)'/%3E%3Cellipse cx='12' cy='88' rx='11' ry='18' fill='%231a1a18' opacity='0.11' transform='rotate(28 12 88)'/%3E%3Cellipse cx='118' cy='90' rx='15' ry='10' fill='%231a1a18' opacity='0.06' transform='rotate(-35 118 90)'/%3E%3Cellipse cx='72' cy='118' rx='18' ry='11' fill='%231a1a18' opacity='0.065' transform='rotate(12 72 118)'/%3E%3Cellipse cx='32' cy='122' rx='9' ry='13' fill='%231a1a18' opacity='0.055' transform='rotate(-18 32 122)'/%3E%3Cellipse cx='125' cy='55' rx='10' ry='7' fill='%231a1a18' opacity='0.06' transform='rotate(42 125 55)'/%3E%3C/svg%3E")`;
 
-// Tous les items de nav
 const allNavItems = [
   {
     section: null,
@@ -57,11 +56,9 @@ const allNavItems = [
     roles: ['FERMIER', 'ADMIN', 'VETERINAIRE'],
     items: [
       { to: '/carnetsante', label: 'Carnet de Santé', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><path d="M5 5h6M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg> },
-      { to: '/rendezvous', label: 'Rendez-vous vétérinaire', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-        <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5"/>
-        <path d="M3 9H21" stroke="currentColor" strokeWidth="1.5"/>
-        <path d="M8 3V7M16 3V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      </svg> },
+      { to: '/rendezvous', label: 'Rendez-vous vétérinaire', 
+        icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M3 9H21" stroke="currentColor" strokeWidth="1.5"/><path d="M8 3V7M16 3V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+      },
 
     ]
   },
@@ -113,10 +110,7 @@ const Sidebar = () => {
   const [openMenus, setOpenMenus] = useState({ '/lots': true });
   const toggleMenu = (key) => setOpenMenus(prev => ({ ...prev, [key]: !prev[key] }));
 
-  // Filtrer les groupes selon le rôle
   const navItems = allNavItems.filter(group => group.roles.includes(userRole));
-
-  // Initiale de l'utilisateur pour l'avatar
   const userInitial = userName.charAt(0).toUpperCase();
 
   return (

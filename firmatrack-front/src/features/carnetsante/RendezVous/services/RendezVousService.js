@@ -1,9 +1,11 @@
-import API from "../../../api/api";
+import API from "../../../../api/api";
 
 export const createRendezVous = (data) => API.post("/rendezvous", data);
 export const updateRendezVous = (id, data) =>API.put(`/rendezvous/${id}`, data);
 export const deleteRendezVous = (id) => API.delete(`/rendezvous/${id}`);
 export const getRendezVousById = (id) => API.get(`/rendezvous/${id}`);
+export const getAllRendezVous = (id) => API.get("/rendezvous");
+
 // Actions métier
 export const confirmerRendezVous = (id) =>API.put(`/rendezvous/confirmer/${id}`);
 export const terminerRendezVous = (id) => API.put(`/rendezvous/terminer/${id}`);

@@ -8,7 +8,6 @@ function CarnetsantePage() {
   const [selectedCarnet, setSelectedCarnet] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  // 🔵 fetch all
   const fetchCarnets = async () => {
     const res = await service.getAllcarnet();
     setCarnets(Array.isArray(res.data) ? res.data : []);
@@ -18,8 +17,6 @@ function CarnetsantePage() {
     fetchCarnets();
   }, []);
 
-  // 🟢 ADD CARNET
-  // Dans CarnetsantePage.js — remplace handleAdd par :
 const handleAdd = async (data) => {
   try {
     await service.createCarnet(data);

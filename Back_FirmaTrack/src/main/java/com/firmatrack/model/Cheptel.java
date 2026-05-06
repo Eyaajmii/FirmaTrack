@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Cheptel {
 	
     @Id

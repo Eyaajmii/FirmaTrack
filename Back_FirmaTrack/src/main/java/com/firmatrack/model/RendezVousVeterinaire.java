@@ -2,6 +2,7 @@ package com.firmatrack.model;
 
 import java.time.LocalDateTime;
 
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,12 @@ public class RendezVousVeterinaire {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "animal_id")
+    private Cheptel animal;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "veterinaire_id")
+    private Veterinaire veterinaire;
     private LocalDateTime dateRdv;
     private String motif;
 
@@ -25,14 +32,10 @@ public class RendezVousVeterinaire {
     private String statut;
     // demandé, confirmé, terminé
 
-    @ManyToOne
-    private Fermier fermier;
-
-    @ManyToOne
-    private Veterinaire veterinaire;
-
-    @ManyToOne
-    private Cheptel animal;
+    //@ManyToOne
+    //@JoinColumn(name = "fermier_id")
+    //@JsonIgnoreProperties({"cheptels", "user"})
+    //private Fermier fermier;
 
     public RendezVousVeterinaire() {
     }

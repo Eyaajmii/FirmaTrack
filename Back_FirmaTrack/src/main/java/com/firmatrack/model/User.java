@@ -27,6 +27,9 @@ public class User {
     @OneToOne(mappedBy = "user")
     @JsonIgnore
     private Fermier fermier;
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private Veterinaire Veterinaire;
     public User() {
     	this.createdAt=LocalDateTime.now();
     }

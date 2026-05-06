@@ -4,10 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.firmatrack.model.RendezVousVeterinaire;
+import com.firmatrack.model.User;
 import com.firmatrack.service.RendezVousVeterinaireService;
+import com.firmatrack.service.UserService;
 
 @RestController
 @RequestMapping("/api/rendezvous")
@@ -15,18 +18,44 @@ import com.firmatrack.service.RendezVousVeterinaireService;
 public class RendezVousVeterinaireController {
     @Autowired
     private RendezVousVeterinaireService rdvService;
+    @Autowired
+    private UserService userService;
+    @GetMapping
+    public ResponseEntity<List<RendezVousVeterinaire>> getAllRdvs() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByEmail(email);
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            return ResponseEntity.ok(rdvService.getAll());
+        }
+        if ("FERMIER".equalsIgnoreCase(user.getRole())) {
+            Long fermierId = user.getFermier().getId();
+            return ResponseEntity.ok(rdvService.getRdvByFermier(fermierId));
+        }
+        if ("VETERINAIRE".equalsIgnoreCase(user.getRole())) {
+            Long vetId = user.getVeterinaire().getId();
+            return ResponseEntity.ok(rdvService.getRdvByVeterinaire(vetId));
+        }
+
+        return ResponseEntity.status(403).build();
+    }
+
     @PostMapping
-    public ResponseEntity<RendezVousVeterinaire> prendreRdv(@RequestBody RendezVousVeterinaire rdv) {
+    public ResponseEntity<?> prendreRdv(@RequestBody RendezVousVeterinaire rdv) {
+        boolean exists = rdvService.existsByVeterinaireAndDate(rdv.getVeterinaire().getId(),rdv.getDateRdv());
+        if (exists) {return ResponseEntity.badRequest().body("Ce vétérinaire a déjà un rendez-vous à cette date !");}
         return ResponseEntity.ok(rdvService.prendreRendezVous(rdv));
     }
+
     @PutMapping("/{id}")
-    public ResponseEntity<RendezVousVeterinaire> updateMedicament(@PathVariable Long id, @RequestBody RendezVousVeterinaire m) {
+    public ResponseEntity<RendezVousVeterinaire> updateMedicament(@PathVariable Long id,
+            @RequestBody RendezVousVeterinaire m) {
         RendezVousVeterinaire updated = rdvService.updateRendezVousVeterinaire(id, m);
         if (updated == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(updated);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRdv(@PathVariable Long id) {
         rdvService.deleteRdv(id);
@@ -63,10 +92,10 @@ public class RendezVousVeterinaireController {
     }
 
     // RDV par fermier
-    @GetMapping("/fermier/{fermierId}")
-    public ResponseEntity<List<RendezVousVeterinaire>> getByFermier(@PathVariable Long fermierId) {
-        return ResponseEntity.ok(rdvService.getRdvByFermier(fermierId));
-    }
+    //@GetMapping("/fermier/{fermierId}")
+    //public ResponseEntity<List<RendezVousVeterinaire>> getByFermier(@PathVariable Long fermierId) {
+      //  return ResponseEntity.ok(rdvService.getRdvByFermier(fermierId));
+    //}
 
     // RDV par animal
     @GetMapping("/animal/{animalId}")
