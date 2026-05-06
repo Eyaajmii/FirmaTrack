@@ -30,26 +30,26 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // On désactive ça pour les API REST
             .cors(cors -> cors.configure(http)) // Autorise React à parler au serveur
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Bonne pratique pour JWT
+         // ... (garder le début du fichier identique)
             .authorizeHttpRequests(auth -> auth
-            	    // 1. Tes routes Auth sont ouvertes
+            	    // 1. Routes ouvertes (Auth et Swagger)
             	    .requestMatchers("/api/auth/**").permitAll() 
+            	    .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             	    
-            	    // 2. On laisse ouvert Swagger pour les filles ! (TRÈS IMPORTANT)
-            	    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-            	    
-            	    // 3. On laisse ouvert les API des filles PROVISOIREMENT le temps du développement
-            	    .requestMatchers("/api/users/**", "/api/fermier/**", "/api/veterinaires/**").permitAll() 
-            	    
-            	    // --- AJOUTE CETTE LIGNE ICI POUR TON MODULE ---
+            	    // 2. Ton module Finance (ouvert pour l'instant pour les tests)
             	    .requestMatchers("/api/finance/**").permitAll() 
-            	    // ----------------------------------------------
-            	    
-            	    
-            	    // 4. Seul le reste (ce qui n'est pas listé au-dessus) sera bloqué
-            	    .anyRequest().permitAll()
+
+            	    // 3. Leurs modules avec sécurité par Rôle (Code de Aya/Mariem)
+                    .requestMatchers("/api/users/**", "/api/fermier/**", "/api/veterinaires/**").permitAll() 
+                    .requestMatchers("/api/cheptel/**").hasAnyRole("ADMIN", "FERMIER")
+                    .requestMatchers("/api/lots/**").hasAnyRole("ADMIN", "FERMIER")
+                    .requestMatchers("/api/carnetsante/**").hasAnyRole("ADMIN", "FERMIER", "VETERINAIRE")
+                    .requestMatchers("/api/rendezvous/**").hasAnyRole("ADMIN", "FERMIER", "VETERINAIRE")
+
+            	    // 4. Protection globale
+            	    .anyRequest().authenticated()
             	)
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
- 
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); 
         return http.build();
     }
 }

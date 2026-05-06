@@ -38,8 +38,8 @@ public class VeterinaireController {
         return ResponseEntity.ok(v);
     }
     @GetMapping
-    public ResponseEntity<List<Veterinaire>> getAll() {
-        return ResponseEntity.ok(veterinaireService.getAll());
+    public List<Veterinaire> getAll() {
+        return veterinaireService.getAll();
     }
     @GetMapping("/specialite/{specialite}")
     public ResponseEntity<List<Veterinaire>> getBySpecialite(@PathVariable String specialite) {

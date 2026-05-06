@@ -1,73 +1,163 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { lotService } from "../Lot/Services/LotService";
 
 function CheptelForm({ onAdd }) {
+  const [lots, setLots] = useState([]);
+
   const [form, setForm] = useState({
-    chepnumber: "", nom: "", type: "", race: "", gender: "", statut: "ALIVE",
+    chepnumber: "",
+    nom: "",
+    type: "",
+    race: "",
+    gender: "",
+    statut: "ALIVE",
+    lotId: "",
   });
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  useEffect(() => {
+    const loadLots = async () => {
+      try {
+        const res = await lotService.getAll();
+        setLots(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Erreur chargement lots", err);
+      }
+    };
+
+    loadLots();
+  }, []);
+
+ 
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAdd(form);
-    setForm({ chepnumber: "", nom: "", type: "", race: "", gender: "", statut: "ALIVE" });
+
+    const payload = {
+      chepnumber: form.chepnumber,
+      nom: form.nom,
+      type: form.type,
+      race: form.race,
+      gender: form.gender,
+      statut: form.statut,
+
+      lot: form.lotId ? { id: Number(form.lotId) } : null,
+    };
+
+    onAdd(payload);
+
+    setForm({
+      chepnumber: "",
+      nom: "",
+      type: "",
+      race: "",
+      gender: "",
+      statut: "ALIVE",
+      lotId: "",
+    });
   };
 
   const inputStyle = {
-    width: '100%', padding: '9px 12px', border: '0.5px solid #e8e7e2',
-    borderRadius: '9px', fontSize: '13px', color: '#1a1a18',
-    background: '#fff', outline: 'none', boxSizing: 'border-box',
+    width: "100%",
+    padding: "9px 12px",
+    border: "0.5px solid #e8e7e2",
+    borderRadius: "9px",
+    fontSize: "13px",
+    background: "#fff",
+    outline: "none",
   };
 
   const labelStyle = {
-    display: 'block', fontSize: '10px', fontWeight: '500', color: '#9a9a96',
-    textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '6px',
+    display: "block",
+    fontSize: "10px",
+    fontWeight: "500",
+    color: "#9a9a96",
+    textTransform: "uppercase",
+    marginBottom: "6px",
   };
 
-  const gridTwo = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' };
+  const gridTwo = {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "10px",
+  };
 
   return (
-    <div style={{ background: '#fff', borderRadius: '14px', border: '0.5px solid #e8e7e2', padding: '1.5rem' }}>
-      <h2 style={{ fontSize: '14px', fontWeight: '500', color: '#1a1a18', marginBottom: '1.25rem' }}>
-        Ajouter un animal
-      </h2>
+    <div
+      style={{ background: "#fff", padding: "1.5rem", borderRadius: "14px" }}
+    >
+      <h2>Ajouter un animal</h2>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+      >
         <div style={gridTwo}>
           <div>
             <label style={labelStyle}>Numéro ID</label>
-            <input name="chepnumber" value={form.chepnumber} placeholder="TN-001" onChange={handleChange} style={inputStyle} />
+            <input
+              name="chepnumber"
+              value={form.chepnumber}
+              onChange={handleChange}
+              style={inputStyle}
+            />
           </div>
+
           <div>
             <label style={labelStyle}>Nom</label>
-            <input name="nom" value={form.nom} placeholder="Marguerite" onChange={handleChange} style={inputStyle} />
+            <input
+              name="nom"
+              value={form.nom}
+              onChange={handleChange}
+              style={inputStyle}
+            />
           </div>
         </div>
-
         <div style={gridTwo}>
           <div>
             <label style={labelStyle}>Type</label>
-            <input name="type" value={form.type} placeholder="Vache..." onChange={handleChange} style={inputStyle} />
+            <input
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+              style={inputStyle}
+            />
           </div>
+
           <div>
             <label style={labelStyle}>Race</label>
-            <input name="race" value={form.race} placeholder="Holstein" onChange={handleChange} style={inputStyle} />
+            <input
+              name="race"
+              value={form.race}
+              onChange={handleChange}
+              style={inputStyle}
+            />
           </div>
         </div>
-
         <div style={gridTwo}>
           <div>
             <label style={labelStyle}>Genre</label>
-            <select name="gender" value={form.gender} onChange={handleChange} style={inputStyle}>
+            <select
+              name="gender"
+              value={form.gender}
+              onChange={handleChange}
+              style={inputStyle}
+            >
               <option value="">-- Choisir --</option>
               <option value="F">Femelle</option>
               <option value="M">Mâle</option>
             </select>
           </div>
+
           <div>
             <label style={labelStyle}>Statut</label>
-            <select name="statut" value={form.statut} onChange={handleChange} style={inputStyle}>
+            <select
+              name="statut"
+              value={form.statut}
+              onChange={handleChange}
+              style={inputStyle}
+            >
               <option value="ALIVE">Vivant</option>
               <option value="SOLD">Vendu</option>
               <option value="DEAD">Décédé</option>
@@ -75,12 +165,36 @@ function CheptelForm({ onAdd }) {
           </div>
         </div>
 
-        <button type="submit" style={{
-          width: '100%', padding: '10px', background: '#1a1a18',
-          color: '#fff', border: 'none', borderRadius: '9px',
-          fontSize: '13px', fontWeight: '500', cursor: 'pointer',
-          marginTop: '4px',
-        }}>
+        <div>
+          <label style={labelStyle}>Lot</label>
+
+          <select
+            name="lotId"
+            value={form.lotId}
+            onChange={handleChange}
+            style={inputStyle}
+          >
+            <option value="">-- Aucun lot --</option>
+
+            {lots.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.nom}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          style={{
+            padding: "10px",
+            background: "#1a1a18",
+            color: "#fff",
+            border: "none",
+            borderRadius: "9px",
+            cursor: "pointer",
+          }}
+        >
           Ajouter à l'inventaire
         </button>
       </form>

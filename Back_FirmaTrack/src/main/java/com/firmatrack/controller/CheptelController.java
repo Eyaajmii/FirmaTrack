@@ -1,24 +1,44 @@
 package com.firmatrack.controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.firmatrack.model.Cheptel;
+import com.firmatrack.model.Fermier;
+import com.firmatrack.model.User;
 import com.firmatrack.service.CheptelService;
+import com.firmatrack.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/api/cheptel")
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 public class CheptelController {
-	@Autowired
-	private CheptelService cheptelservice;
-	@GetMapping
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private CheptelService cheptelservice;
+
+    @GetMapping
     public List<Cheptel> getAllAnimals() {
-        return cheptelservice.getAllAnimals();
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByEmail(email);
+
+        // ADMIN → voir tout
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            return cheptelservice.getAllAnimals();
+        }
+
+        // FERMIER → voir seulement ses animaux
+        if ("FERMIER".equalsIgnoreCase(user.getRole())) {
+            Fermier fermier = user.getFermier();
+            return fermier.getCheptels();
+        }
+
+        throw new RuntimeException("Accès refusé !");
     }
 
     @GetMapping("/{id}")
@@ -43,17 +63,83 @@ public class CheptelController {
 
     @PostMapping
     public Cheptel createAnimal(@RequestBody Cheptel animal) {
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+        User user = userService.getUserByEmail(email);
+        Fermier fermier = user.getFermier();
+
+        if (fermier == null) {
+            throw new RuntimeException("Ce user n'est pas un fermier !");
+        }
+        animal.setFermier(fermier);
         return cheptelservice.saveAnimal(animal);
     }
 
     @PutMapping("/{id}")
     public Cheptel updateAnimal(@PathVariable Long id, @RequestBody Cheptel cheptel) {
-        cheptel.setId(id);
-        return cheptelservice.saveAnimal(cheptel);
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByEmail(email);
+
+        Cheptel existing = cheptelservice.getAnimalById(id);
+
+        if (existing == null) {
+            throw new RuntimeException("Animal introuvable !");
+        }
+
+        // ADMIN → peut modifier tout
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            cheptel.setId(id);
+            return cheptelservice.saveAnimal(cheptel);
+        }
+
+        // FERMIER → modifier seulement son animal
+        if ("FERMIER".equalsIgnoreCase(user.getRole())) {
+
+            if (!existing.getFermier().getId().equals(user.getFermier().getId())) {
+                throw new RuntimeException("Accès refusé !");
+            }
+
+            cheptel.setId(id);
+            cheptel.setFermier(user.getFermier());
+
+            return cheptelservice.saveAnimal(cheptel);
+        }
+
+        throw new RuntimeException("Accès refusé !");
     }
 
     @DeleteMapping("/{id}")
     public void deleteAnimal(@PathVariable Long id) {
-    	cheptelservice.deleteAnimal(id);
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByEmail(email);
+
+        Cheptel existing = cheptelservice.getAnimalById(id);
+
+        if (existing == null) {
+            throw new RuntimeException("Animal introuvable !");
+        }
+
+        // ADMIN → delete tout
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            cheptelservice.deleteAnimal(id);
+            return;
+        }
+
+        // FERMIER → delete son animal seulement
+        if ("FERMIER".equalsIgnoreCase(user.getRole())) {
+
+            if (!existing.getFermier().getId().equals(user.getFermier().getId())) {
+                throw new RuntimeException("Accès refusé !");
+            }
+
+            cheptelservice.deleteAnimal(id);
+            return;
+        }
+
+        throw new RuntimeException("Accès refusé !");
     }
 }

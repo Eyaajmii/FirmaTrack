@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="users")
 @Getter
@@ -22,6 +24,12 @@ public class User {
     private String telephone;
     private String adresse;
     private LocalDateTime createdAt;
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private Fermier fermier;
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private Veterinaire Veterinaire;
     public User() {
     	this.createdAt=LocalDateTime.now();
     }

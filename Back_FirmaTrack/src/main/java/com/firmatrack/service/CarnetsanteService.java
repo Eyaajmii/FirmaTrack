@@ -1,9 +1,7 @@
 package com.firmatrack.service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +16,14 @@ public class CarnetsanteService {
     private CarnetsanteRepository carnetsanteRepository;
 
     public Carnetsante saveCarnet(Carnetsante c) {
-        if (c.getAnimal() != null && carnetsanteRepository.findByAnimalId(c.getAnimal().getId()).isPresent()) {
-            throw new RuntimeException("Cet animal possède déjà un carnet");
+
+        if (c.getId() == null) {
+            // CREATE ONLY
+            if (carnetsanteRepository.existsById(c.getAnimal().getId())) {
+                throw new RuntimeException("Cet animal possède déjà un carnet");
+            }
         }
+
         return carnetsanteRepository.save(c);
     }
 

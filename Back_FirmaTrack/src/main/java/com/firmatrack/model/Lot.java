@@ -1,4 +1,5 @@
 package com.firmatrack.model;
+import java.util.*;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,10 +13,10 @@ public class Lot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     private String nom;
     private String description;
-
+    @OneToMany(mappedBy = "lot")
+    private List<Cheptel> cheptels = new ArrayList<>();
     public Lot() {}
 }
 

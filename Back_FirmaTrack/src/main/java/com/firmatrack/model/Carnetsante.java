@@ -1,7 +1,5 @@
 package com.firmatrack.model;
-
 import java.util.List;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +22,7 @@ public class Carnetsante {
     @OneToOne
     @JoinColumn(name = "animal_id")
     private Cheptel animal;
-    @OneToMany(mappedBy = "carnetSante")
+    @OneToMany(mappedBy = "carnetSante", fetch = FetchType.EAGER)
     private List<Maladie> maladies;
 
     @OneToMany(mappedBy = "carnetSante")

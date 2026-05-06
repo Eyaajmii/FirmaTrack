@@ -3,6 +3,8 @@ package com.firmatrack.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.*;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +19,7 @@ public class Veterinaire {
     private Long id;
     @OneToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties("veterinaire")
     private User user;
     private String nomVet;
     private String localisation;
@@ -43,10 +46,13 @@ public class Veterinaire {
     private Integer nombreAvis;
     // Liste des rendezvous
     @OneToMany(mappedBy = "veterinaire")
+    @JsonIgnore
     private List<RendezVousVeterinaire> rendezVous;
     @OneToMany(mappedBy = "veterinaire")
+    @JsonIgnore
     private List<Maladie> maladies;
     @OneToMany(mappedBy = "veterinaire")
+    @JsonIgnore
     private List<Vaccination> vaccinations;
 
     public Veterinaire() {
