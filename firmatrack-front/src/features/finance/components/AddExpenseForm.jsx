@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import financeService from '../services/financeService';
+import { toast } from 'react-hot-toast';
 
 const AddExpenseForm = ({ onExpenseAdded }) => {
-  const fermierId = localStorage.getItem('user_id');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     categorie: 'ALIMENTATION',
@@ -24,11 +24,10 @@ const AddExpenseForm = ({ onExpenseAdded }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await financeService.addDepense(fermierId, formData);
+      await financeService.addDepense(formData);
       setFormData({ categorie: 'ALIMENTATION', montant: '', description: '' }); // Reset
       onExpenseAdded(); // Rafraîchir les calculs sur le dashboard
-      alert("Dépense enregistrée !");
-    } catch (err) {
+      toast.success("Dépense enregistrée avec succès !", { style: { borderRadius: '10px', background: '#333', color: '#fff' }});    } catch (err) {
       alert("Erreur lors de l'enregistrement");
     } finally {
       setLoading(false);
