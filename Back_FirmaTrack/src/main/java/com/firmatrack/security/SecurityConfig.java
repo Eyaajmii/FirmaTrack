@@ -37,8 +37,7 @@ public class SecurityConfig {
             	    .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             	    
             	    // 2. Ton module Finance (ouvert pour l'instant pour les tests)
-            	    .requestMatchers("/api/finance/**").permitAll() 
-
+            	    .requestMatchers("/api/finance/**").hasAnyRole("FERMIER", "ADMIN")
             	    // 3. Leurs modules avec sécurité par Rôle (Code de Aya/Mariem)
                     .requestMatchers("/api/users/**", "/api/fermier/**", "/api/veterinaires/**").permitAll() 
                     .requestMatchers("/api/cheptel/**").hasAnyRole("ADMIN", "FERMIER")
