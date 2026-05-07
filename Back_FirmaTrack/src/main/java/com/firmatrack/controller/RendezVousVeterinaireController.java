@@ -72,7 +72,16 @@ public class RendezVousVeterinaireController {
 
         return ResponseEntity.ok(rdv);
     }
+    @PutMapping("/annuler/{id}")
+    public ResponseEntity<RendezVousVeterinaire> annuler(@PathVariable Long id) {
+        RendezVousVeterinaire rdv = rdvService.annuler(id);
 
+        if (rdv == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(rdv);
+    }
     // Terminer un rendez-vous
     @PutMapping("/terminer/{id}")
     public ResponseEntity<RendezVousVeterinaire> terminer(@PathVariable Long id) {

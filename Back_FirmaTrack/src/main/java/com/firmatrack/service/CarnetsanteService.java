@@ -47,13 +47,7 @@ public class CarnetsanteService {
 
     // Tous les carnets suivis par un vétérinaire
     public List<Carnetsante> getAllCarnetsByVeterinaire(Long veterinaireId) {
-        List<Carnetsante> viaMaladies = carnetsanteRepository.findDistinctByMaladiesVeterinaireId(veterinaireId);
-        List<Carnetsante> viaVaccins = carnetsanteRepository.findDistinctByVaccinationsVeterinaireId(veterinaireId);
-        LinkedHashSet<Carnetsante> unique = new LinkedHashSet<>();
-        unique.addAll(viaMaladies);
-        unique.addAll(viaVaccins);
-        return new ArrayList<>(unique);
-
+        return carnetsanteRepository.findCarnetsByVeterinaireAndRdvConfirme(veterinaireId);
     }
 
     /* Tous les carnets */
