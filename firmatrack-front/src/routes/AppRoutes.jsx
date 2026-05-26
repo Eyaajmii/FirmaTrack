@@ -13,7 +13,7 @@ import CarnetSanteDetail from "../features/carnetsante/pages/CarnetsanteDetailPa
 import StockListPage from "../features/stock/pages/StockListPage";
 import StockAddPage from "../features/stock/pages/StockAddPage";
 import RendezVousPage from "../features/carnetsante/RendezVous/pages/RendezVousPage";
-
+import SaisieCharges from "../features/finance/pages/SaisieCharges";
 // 1. AJOUT DE L'IMPORT FINANCE
 import FinancePage from "../features/finance/pages/FinancePage";
 
@@ -104,6 +104,17 @@ const AppRoutes = () => {
         path="/finance"
         element={isFermier ? <FinancePage /> : <Navigate to="/" />}
       />
+
+      {/* ÉCONOMIE / FINANCE (US 27 à 35) */}
+<Route
+  path="/finance"
+  element={isFermier ? <FinancePage /> : <Navigate to="/" />}
+/>
+
+<Route
+  path="/finance/enregistrer"
+  element={isFermier ? <SaisieCharges /> : <Navigate to="/" />}
+/>
 
       <Route
         path="*"

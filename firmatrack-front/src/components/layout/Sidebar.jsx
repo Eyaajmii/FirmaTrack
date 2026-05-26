@@ -65,11 +65,26 @@ const allNavItems = [
     section: 'Économie',
     roles: ['FERMIER', 'ADMIN'],
     items: [
-      { to: '/finance', label: 'Analyse Financière', icon: (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
-        </svg>
-      )},
+      { 
+        to: '/finance', 
+        label: 'Dashboard de rentabilité', 
+        icon: (
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <line x1="18" y1="20" x2="18" y2="10" strokeLinecap="round" />
+            <line x1="12" y1="20" x2="12" y2="4" strokeLinecap="round" />
+            <line x1="6" y1="20" x2="6" y2="14" strokeLinecap="round" />
+          </svg>
+        ) 
+      },
+      { 
+        to: '/finance/enregistrer', 
+        label: 'Saisie de charges', 
+        icon: (
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" />
+          </svg>
+        ) 
+      }
     ]
   },
   {
@@ -93,6 +108,7 @@ const SubMenu = ({ items, visible, collapsed }) => (
     {items.map(child => (
       <NavLink key={child.to} to={child.to}
         className="sb-sub"
+        end // Évite l'activation croisée des sous-onglets
         style={({ isActive }) => ({
           display: 'flex', alignItems: 'center', gap: '7px',
           padding: '6px 8px 6px 33px', fontSize: '12px',
@@ -124,7 +140,7 @@ const Sidebar = () => {
   const userName = localStorage.getItem('user_name') || 'Utilisateur';
   const userRole = (localStorage.getItem('user_role') || 'VISITEUR').toUpperCase();
   const [collapsed, setCollapsed] = useState(false);
-  const [openMenus, setOpenMenus] = useState({ '/lots': true });
+  const [openMenus, setOpenMenus] = useState({ '/lots': true }); 
   const toggleMenu = (key) => setOpenMenus(prev => ({ ...prev, [key]: !prev[key] }));
 
   const navItems = allNavItems.filter(group => group.roles.includes(userRole));
@@ -262,6 +278,7 @@ const Sidebar = () => {
 
                   return (
                     <NavLink key={item.to} to={item.to} className="sb-link"
+                      end // <--- FORCE L'EXACT MATCH POUR LES LIENS À PLAT (Économie)
                       title={collapsed ? item.label : undefined}
                       style={({ isActive }) => ({
                         display: 'flex', alignItems: 'center', gap: '7px',

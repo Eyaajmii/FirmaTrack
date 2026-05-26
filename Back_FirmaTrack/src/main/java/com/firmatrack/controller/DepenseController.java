@@ -1,6 +1,7 @@
 package com.firmatrack.controller;
 
 import com.firmatrack.dto.AnalyseRentabiliteDTO;
+import com.firmatrack.dto.AnimalRentabiliteDTO;
 import com.firmatrack.model.Depense;
 import com.firmatrack.model.Fermier;
 import com.firmatrack.model.User;
@@ -58,26 +59,41 @@ public class DepenseController {
     // US 31 : Analyse Lait (ID via Token)
     @GetMapping("/analyse/lait")
     public ResponseEntity<AnalyseRentabiliteDTO> getAnalyseLait(
-            @RequestParam(required = false) Double prixVente 
+            @RequestParam(required = false) Double prixVente,
+            @RequestParam(required = false) Integer mois // <--- AJOUTÉ
     ) {
         Fermier fermier = getCurrentFermier();
-        return ResponseEntity.ok(financeService.calculerAnalyseLait(fermier.getId(), prixVente));
+        // Si le mois n'est pas précisé, on prend le mois en cours
+        int moisSelectionne = (mois != null) ? mois : java.time.LocalDate.now().getMonthValue();
+        return ResponseEntity.ok(financeService.calculerAnalyseLait(fermier.getId(), prixVente, moisSelectionne));
     }
+
 
     // US 31 : Analyse Oeufs (ID via Token)
     @GetMapping("/analyse/oeufs")
     public ResponseEntity<AnalyseRentabiliteDTO> getAnalyseOeufs(
-            @RequestParam(required = false) Double prixVente
+            @RequestParam(required = false) Double prixVente,
+            @RequestParam(required = false) Integer mois // <--- AJOUTÉ
     ) {
         Fermier fermier = getCurrentFermier();
-        return ResponseEntity.ok(financeService.calculerAnalyseOeufs(fermier.getId(), prixVente));
+        int moisSelectionne = (mois != null) ? mois : java.time.LocalDate.now().getMonthValue();
+        return ResponseEntity.ok(financeService.calculerAnalyseOeufs(fermier.getId(), prixVente, moisSelectionne));
     }
 
     // US 34 : Répartition (ID via Token)
     @GetMapping("/repartition")
-    public ResponseEntity<Map<String, Double>> getRepartition() {
+    public ResponseEntity<Map<String, Double>> getRepartition(
+            @RequestParam(required = false) Integer mois // <--- AJOUTÉ
+    ) {
         Fermier fermier = getCurrentFermier();
-        return ResponseEntity.ok(financeService.getRepartitionDepenses(fermier.getId()));
+        int moisSelectionne = (mois != null) ? mois : java.time.LocalDate.now().getMonthValue();
+        return ResponseEntity.ok(financeService.getRepartitionDepenses(fermier.getId(), moisSelectionne));
+    }
+    
+    @GetMapping("/evolution-alimentation")
+    public ResponseEntity<Map<String, Double>> getEvolutionAlimentation() {
+        Fermier fermier = getCurrentFermier(); // Récupère le fermier connecté via le Token
+        return ResponseEntity.ok(financeService.getEvolutionAlimentation(fermier.getId()));
     }
 
     @DeleteMapping("/depenses/{id}")
@@ -85,5 +101,14 @@ public class DepenseController {
         // Optionnel : vérifier si la dépense appartient bien au fermier avant de delete
         financeService.deleteDepense(id);
         return ResponseEntity.ok("Dépense supprimée !");
+    }
+    
+    @GetMapping("/analyse/classement-animaux")
+    public ResponseEntity<List<AnimalRentabiliteDTO>> getClassement(
+            @RequestParam(required = false) Integer mois // <--- AJOUTÉ
+    ) {
+        Fermier fermier = getCurrentFermier();
+        int moisSelectionne = (mois != null) ? mois : java.time.LocalDate.now().getMonthValue();
+        return ResponseEntity.ok(financeService.getClassementAnimaux(fermier.getId(), moisSelectionne));
     }
 }
