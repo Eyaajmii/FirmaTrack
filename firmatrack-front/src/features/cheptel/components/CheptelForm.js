@@ -115,15 +115,22 @@ function CheptelForm({ onAdd }) {
           </div>
         </div>
         <div style={gridTwo}>
-          <div>
-            <label style={labelStyle}>Type</label>
-            <input
-              name="type"
-              value={form.type}
-              onChange={handleChange}
-              style={inputStyle}
-            />
-          </div>
+  <div>
+  <label style={labelStyle}>Type</label>
+  <select
+    name="type"
+    value={form.type}
+    onChange={handleChange}
+    style={inputStyle}
+    required
+  >
+    <option value="">-- Choisir un type --</option>
+    <option value="VACHE">Vache (Filière Lait)</option>
+    <option value="POULE">Poule (Filière Œufs)</option>
+    <option value="CHEVRE">Chèvre (Lait de chèvre)</option>
+    <option value="BREBIS">Brebis</option>
+  </select>
+</div>
 
           <div>
             <label style={labelStyle}>Race</label>

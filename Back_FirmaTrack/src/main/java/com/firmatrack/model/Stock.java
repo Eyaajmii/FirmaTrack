@@ -22,6 +22,7 @@ public class Stock {
 
     private String nom;
     
+    
     // Type : ALIMENTATION, MEDICAMENT, MATERIEL
     private String type;
 
@@ -33,6 +34,10 @@ public class Stock {
 
     private Double prixUnitaire; 
     private LocalDate dateExpiration;
+    
+    @ManyToOne
+    @JoinColumn(name = "fermier_id")
+    private Fermier fermier; 
 
     //  un helper pour savoir si c'est périmé
     public boolean isPerime() {

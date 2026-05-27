@@ -1,28 +1,28 @@
 import api from '../../../api/api';
 
 const financeService = {
-  // US 30 : Ajouter une dépense (L'ID est deviné par le Token au Back)
+   // US 27, 28, 29, 30 : Enregistrer une dépense
   addDepense: async (depenseData) => {
-    // Ma3adech n-passiw fermierId hna
+    // Note : Le Token JWT s'occupe de dire au serveur qui est le fermier
     const response = await api.post('/finance/depenses', depenseData);
     return response.data;
   },
 
   // US 31 : Analyse Lait (Le serveur sait qui demande grâce au Token)
-  getAnalyseLait: async (prixVente = 1.340) => {
-    const response = await api.get(`/finance/analyse/lait?prixVente=${prixVente}`);
+getAnalyseLait: async (prixVente = 1.340, mois) => {
+    // On passe le prix de vente ET le mois sélectionné dans la requête
+    const response = await api.get(`/finance/analyse/lait?prixVente=${prixVente}&mois=${mois}`);
     return response.data;
   },
 
-  // US 31 : Analyse Oeufs
-  getAnalyseOeufs: async (prixVente = 0.340) => {
-    const response = await api.get(`/finance/analyse/oeufs?prixVente=${prixVente}`); 
+  getAnalyseOeufs: async (prixVente = 0.340, mois) => {
+    const response = await api.get(`/finance/analyse/oeufs?prixVente=${prixVente}&mois=${mois}`); 
     return response.data;
   },
 
   // US 34 : Répartition (Camembert)
-  getRepartition: async () => {
-    const response = await api.get('/finance/repartition');
+    getRepartition: async (mois) => {
+    const response = await api.get(`/finance/repartition?mois=${mois}`);
     return response.data;
   },
 
@@ -30,7 +30,19 @@ const financeService = {
   getMyDepenses: async () => {
     const response = await api.get('/finance/depenses');
     return response.data;
+  },
+   getEvolutionAlimentation: async () => {
+    const response = await api.get('/finance/evolution-alimentation');
+    return response.data;
+  },
+  // US 37 : Récupérer le classement des vaches par rentabilité
+getClassementAnimaux: async (mois) => {
+    // On passe le mois dans l'URL
+    const response = await api.get(`/finance/analyse/classement-animaux?mois=${mois}`);
+    return response.data;
   }
+
 };
+
 
 export default financeService;

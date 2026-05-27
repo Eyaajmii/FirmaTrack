@@ -7,5 +7,6 @@ public enum CategorieDepense {
     SANTE_VETERINAIRE,
     TRANSPORT,
     ENTRETIEN_MATERIEL,
+    MAIN_D_OEUVRE,
     AUTRES
 }
