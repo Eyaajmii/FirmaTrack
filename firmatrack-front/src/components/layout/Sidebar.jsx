@@ -87,6 +87,23 @@ const allNavItems = [
       }
     ]
   },
+
+  {
+    section: 'Communauté',
+    roles: ['FERMIER', 'ADMIN', 'VETERINAIRE'], // <--- VISIBLE PAR TOUT LE MONDE !
+    items: [
+      { 
+        to: '/forum', 
+        label: 'Forum', 
+        icon: (
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
+            <rect x="1" y="3" width="14" height="10" rx="2" strokeLinecap="round" />
+            <path d="M1 5l7 5 7-5" strokeLinecap="round" />
+          </svg>
+        ) 
+      },
+    ]
+  },
   {
     section: 'Paramètres',
     roles: ['FERMIER', 'ADMIN'],

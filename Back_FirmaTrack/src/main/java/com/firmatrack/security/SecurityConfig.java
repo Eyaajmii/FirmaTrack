@@ -35,6 +35,7 @@ public class SecurityConfig {
             	    // 1. Routes ouvertes (Auth et Swagger)
             	    .requestMatchers("/api/auth/**").permitAll() 
             	    .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+            	    .requestMatchers("/uploads/**").permitAll() 
             	    
             	    // 2. Ton module Finance (ouvert pour l'instant pour les tests)
             	    .requestMatchers("/api/finance/**").hasAnyRole("FERMIER", "ADMIN")
@@ -44,6 +45,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/lots/**").hasAnyRole("ADMIN", "FERMIER")
                     .requestMatchers("/api/carnetsante/**").hasAnyRole("ADMIN", "FERMIER", "VETERINAIRE")
                     .requestMatchers("/api/rendezvous/**").hasAnyRole("ADMIN", "FERMIER", "VETERINAIRE")
+                    .requestMatchers("/api/forum/**").hasAnyRole("FERMIER", "ADMIN", "VETERINAIRE")
 
             	    // 4. Protection globale
             	    .anyRequest().authenticated()
