@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import authService from './authService';
 import { Link } from 'react-router-dom';
 
 // --- SVG Icons Components ---
@@ -73,17 +73,16 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8888/api/auth/login', { email, password });
-      if (rememberMe) localStorage.setItem('firmtrack_remembered_email', email);
-      else localStorage.removeItem('firmtrack_remembered_email');
+      // --- APPEL DE TON SERVICE PROPRE ---
+      // Le service s'occupe déjà de faire le POST et de remplir le localStorage !
+      const response = await authService.login(email, password);
 
-      localStorage.setItem('user_token', response.data.token);
-      localStorage.setItem('user_role', response.data.role);
-      localStorage.setItem('user_name', response.data.nom);
-      localStorage.setItem('user_id', response.data.userId);
+      // ✅ Redirection et rafraîchissement
       window.location.href = '/';
     } catch (err) {
-      setError(err.response?.data?.message || 'Identifiants invalides.');
+      // On attrape le message d'erreur proprement
+      const msg = err.response?.data?.message || err.response?.data || 'Identifiants invalides.';
+      setError(typeof msg === 'object' ? JSON.stringify(msg) : msg);
       setLoading(false);
     }
   };

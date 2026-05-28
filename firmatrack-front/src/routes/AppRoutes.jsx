@@ -22,6 +22,7 @@ import DashboardVeto from "../features/veterinaire/DashboardVeto";
 import ForumPage from "../features/forum/pages/ForumPage";
 import PostDetail from "../features/forum/pages/PostDetail";
 
+import ProfilePage from "../features/auth/ProfilePage";
 
 const AppRoutes = () => {
   const userRole = localStorage.getItem("user_role");
@@ -133,6 +134,10 @@ const AppRoutes = () => {
         element={isFermier ? <SaisieCharges /> : <Navigate to="/" />}
       />
 
+ <Route
+        path="/profile"
+        element={isFermier || isVeterinaire ? <ProfilePage /> : <Navigate to="/" />}
+      />
       {/* 7. Page 404 - Fallback */}
       <Route
         path="*"

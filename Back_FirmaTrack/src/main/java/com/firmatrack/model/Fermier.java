@@ -27,6 +27,7 @@ public class Fermier {
     private Double surfaceFerme;
     // date création ferme
     private LocalDate DateCreationFerme;
+    private String matriculeApia;
     @OneToMany(mappedBy = "fermier", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Cheptel> cheptels;

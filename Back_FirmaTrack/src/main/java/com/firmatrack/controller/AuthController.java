@@ -5,6 +5,8 @@ import com.firmatrack.dto.RegisterRequest;
 import com.firmatrack.model.Fermier;
 import com.firmatrack.model.User;
 import com.firmatrack.model.Veterinaire;
+import com.firmatrack.repository.FermierAutoriseRepository;
+import com.firmatrack.repository.VeterinaireAutoriseRepository;
 import com.firmatrack.security.JwtUtil;
 import com.firmatrack.service.FermierService;
 import com.firmatrack.service.UserService;
@@ -39,7 +41,14 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // 1. INSCRIPTION (Register)
+    // Repositories requis pour la sécurité de la liste blanche (US 58)
+    @Autowired 
+    private VeterinaireAutoriseRepository vetAutoriseRepo;
+
+    @Autowired 
+    private FermierAutoriseRepository fermierAutoriseRepo;
+
+    // 1. INSCRIPTION (Register avec automatisation US 58)
     @PostMapping("/register")
     @Transactional
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
@@ -49,44 +58,64 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Cet email est déjà utilisé !");
         }
 
-        // Créer l'objet User de base
+        // SÉCURITÉ LISTE BLANCHE (US 58 - AUTOMATION SANS ADMIN)
+        if ("FERMIER".equalsIgnoreCase(request.getRole())) {
+            // Vérification APIA / Patente Agricole
+            boolean autorise = fermierAutoriseRepo.existsById(request.getMatriculeApia());
+            if (!autorise) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Inscription refusée : Votre Matricule APIA/Patente n'est pas répertorié auprès du Ministère de l'Agriculture !");
+            }
+        } 
+        else if ("VETERINAIRE".equalsIgnoreCase(request.getRole())) {
+            // Vérification Numéro d'Ordre CNOMVT (Le champ diplôme est utilisé comme numéro d'ordre)
+            boolean autorise = vetAutoriseRepo.existsById(request.getNumeroOrdreVeterinaire());
+            if (!autorise) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Inscription refusée : Votre Numéro d'Ordre n'est pas enregistré au tableau de l'Ordre National des Vétérinaires de Tunisie !");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Inscription refusée : Rôle invalide !");
+        }
+
+        // Si présent dans la liste blanche, on crée le compte avec le statut APPROVED immédiatement
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword())); 
         user.setRole(request.getRole());
         user.setTelephone(request.getTelephone());
+        user.setStatus("APPROVED"); // Validé automatiquement !
         
         // Sauvegarder le User
         User savedUser = userService.saveUser(user);
 
-        // Routage selon le rôle
+        // Sauvegarde du profil lié
         if ("FERMIER".equalsIgnoreCase(request.getRole())) {
             Fermier f = new Fermier();
             f.setUser(savedUser);
             f.setNomFerme(request.getNomFerme());
             f.setSurfaceFerme(request.getSurfaceFerme());
+            f.setMatriculeApia(request.getMatriculeApia()); // Sauvegarde du matricule
             fermierService.saveFarmer(f);
             
-        } else if ("VETERINAIRE".equalsIgnoreCase(request.getRole())) {
+        } else {
             Veterinaire v = new Veterinaire();
             v.setUser(savedUser);
             v.setNomVet(request.getName());
             v.setSpecialite(request.getSpecialite());
             v.setDiplome(request.getDiplome());
+            v.setNumeroOrdreVeterinaire(request.getNumeroOrdreVeterinaire());// Le matricule professionnel
             veterinaireService.saveVeterinaire(v);
-            
-        } else {
-            throw new RuntimeException("Rôle invalide !"); 
         }
 
-        return ResponseEntity.ok("Compte " + request.getRole() + " créé avec succès !");
+        return ResponseEntity.ok("Compte " + request.getRole() + " créé et validé automatiquement !");
     }
 
     // 2. CONNEXION (Login)
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-    	User user = userService.getUserByEmail(request.getEmail());
+        User user = userService.getUserByEmail(request.getEmail());
 
         if (user == null) {
             Map<String, String> response = new HashMap<>();
@@ -109,8 +138,9 @@ public class AuthController {
         response.put("token", token);
         response.put("role", user.getRole());
         response.put("userId", user.getId());
-        response.put("nom", user.getName()); // <--- AJOUTE CETTE LIGNE
-        // -----------------------------
+        response.put("nom", user.getName());
+        response.put("status", user.getStatus());
+        
         return ResponseEntity.ok(response);
     }
 }
