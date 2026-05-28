@@ -8,16 +8,19 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface StockRepository extends JpaRepository<Stock, Long> {
-    
-    // US 55 : Alerte quantité critique
-    @Query("SELECT s FROM Stock s WHERE s.quantite <= s.seuilAlerte")
-    List<Stock> findStockCritique();
 
-    // NOUVEAU : Alerte produits périmés
-    @Query("SELECT s FROM Stock s WHERE s.dateExpiration <= :today")
-    List<Stock> findProduitsPerimes(@Param("today") LocalDate today);
+    // Filtrage par fermier connecté
+    List<Stock> findByFermierId(Long fermierId);
 
-    // NOUVEAU : Alerte expiration proche (ex: dans 7 jours)
-    @Query("SELECT s FROM Stock s WHERE s.dateExpiration BETWEEN :today AND :soon")
-    List<Stock> findExpirationProche(@Param("today") LocalDate today, @Param("soon") LocalDate soon);
+    // US 55 : Alerte quantité critique (filtré par fermier)
+    @Query("SELECT s FROM Stock s WHERE s.fermier.id = :fermierId AND s.quantite <= s.seuilAlerte")
+    List<Stock> findStockCritiqueByFermierId(@Param("fermierId") Long fermierId);
+
+    // Alerte produits périmés (filtré par fermier)
+    @Query("SELECT s FROM Stock s WHERE s.fermier.id = :fermierId AND s.dateExpiration <= :today")
+    List<Stock> findProduitsPerimesByFermierId(@Param("fermierId") Long fermierId, @Param("today") LocalDate today);
+
+    // Alerte expiration proche (filtré par fermier)
+    @Query("SELECT s FROM Stock s WHERE s.fermier.id = :fermierId AND s.dateExpiration BETWEEN :today AND :soon")
+    List<Stock> findExpirationProcheByFermierId(@Param("fermierId") Long fermierId, @Param("today") LocalDate today, @Param("soon") LocalDate soon);
 }

@@ -18,4 +18,3 @@ public interface cheptelRepository extends JpaRepository<Cheptel, Long> {
     // Filtrer par catégorie
     List<Cheptel> findByCategorieId(Long categorieId);
 }
-

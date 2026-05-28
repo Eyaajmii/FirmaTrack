@@ -18,7 +18,7 @@ import java.util.*;
 @RequestMapping("/api/carnetsante")
 
 @CrossOrigin(origins="*")
-public class CarnetsanteController {
+public class CarnetSanteController {
     @Autowired
 	private CarnetsanteService carnetsanteservice;
     @Autowired
