@@ -46,6 +46,9 @@ public class SecurityConfig {
                     .requestMatchers("/api/carnetsante/**").hasAnyRole("ADMIN", "FERMIER", "VETERINAIRE")
                     .requestMatchers("/api/rendezvous/**").hasAnyRole("ADMIN", "FERMIER", "VETERINAIRE")
                     .requestMatchers("/api/forum/**").hasAnyRole("FERMIER", "ADMIN", "VETERINAIRE")
+                    .requestMatchers("/api/stock/**").hasAnyRole("ADMIN", "FERMIER")
+                    .requestMatchers("/api/production-lait/**").hasAnyRole("ADMIN", "FERMIER")
+                    .requestMatchers("/api/production-oeufs/**").hasAnyRole("ADMIN", "FERMIER")
 
             	    // 4. Protection globale
             	    .anyRequest().authenticated()

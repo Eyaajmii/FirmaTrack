@@ -2,14 +2,17 @@ package com.firmatrack.service;
 
 import com.firmatrack.dto.ProductionOeufDTO;
 import com.firmatrack.model.Cheptel;
+import com.firmatrack.model.Fermier;
 import com.firmatrack.model.Lot;
 import com.firmatrack.model.ProductionOeuf;
+import com.firmatrack.repository.FermierRepository;
 import com.firmatrack.repository.LotRepository;
 import com.firmatrack.repository.cheptelRepository;
 import com.firmatrack.repository.ProductionOeufRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +23,8 @@ public class ProductionOeufService {
     private final ProductionOeufRepository productionOeufRepository;
     private final cheptelRepository cheptelRepository;
     private final LotRepository lotRepository;
+    private final UserService userService;
+    private final FermierRepository fermierRepository;
 
     // ── Mapper Entity → DTO ──────────────────────────────────────────
     private ProductionOeufDTO toDTO(ProductionOeuf p) {
@@ -63,9 +68,19 @@ public class ProductionOeufService {
         return p;
     }
 
+    // ── Helper : fermier connecté ────────────────────────────────────
+    private Fermier getConnectedFermier() {
+        String email = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication().getName();
+        com.firmatrack.model.User user = userService.getUserByEmail(email);
+        return fermierRepository.findByUserId(user.getId()).orElse(null);
+    }
+
     // ── CRUD ──────────────────────────────────────────────────────────
     public List<ProductionOeufDTO> getAll() {
-        return productionOeufRepository.findAll()
+        Fermier fermier = getConnectedFermier();
+        if (fermier == null) return Collections.emptyList();
+        return productionOeufRepository.findByFermierId(fermier.getId())
                 .stream().map(this::toDTO).collect(Collectors.toList());
     }
 
@@ -76,8 +91,9 @@ public class ProductionOeufService {
     }
 
     public ProductionOeufDTO create(ProductionOeufDTO dto) {
-        ProductionOeuf saved = productionOeufRepository.save(toEntity(dto));
-        return toDTO(saved);
+        ProductionOeuf entity = toEntity(dto);
+        entity.setFermier(getConnectedFermier());
+        return toDTO(productionOeufRepository.save(entity));
     }
 
     public ProductionOeufDTO update(Long id, ProductionOeufDTO dto) {
