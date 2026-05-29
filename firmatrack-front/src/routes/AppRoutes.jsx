@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-
 import CheptelPage from "../features/cheptel/pages/CheptelPage";
 import CheptelEditPage from "../features/cheptel/pages/CheptelEditPage";
 import ProductionListPage from "../features/production-lait/pages/ProductionListPage";
@@ -15,7 +14,6 @@ import StockListPage from "../features/stock/pages/StockListPage";
 import StockAddPage from "../features/stock/pages/StockAddPage";
 import RendezVousPage from "../features/carnetsante/RendezVous/pages/RendezVousPage";
 
-
 import SaisieCharges from "../features/finance/pages/SaisieCharges";
 import FinancePage from "../features/finance/pages/FinancePage";
 import DashboardVeto from "../features/veterinaire/DashboardVeto";
@@ -23,6 +21,8 @@ import ForumPage from "../features/forum/pages/ForumPage";
 import PostDetail from "../features/forum/pages/PostDetail";
 
 import ProfilePage from "../features/auth/ProfilePage";
+import VetListMapPage from "../features/veterinaire/pages/VetListMapPage";
+import VetDetailPage from "../features/veterinaire/pages/VetDetailPage";
 
 const AppRoutes = () => {
   const userRole = localStorage.getItem("user_role");
@@ -32,7 +32,6 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      {/* 1. Redirection intelligente d'accueil */}
       <Route
         path="/"
         element={
@@ -43,23 +42,30 @@ const AppRoutes = () => {
           )
         }
       />
-
-      {/* 2. Espace Vétérinaire (Dashboard Pro - US 63) */}
       <Route
         path="/veterinaire-dashboard"
         element={isVeterinaire ? <DashboardVeto /> : <Navigate to="/" />}
       />
-
-      {/* 3. Le Forum Communautaire "Le Majless" (US 70, 71, 72) */}
-      <Route 
-        path="/forum" 
-        element={isFermier || isVeterinaire || userRole === "ADMIN" ? <ForumPage /> : <Navigate to="/" />} 
+      <Route
+        path="/forum"
+        element={
+          isFermier || isVeterinaire || userRole === "ADMIN" ? (
+            <ForumPage />
+          ) : (
+            <Navigate to="/" />
+          )
+        }
       />
-      {/* ROUTE DÉTAIL POST (US 72) */}
-      <Route path="/forum/posts/:id" 
-      element={isFermier || isVeterinaire || userRole === "ADMIN" ? <PostDetail /> : <Navigate to="/" />}
-      /> 
-      {/* 4. Fermier / Éleveur (Gestion & Production) */}
+      <Route
+        path="/forum/posts/:id"
+        element={
+          isFermier || isVeterinaire || userRole === "ADMIN" ? (
+            <PostDetail />
+          ) : (
+            <Navigate to="/" />
+          )
+        }
+      />
       <Route
         path="/cheptel"
         element={isFermier ? <CheptelPage /> : <Navigate to="/" />}
@@ -75,14 +81,14 @@ const AppRoutes = () => {
         element={isFermier ? <ProductionOeufPage /> : <Navigate to="/" />}
       />
 
-      <Route 
-        path="/stock" 
-        element={isFermier ? <StockListPage /> : <Navigate to ="/"/>} 
+      <Route
+        path="/stock"
+        element={isFermier ? <StockListPage /> : <Navigate to="/" />}
       />
-      
-      <Route 
-        path="/stock/nouveau" 
-        element={isFermier ? <StockAddPage /> : <Navigate to ="/"/>} 
+
+      <Route
+        path="/stock/nouveau"
+        element={isFermier ? <StockAddPage /> : <Navigate to="/" />}
       />
 
       <Route
@@ -105,25 +111,47 @@ const AppRoutes = () => {
         element={isFermier ? <CheptelEditPage /> : <Navigate to="/" />}
       />
 
-      {/* 5. Santé & Suivi Sanitaire (Partagé) */}
       <Route
         path="/carnetsante"
-        element={isFermier || isVeterinaire || userRole === "ADMIN" ? <CarnetsantePage /> : <Navigate to="/" />}
+        element={
+          isFermier || isVeterinaire || userRole === "ADMIN" ? (
+            <CarnetsantePage />
+          ) : (
+            <Navigate to="/" />
+          )
+        }
       />
       <Route
         path="/carnetsante/:id"
-        element={isFermier || isVeterinaire || userRole === "ADMIN" ? <CarnetSanteDetail /> : <Navigate to="/" />}
+        element={
+          isFermier || isVeterinaire || userRole === "ADMIN" ? (
+            <CarnetSanteDetail />
+          ) : (
+            <Navigate to="/" />
+          )
+        }
       />
       <Route
         path="/carnetsante/edit/:id"
-        element={isFermier || isVeterinaire || userRole === "ADMIN" ? <CarnetsanteEditPage /> : <Navigate to="/" />}
+        element={
+          isFermier || isVeterinaire || userRole === "ADMIN" ? (
+            <CarnetsanteEditPage />
+          ) : (
+            <Navigate to="/" />
+          )
+        }
       />
       <Route
         path="/rendezvous"
-        element={isFermier || isVeterinaire || userRole === "ADMIN" ? <RendezVousPage /> : <Navigate to="/" />}
+        element={
+          isFermier || isVeterinaire || userRole === "ADMIN" ? (
+            <RendezVousPage />
+          ) : (
+            <Navigate to="/" />
+          )
+        }
       />
 
-      {/* 6. Économie & Finance (Firas) */}
       <Route
         path="/finance"
         element={isFermier ? <FinancePage /> : <Navigate to="/" />}
@@ -133,6 +161,8 @@ const AppRoutes = () => {
         path="/finance/enregistrer"
         element={isFermier ? <SaisieCharges /> : <Navigate to="/" />}
       />
+      <Route path="/veterinairesproches" element={isFermier || userRole === "ADMIN"? <VetListMapPage /> : <Navigate to="/" />} />
+      <Route path="/veterinairesproche/:id" element={isFermier || userRole === "ADMIN"? <VetDetailPage /> : <Navigate to="/" />} />
 
  <Route
         path="/profile"

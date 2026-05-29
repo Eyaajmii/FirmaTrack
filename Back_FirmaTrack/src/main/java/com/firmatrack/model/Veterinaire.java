@@ -22,7 +22,9 @@ public class Veterinaire {
     @JsonIgnoreProperties("veterinaire")
     private User user;
     private String nomVet;
-    private String localisation;
+    private String localisation;//localisation cabinet
+    private Double latitude;
+    private Double longitude;
     private String numeroOrdreVeterinaire;
     private String specialite;
     private Integer anneesExperience;
