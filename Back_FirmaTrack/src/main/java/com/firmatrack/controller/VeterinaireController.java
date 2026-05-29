@@ -55,4 +55,11 @@ public class VeterinaireController {
     public ResponseEntity<List<Veterinaire>> getDeplacementFerme() {
         return ResponseEntity.ok(veterinaireService.getDeplacementFerme());
     }
+    @GetMapping("/proches")
+    public ResponseEntity<List<Veterinaire>> getProches(
+        @RequestParam Double lat,
+        @RequestParam Double lng,
+        @RequestParam(defaultValue = "20") Double rayonKm) {
+        return ResponseEntity.ok(veterinaireService.getProches(lat, lng, rayonKm));
+    }
 }

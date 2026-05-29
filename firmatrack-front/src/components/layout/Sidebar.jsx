@@ -87,7 +87,15 @@ const allNavItems = [
       }
     ]
   },
-
+  {
+    section:'Vétérianire',
+    roles: ['FERMIER', 'ADMIN'],
+    items:[
+      {
+        to: '/veterinairesproches', label: 'Trouver un vétérinaire'
+      }
+    ]
+  },
   {
     section: 'Communauté',
     roles: ['FERMIER', 'ADMIN', 'VETERINAIRE'], // <--- VISIBLE PAR TOUT LE MONDE !
