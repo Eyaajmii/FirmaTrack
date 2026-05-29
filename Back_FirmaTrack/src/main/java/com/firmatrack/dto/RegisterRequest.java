@@ -16,8 +16,10 @@ public class RegisterRequest {
     // Infos spécifiques Fermier
     private String nomFerme;
     private Double surfaceFerme;
+    private String matriculeApia;
 
     // Infos spécifiques Vétérinaire
     private String specialite;
     private String diplome;
+    private String numeroOrdreVeterinaire; 
 }

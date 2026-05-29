@@ -19,6 +19,8 @@ import FinancePage from "../features/finance/pages/FinancePage";
 import DashboardVeto from "../features/veterinaire/DashboardVeto";
 import ForumPage from "../features/forum/pages/ForumPage";
 import PostDetail from "../features/forum/pages/PostDetail";
+
+import ProfilePage from "../features/auth/ProfilePage";
 import VetListMapPage from "../features/veterinaire/pages/VetListMapPage";
 import VetDetailPage from "../features/veterinaire/pages/VetDetailPage";
 
@@ -162,6 +164,11 @@ const AppRoutes = () => {
       <Route path="/veterinairesproches" element={isFermier || userRole === "ADMIN"? <VetListMapPage /> : <Navigate to="/" />} />
       <Route path="/veterinairesproche/:id" element={isFermier || userRole === "ADMIN"? <VetDetailPage /> : <Navigate to="/" />} />
 
+ <Route
+        path="/profile"
+        element={isFermier || isVeterinaire ? <ProfilePage /> : <Navigate to="/" />}
+      />
+      {/* 7. Page 404 - Fallback */}
       <Route
         path="*"
         element={

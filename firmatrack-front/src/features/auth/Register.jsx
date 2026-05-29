@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Toaster, toast } from 'react-hot-toast';
+import authService from './authService'; 
 
 // Icons
 const UserIcon = ({ size = 18 }) => (
@@ -20,8 +20,16 @@ const Register = () => {
   const [role, setRole] = useState('FERMIER'); 
 
   const [formData, setFormData] = useState({
-    name: '', email: '', password: '', telephone: '',
-    nomFerme: '', surfaceFerme: '', specialite: '', diplome: ''
+    name: '', 
+    email: '', 
+    password: '', 
+    telephone: '',
+    nomFerme: '', 
+    surfaceFerme: '', 
+    matriculeApia: '', // <--- AJOUTÉ (US 58)
+    specialite: '', 
+    diplome: '',
+    numeroOrdreVeterinaire: '' // <--- AJOUTÉ (US 58)
   });
 
   // États pour le feedback visuel (comme sur le login)
@@ -52,7 +60,7 @@ const Register = () => {
 
   const isFormValid = isEmailValid && isPasswordValid && isPhoneValid && formData.name.length > 2;
 
-  const handleRegister = async (e) => {
+const handleRegister = async (e) => {
     e.preventDefault();
     if (!isFormValid) {
         toast.error("Veuillez remplir correctement tous les champs.");
@@ -60,12 +68,17 @@ const Register = () => {
     }
 
     setLoading(true);
+    setError('');
+
     try {
-      await axios.post('http://localhost:8888/api/auth/register', { ...formData, role });
-      toast.success("Compte créé ! Redirection...");
+      // --- APPEL DE TON SERVICE PROPRE ---
+      await authService.register({ ...formData, role });
+      
+      toast.success("Compte créé et validé avec succès ! 🎉");
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || "Erreur lors de l'inscription");
+      const msg = err.response?.data?.message || err.response?.data || "Erreur d'inscription";
+      setError(typeof msg === 'object' ? JSON.stringify(msg) : msg);
       setLoading(false);
     }
   };
@@ -168,6 +181,10 @@ const Register = () => {
                     <label style={styles.label}>Surface (Ha)</label>
                     <input name="surfaceFerme" type="number" placeholder="10" style={styles.inputSpec} onChange={handleChange} />
                   </div>
+                  <div style={styles.inputGroup}>
+                    <label style={styles.label}>Matricule APIA </label>
+                    <input name="matriculeApia" placeholder="APIA-2026-XXXX" style={styles.inputSpec} onChange={handleChange} required />
+                  </div>
                 </div>
               ) : (
                 <div style={styles.grid} className="fade-up">
@@ -176,8 +193,8 @@ const Register = () => {
                     <input name="specialite" placeholder="Bovins" style={styles.inputSpecVeto} onChange={handleChange} required />
                   </div>
                   <div style={styles.inputGroup}>
-                    <label style={styles.label}>Matricule</label>
-                    <input name="diplome" placeholder="N° Ordre" style={styles.inputSpecVeto} onChange={handleChange} required />
+                    <label style={styles.label}>N° Ordre CNOMVT</label>
+                    <input name="numeroOrdreVeterinaire" placeholder="VT-2026-XXXX" style={styles.inputSpecVeto} onChange={handleChange} required />
                   </div>
                 </div>
               )}

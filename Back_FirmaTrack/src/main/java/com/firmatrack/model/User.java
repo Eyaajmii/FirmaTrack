@@ -23,6 +23,7 @@ public class User {
     private String role;
     private String telephone;
     private String adresse;
+    private String status = "PENDING";
     private LocalDateTime createdAt;
     @OneToOne(mappedBy = "user")
     @JsonIgnore

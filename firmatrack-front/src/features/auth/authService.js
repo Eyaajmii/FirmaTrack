@@ -21,6 +21,7 @@ const login = async (email, password) => {
     localStorage.setItem('user_role', response.data.role);
     localStorage.setItem('user_name', response.data.nom);
     localStorage.setItem('user_id', response.data.userId);
+    localStorage.setItem('user_status', response.data.status); 
   }
   return response.data;
 };
@@ -35,10 +36,26 @@ const logout = () => {
   window.location.href = '/login';
 };
 
+// US 62/63/64 : Récupérer mon profil complet
+const getMyProfile = async () => {
+  // On appelle l'API pour lire le user connecté
+  // (Le token est géré automatiquement par les intercepteurs configurés sur l'instance "api")
+  const response = await api.get('/users/profile/me'); 
+  return response.data;
+};
+
+// US 62/63/64/65 : Mettre à jour mon profil
+const updateProfile = async (profileData) => {
+  const response = await api.put('/users/profile', profileData);
+  return response.data;
+};
+
 const authService = {
   register,
   login,
   logout,
+  getMyProfile,
+  updateProfile,
 };
 
 export default authService;

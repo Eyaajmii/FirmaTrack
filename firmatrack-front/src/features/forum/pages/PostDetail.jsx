@@ -113,7 +113,7 @@ const PostDetail = () => {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {post.commentaires && post.commentaires.map(comment => {
-              const isVet = comment.auteur?.role === 'VETERINAIRE';
+              const isVerifiedVet = comment.auteur?.role === 'VETERINAIRE' && comment.auteur?.status === 'APPROVED';
               return (
                 <div key={comment.id} style={{
                   ...styles.commentBox,
@@ -123,7 +123,7 @@ const PostDetail = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span style={{ fontWeight: '700', fontSize: '13px', color: '#1a1a18' }}>{comment.auteur?.name}</span>
-                      {isVet && (
+                      {isVerifiedVet && (
                         <span style={styles.vetBadge}>
                           <IconStethoscope /> Expert Vérifié
                         </span>

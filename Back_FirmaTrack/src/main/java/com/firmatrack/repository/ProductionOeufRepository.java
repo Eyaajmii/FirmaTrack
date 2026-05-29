@@ -21,4 +21,7 @@ public interface ProductionOeufRepository extends JpaRepository<ProductionOeuf, 
 
     // Productions d'un animal entre deux dates
     List<ProductionOeuf> findByCheptelIdAndDateProductionBetween(Long cheptelId, LocalDate debut, LocalDate fin);
+
+    // Filtrage par fermier connecté
+    List<ProductionOeuf> findByFermierId(Long fermierId);
 }

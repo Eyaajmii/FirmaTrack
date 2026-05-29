@@ -3,9 +3,12 @@ package com.firmatrack.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.firmatrack.model.Fermier;
 import com.firmatrack.model.ProductionLait;
+import com.firmatrack.repository.FermierRepository;
 import com.firmatrack.repository.ProductionLaitRepository;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +17,12 @@ public class ProductionLaitService {
 
     @Autowired
     private ProductionLaitRepository productionLaitRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private FermierRepository fermierRepository;
 
     // Méthode pour enregistrer une nouvelle production
     public ProductionLait enregistrerProduction(ProductionLait production) {
@@ -29,7 +38,12 @@ public class ProductionLaitService {
     }
     
     public List<ProductionLait> getToutesLesProductions() {
-        return productionLaitRepository.findAll();
+        String email = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication().getName();
+        com.firmatrack.model.User user = userService.getUserByEmail(email);
+        Fermier fermier = fermierRepository.findByUserId(user.getId()).orElse(null);
+        if (fermier == null) return Collections.emptyList();
+        return productionLaitRepository.findByCheptelFermierId(fermier.getId());
     }
     
     public List<ProductionLait> getProductionParAnimal(Long cheptelId) {

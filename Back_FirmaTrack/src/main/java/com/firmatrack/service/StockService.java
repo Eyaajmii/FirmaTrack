@@ -29,8 +29,18 @@ public class StockService {
     @Autowired
     private DepenseRepository depenseRepository; // Injecté pour l'automatisation !
 
-    public List<Stock> getAllStock() { 
-        return stockRepository.findAll(); 
+    private Long getConnectedFermierId() {
+        String email = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication().getName();
+        com.firmatrack.model.User user = userService.getUserByEmail(email);
+        Fermier fermier = fermierRepository.findByUserId(user.getId()).orElse(null);
+        return fermier != null ? fermier.getId() : null;
+    }
+
+    public List<Stock> getAllStock() {
+        Long fermierId = getConnectedFermierId();
+        if (fermierId == null) return java.util.List.of();
+        return stockRepository.findByFermierId(fermierId);
     }
 
     // --- US 51 & US 30 : AJOUT STOCK + GÉNÉRATION DÉPENSE AUTOMATIQUE ---
@@ -101,6 +111,15 @@ public class StockService {
         });
     }
 
-    public List<Stock> getAlertesQuantite() { return stockRepository.findStockCritique(); }
-    public List<Stock> getAlertesPeremption() { return stockRepository.findProduitsPerimes(LocalDate.now()); }
+    public List<Stock> getAlertesQuantite() {
+        Long fermierId = getConnectedFermierId();
+        if (fermierId == null) return java.util.List.of();
+        return stockRepository.findStockCritiqueByFermierId(fermierId);
+    }
+
+    public List<Stock> getAlertesPeremption() {
+        Long fermierId = getConnectedFermierId();
+        if (fermierId == null) return java.util.List.of();
+        return stockRepository.findProduitsPerimesByFermierId(fermierId, LocalDate.now());
+    }
 }
