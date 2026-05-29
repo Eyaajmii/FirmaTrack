@@ -13,6 +13,7 @@ import com.firmatrack.repository.VeterinaireRepository;
 public class VeterinaireService {
     @Autowired
     private VeterinaireRepository veterinaireRepository;
+
     public Veterinaire saveVeterinaire(Veterinaire v) {
         return veterinaireRepository.save(v);
     }
@@ -83,5 +84,6 @@ public class VeterinaireService {
                 })
                 .collect(Collectors.toList());
     }
+    
     
 }

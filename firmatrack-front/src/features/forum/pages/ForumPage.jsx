@@ -1,52 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
 import forumService from '../services/forumService';
+import api from '../../../api/api';
 
-// --- Icônes SVG Pro ---
+// --- Icônes SVG Épurées (Coordonnées avec le style global) ---
 const IconPlus = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <line x1="12" y1="5" x2="12" y2="19" />
-    <line x1="5" y1="12" x2="19" y2="12" />
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+    <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
   </svg>
 );
 
 const IconFolder = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+    <path d="M1.5 3.5v9a1 1 0 001 1h11a1 1 0 001-1V5.5a1 1 0 00-1-1H7.5L6 2.5H2.5a1 1 0 00-1 1z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const IconChat = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round" />
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+    <path d="M14 8a6 6 0 11-12 0 6 6 0 0112 0z" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M8 11.5l-3 2v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const IconHeart = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+    <path d="M8 13s-5-3-5-6a3 3 0 015.15-2.1L8 5.1l.85-.2A3 3 0 0113 7c0 3-5 6-5 6z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const IconWheat = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+    <path d="M8 1.5v13M11 4.5H7.5a2.5 2.5 0 000 5h1a2.5 2.5 0 010 5H4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const IconDollar = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <line x1="12" y1="1" x2="12" y2="23" />
-    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+    <path d="M8 1.5v13M11.5 4H7a3 3 0 000 6h2a3 3 0 010 6H4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const CATEGORIES = [
-  { value: 'GENERAL', label: 'Général', icon: <IconChat /> },
-  { value: 'SANTE', label: 'Santé Animale', icon: <IconHeart /> },
-  { value: 'ALIMENTATION', label: 'Alimentation', icon: <IconWheat /> },
-  { value: 'PRIX_MARCHE', label: 'Prix du Marché', icon: <IconDollar /> }
+  { value: 'GENERAL', label: 'Général', icon: <IconChat />, color: '#2563eb', bg: '#eff6ff' },
+  { value: 'SANTE', label: 'Santé Animale', icon: <IconHeart />, color: '#A32D2D', bg: '#FCEBEB' },
+  { value: 'ALIMENTATION', label: 'Alimentation', icon: <IconWheat />, color: '#d97706', bg: '#FAEEDA' },
+  { value: 'PRIX_MARCHE', label: 'Prix du Marché', icon: <IconDollar />, color: '#2a7a4b', bg: '#EAF3DE' }
 ];
 
 const ForumPage = () => {
@@ -58,13 +58,26 @@ const ForumPage = () => {
   const [newPost, setNewPost] = useState({ titre: '', contenu: '', categorie: 'GENERAL' });
   const [imageFile, setImageFile] = useState(null);
 
+  const [mesAnimaux, setMesAnimaux] = useState([]);
+  const [selectedAnimalId, setSelectedAnimalId] = useState('');
+
   const navigate = useNavigate();
 
+  // Chargement des animaux du cheptel (US 74)
   useEffect(() => {
-    loadPosts();
-  }, [selectedCategory]);
+    const fetchMyAnimals = async () => {
+       try {
+         const res = await api.get('/cheptel');
+         setMesAnimaux(res.data || []);
+       } catch (e) {
+         console.error("Erreur chargement animaux", e);
+       }
+    };
+    fetchMyAnimals();
+  }, []);
 
-  const loadPosts = async () => {
+  // Chargement des posts
+  const loadPosts = useCallback(async () => {
     try {
       let data;
       if (selectedCategory === 'ALL') {
@@ -76,12 +89,15 @@ const ForumPage = () => {
     } catch (err) {
       toast.error("Erreur de chargement du forum.");
     }
-  };
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
 
   const handleCreatePost = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const formData = new FormData();
       formData.append('titre', newPost.titre);
@@ -90,8 +106,13 @@ const ForumPage = () => {
       if (imageFile) {
         formData.append('image', imageFile);
       }
+      
+      if (selectedAnimalId) {
+        formData.append('cheptelId', selectedAnimalId);
+      }
 
       await forumService.createPost(formData);
+      setSelectedAnimalId('');
       toast.success("Votre question a été publiée !");
       setShowForm(false);
       setNewPost({ titre: '', contenu: '', categorie: 'GENERAL' });
@@ -105,137 +126,330 @@ const ForumPage = () => {
   };
 
   return (
-    <div style={{ padding: '2rem 3rem', backgroundColor: '#faf9f6', minHeight: '100vh', fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: '#f7f6f4', padding: '2rem', fontFamily: "'DM Sans', sans-serif" }}>
       <Toaster position="top-center" />
 
-      <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h1 style={{ fontSize: '26px', fontWeight: '800', color: '#1a1a18', margin: 0, letterSpacing: '-0.5px' }}>Forum d'Entraide</h1>
-          <p style={{ fontSize: '14px', color: '#7a7a74', marginTop: '4px' }}>Posez vos questions et obtenez des conseils d'experts.</p>
+      {/* --- MAX-WIDTH WRAPPER --- */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+
+        {/* Breadcrumb */}
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
+          <span>Ferme El Baraka</span>
+          <span>/</span>
+          <span style={{ color: '#1a1a18' }}>Forum d'Entraide</span>
         </div>
-        <button onClick={() => setShowForm(!showForm)} style={styles.addBtn}>
-          {showForm ? 'Fermer' : <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><IconPlus /> Poser une question</span>}
-        </button>
-      </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '2.5rem', alignItems: 'start' }}>
-        
-        {/* BARRE LATÉRALE DES CATÉGORIES */}
-        <aside style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <button 
-            onClick={() => setSelectedCategory('ALL')}
-            style={{ 
-              ...styles.categoryBtn, 
-              background: selectedCategory === 'ALL' ? '#1a1a18' : 'transparent', 
-              color: selectedCategory === 'ALL' ? '#fff' : '#6b6b67',
-              fontWeight: selectedCategory === 'ALL' ? '600' : '400'
-            }}
-          >
-            <span style={{ display: 'flex', alignItems: 'center', opacity: selectedCategory === 'ALL' ? 1 : 0.7 }}><IconFolder /></span>
-            Tout voir
+        {/* --- HEADER --- */}
+        <header style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h1 style={{ fontSize: '22px', fontWeight: '500', color: '#1a1a18', letterSpacing: '-0.4px', margin: 0 }}>
+              Forum d'Entraide
+            </h1>
+            <p style={{ fontSize: '12px', color: '#9a9a96', marginTop: '4px', margin: '4px 0 0' }}>
+              Posez vos questions et obtenez des conseils d'experts ou de confrères.
+            </p>
+          </div>
+          
+          <button onClick={() => setShowForm(!showForm)} style={showForm ? s.btnCancel : s.btnPrimary}>
+            {showForm ? 'Fermer la saisie' : <><IconPlus /> Poser une question</>}
           </button>
-          {CATEGORIES.map(cat => {
-            const isSelected = selectedCategory === cat.value;
-            return (
-              <button 
-                key={cat.value}
-                onClick={() => setSelectedCategory(cat.value)}
-                style={{ 
-                  ...styles.categoryBtn, 
-                  background: isSelected ? '#1a1a18' : 'transparent', 
-                  color: isSelected ? '#fff' : '#6b6b67',
-                  fontWeight: isSelected ? '600' : '400'
-                }}
-              >
-                <span style={{ display: 'flex', alignItems: 'center', opacity: isSelected ? 1 : 0.7 }}>{cat.icon}</span>
-                {cat.label}
-              </button>
-            );
-          })}
-        </aside>
+        </header>
 
-        {/* ZONE PRINCIPALE (FORMULAIRE OU LISTE DES POSTS) */}
-        <main>
-          {showForm ? (
-            /* FORMULAIRE DE CRÉATION */
-            <div style={styles.mainCard}>
-              <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '1.5rem' }}>Nouvelle question</h3>
-              <form onSubmit={handleCreatePost} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div>
-                  <label style={styles.label}>Titre de votre question</label>
-                  <input type="text" required placeholder="Ex: Ma vache ne mange plus depuis hier" style={styles.input} value={newPost.titre} onChange={(e) => setNewPost({...newPost, titre: e.target.value})} />
+        {/* --- GRILLE LATÉRALE + ZONE DE CONTENU --- */}
+        <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '1.5rem', alignItems: 'start' }}>
+          
+          {/* BARRE LATÉRALE DES CATÉGORIES (Vertical Selector) */}
+          <aside style={s.sidebar}>
+            <div style={{ fontSize: '10px', fontWeight: '600', color: '#9a9a96', padding: '4px 12px 10px 12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Catégories
+            </div>
+            
+            <button 
+              onClick={() => { setSelectedCategory('ALL'); setShowForm(false); }}
+              style={{ 
+                ...s.categoryBtn, 
+                background: selectedCategory === 'ALL' ? '#faf9f7' : 'transparent', 
+                color: selectedCategory === 'ALL' ? '#1a1a18' : '#6b6b67',
+                borderLeft: selectedCategory === 'ALL' ? '3px solid #1a1a18' : '3px solid transparent',
+                fontWeight: selectedCategory === 'ALL' ? '500' : '400'
+              }}
+            >
+              <span style={{ display: 'flex', alignItems: 'center', color: selectedCategory === 'ALL' ? '#1a1a18' : '#9a9a96' }}><IconFolder /></span>
+              Tout voir
+            </button>
+
+            {CATEGORIES.map(cat => {
+              const isSelected = selectedCategory === cat.value;
+              return (
+                <button 
+                  key={cat.value}
+                  onClick={() => { setSelectedCategory(cat.value); setShowForm(false); }}
+                  style={{ 
+                    ...s.categoryBtn, 
+                    background: isSelected ? '#faf9f7' : 'transparent', 
+                    color: isSelected ? '#1a1a18' : '#6b6b67',
+                    borderLeft: isSelected ? `3px solid ${cat.color}` : '3px solid transparent',
+                    fontWeight: isSelected ? '500' : '400'
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', color: isSelected ? cat.color : '#9a9a96' }}>{cat.icon}</span>
+                  {cat.label}
+                </button>
+              );
+            })}
+          </aside>
+
+          {/* ZONE PRINCIPALE (FORMULAIRE OU LISTE DES POSTS) */}
+          <main>
+            {showForm ? (
+              /* FORMULAIRE DE CRÉATION */
+              <div style={s.card}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                  <span style={s.cardTitle}>Nouvelle question</span>
+                  <span style={s.badge}>Publique</span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+
+                <form onSubmit={handleCreatePost} style={s.form}>
                   <div>
-                    <label style={styles.label}>Catégorie</label>
-                    <select style={styles.input} value={newPost.categorie} onChange={(e) => setNewPost({...newPost, categorie: e.target.value})}>
-                      {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                    <label style={s.label}>Titre de votre question</label>
+                    <input type="text" required placeholder="Ex: Ma vache ne mange plus depuis hier" style={s.input} value={newPost.titre} onChange={(e) => setNewPost({...newPost, titre: e.target.value})} />
+                  </div>
+
+                  {/* --- US 74 : SÉLECTION DE L'ANIMAL --- */}
+                  <div>
+                    <label style={s.label}>Associer un animal de votre cheptel (Optionnel)</label>
+                    <select 
+                      style={s.select} 
+                      value={selectedAnimalId} 
+                      onChange={(e) => setSelectedAnimalId(e.target.value)}
+                    >
+                      <option value="">-- Aucun animal associé --</option>
+                      {mesAnimaux.map(a => (
+                        <option key={a.id} value={a.id}>{a.nom || 'Anonyme'} ({a.chepnumber})</option>
+                      ))}
                     </select>
                   </div>
-                  <div>
-                    <label style={styles.label}>Joindre une photo (Optionnel)</label>
-                    <input type="file" accept="image/*" style={styles.input} onChange={(e) => setImageFile(e.target.files[0])} />
-                  </div>
-                </div>
-                <div>
-                  <label style={styles.label}>Description détaillée</label>
-                  <textarea required placeholder="Décrivez les symptômes ou votre problème..." style={{ ...styles.input, height: '120px', resize: 'none' }} value={newPost.contenu} onChange={(e) => setNewPost({...newPost, contenu: e.target.value})} />
-                </div>
-                <button type="submit" disabled={loading} style={styles.submitBtn}>
-                  {loading ? 'Publication en cours...' : 'Publier la question'}
-                </button>
-              </form>
-            </div>
-          ) : (
-            /* LISTE DES POSTS (FIL D'ACTUALITÉ) */
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {posts.length > 0 ? (
-                posts.map(post => {
-                  const resolvedCategory = CATEGORIES.find(c => c.value === post.categorie);
-                  return (
-                    <div 
-                      key={post.id} 
-                      onClick={() => navigate(`/forum/posts/${post.id}`)} 
-                      style={styles.postCard}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={styles.categoryBadge}>
-                          {resolvedCategory ? resolvedCategory.label : post.categorie}
-                        </span>
-                        <span style={{ fontSize: '11px', color: '#a0a098' }}>
-                          Publié le {new Date(post.createdAt).toLocaleDateString()} par <b>{post.auteur?.name || 'Anonyme'}</b>
-                        </span>
-                      </div>
-                      <h3 style={{ fontSize: '18px', fontWeight: '700', margin: '12px 0 6px 0', color: '#1a1a18' }}>{post.titre}</h3>
-                      <p style={{ fontSize: '14px', color: '#4b5563', margin: 0, lineClamp: 2, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                        {post.contenu}
-                      </p>
+
+                  <div style={s.grid2Col}>
+                    <div>
+                      <label style={s.label}>Catégorie</label>
+                      <select style={s.select} value={newPost.categorie} onChange={(e) => setNewPost({...newPost, categorie: e.target.value})}>
+                        {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                      </select>
                     </div>
-                  );
-                })
-              ) : (
-                <div style={styles.emptyContainer}>
-                  Aucune question dans cette catégorie pour le moment. Soyez le premier à poser une question !
-                </div>
-              )}
-            </div>
-          )}
-        </main>
+                    <div>
+                      <label style={s.label}>Joindre une photo (Optionnel)</label>
+                      <input type="file" accept="image/*" style={s.fileInput} onChange={(e) => setImageFile(e.target.files[0])} />
+                    </div>
+                  </div>
+                  <div>
+                    <label style={s.label}>Description détaillée</label>
+                    <textarea required placeholder="Décrivez précisément les symptômes ou les détails de votre question..." style={{ ...s.input, height: '120px', resize: 'none' }} value={newPost.contenu} onChange={(e) => setNewPost({...newPost, contenu: e.target.value})} />
+                  </div>
+                  
+                  <button type="submit" disabled={loading} style={{ ...s.btnPrimary, width: '100%', padding: '12px' }}>
+                    {loading ? 'Publication en cours...' : 'Publier la question'}
+                  </button>
+                </form>
+              </div>
+            ) : (
+              /* LISTE DES POSTS (FIL D'ACTUALITÉ) */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {posts.length > 0 ? (
+                  posts.map(post => {
+                    const resolvedCategory = CATEGORIES.find(c => c.value === post.categorie);
+                    const catStyle = resolvedCategory || { color: '#6b6b67', bg: '#f1f0ec' };
+                    return (
+                      <div 
+                        key={post.id} 
+                        onClick={() => navigate(`/forum/posts/${post.id}`)} 
+                        style={s.postCard}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ 
+                            ...s.categoryBadge, 
+                            color: catStyle.color, 
+                            background: catStyle.bg,
+                            border: `0.5px solid ${catStyle.color}1a`
+                          }}>
+                            {resolvedCategory ? resolvedCategory.label : post.categorie}
+                          </span>
+                          <span style={{ fontSize: '11px', color: '#9a9a96' }}>
+                            Publié le {new Date(post.createdAt).toLocaleDateString()} par <strong>{post.auteur?.name || 'Anonyme'}</strong>
+                          </span>
+                        </div>
+                        <h3 style={{ fontSize: '15px', fontWeight: '500', margin: '12px 0 6px 0', color: '#1a1a18', letterSpacing: '-0.2px' }}>
+                          {post.titre}
+                        </h3>
+                        <p style={{ fontSize: '12.5px', color: '#6b6b67', margin: 0, lineHeight: '1.6', lineClamp: 2, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                          {post.contenu}
+                        </p>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div style={s.emptyContainer}>
+                    <IconChat />
+                    <span style={{ marginTop: '8px' }}>Aucune question dans cette catégorie pour le moment.</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </main>
+        </div>
+
       </div>
     </div>
   );
 };
 
-const styles = {
-  addBtn: { background: '#1a1a18', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center' },
-  categoryBtn: { border: 'none', padding: '10px 14px', borderRadius: '10px', fontSize: '13px', textAlign: 'left', cursor: 'pointer', transition: 'all 0.12s ease', display: 'flex', alignItems: 'center', gap: '10px' },
-  mainCard: { background: '#fff', padding: '2rem', borderRadius: '24px', border: '1px solid #e8e7e2' },
-  postCard: { background: '#fff', padding: '1.5rem', borderRadius: '20px', border: '1px solid #e8e7e2', cursor: 'pointer', transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)' },
-  categoryBadge: { fontSize: '10px', fontWeight: '700', color: '#16a34a', background: '#f0fdf4', padding: '4px 10px', borderRadius: '8px', border: '1px solid #dcfce7' },
-  label: { display: 'block', fontSize: '11px', fontWeight: '600', color: '#a0a098', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.5px' },
-  input: { width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1.5px solid #f0f0ee', background: '#f9f9f7', fontSize: '13px', outline: 'none', fontFamily: 'inherit' },
-  submitBtn: { padding: '14px', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: '700', background: '#1a1a18', color: '#fff', cursor: 'pointer', marginTop: '10px' },
-  emptyContainer: { textAlign: 'center', padding: '3rem', border: '1px dashed #e8e7e2', borderRadius: '20px', color: '#a0a098', fontSize: '14px', background: '#fff' }
+// ── SYSTÈME DE STYLE DIRECTEMENT ALIGNÉ AVEC LE PROJET ──
+const s = {
+  card: {
+    background: '#fff',
+    border: '0.5px solid #e8e7e2',
+    borderRadius: '14px',
+    padding: '1.5rem',
+  },
+  cardTitle: {
+    fontSize: '14px',
+    fontWeight: '500',
+    color: '#1a1a18',
+  },
+  badge: {
+    background: '#f1f0ec',
+    color: '#6b6b67',
+    padding: '3px 10px',
+    borderRadius: '20px',
+    fontSize: '11px',
+    fontWeight: '500',
+    border: '0.5px solid #e8e7e2',
+  },
+  sidebar: {
+    background: '#fff',
+    border: '0.5px solid #e8e7e2',
+    borderRadius: '14px',
+    padding: '12px 6px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '3px'
+  },
+  btnPrimary: {
+    display: 'flex', alignItems: 'center', gap: '6px',
+    background: '#1a1a18', color: '#fff', border: 'none',
+    padding: '8px 16px', borderRadius: '10px',
+    fontWeight: '500', cursor: 'pointer', fontSize: '12px',
+    fontFamily: "'DM Sans', sans-serif", transition: 'opacity 0.15s',
+  },
+  btnCancel: {
+    display: 'flex', alignItems: 'center', gap: '6px',
+    background: '#FCEBEB', color: '#A32D2D', border: '0.5px solid #A32D2D33',
+    padding: '8px 16px', borderRadius: '10px',
+    fontWeight: '500', cursor: 'pointer', fontSize: '12px',
+    fontFamily: "'DM Sans', sans-serif", transition: 'opacity 0.15s',
+  },
+  categoryBtn: {
+    border: 'none',
+    padding: '10px 14px',
+    borderRadius: '8px',
+    fontSize: '12.5px',
+    textAlign: 'left',
+    cursor: 'pointer',
+    transition: 'all 0.14s ease',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    boxSizing: 'border-box'
+  },
+  postCard: {
+    background: '#fff',
+    border: '0.5px solid #e8e7e2',
+    borderRadius: '14px',
+    padding: '1.25rem',
+    cursor: 'pointer',
+    transition: 'transform 0.15s, box-shadow 0.15s',
+    boxSizing: 'border-box',
+    ':hover': {
+      transform: 'translateY(-1px)',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
+    }
+  },
+  categoryBadge: {
+    fontSize: '10px',
+    fontWeight: '500',
+    padding: '3px 9px',
+    borderRadius: '20px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.02em'
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.25rem'
+  },
+  grid2Col: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '1rem'
+  },
+  label: {
+    display: 'block',
+    fontSize: '11px',
+    fontWeight: '600',
+    color: '#9a9a96',
+    textTransform: 'uppercase',
+    marginBottom: '6px',
+    letterSpacing: '0.04em'
+  },
+  input: {
+    width: '100%',
+    padding: '10px 12px',
+    borderRadius: '8px',
+    border: '0.5px solid #e8e7e2',
+    background: '#faf9f7',
+    fontSize: '12.5px',
+    outline: 'none',
+    color: '#1a1a18',
+    fontFamily: "'DM Sans', sans-serif",
+    boxSizing: 'border-box',
+  },
+  select: {
+    width: '100%',
+    padding: '10px 12px',
+    borderRadius: '8px',
+    border: '0.5px solid #e8e7e2',
+    background: '#faf9f7',
+    fontSize: '12.5px',
+    outline: 'none',
+    color: '#1a1a18',
+    fontFamily: "'DM Sans', sans-serif",
+    cursor: 'pointer',
+    boxSizing: 'border-box',
+  },
+  fileInput: {
+    width: '100%',
+    padding: '8px 10px',
+    borderRadius: '8px',
+    border: '0.5px solid #e8e7e2',
+    background: '#faf9f7',
+    fontSize: '12px',
+    color: '#6b6b67',
+    fontFamily: "'DM Sans', sans-serif",
+    boxSizing: 'border-box',
+  },
+  emptyContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '4rem 2rem',
+    border: '1px dashed #e8e7e2',
+    borderRadius: '14px',
+    color: '#9a9a96',
+    fontSize: '13px',
+    background: '#fff',
+    textAlign: 'center'
+  }
 };
 
 export default ForumPage;

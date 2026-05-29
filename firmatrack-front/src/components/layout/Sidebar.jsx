@@ -13,9 +13,9 @@ const COW_PATTERN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200
 const allNavItems = [
   {
     section: null,
-    roles: ['FERMIER', 'ADMIN'],
-    items: [
-      { to: '/dashboard', label: 'Dashboard', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/></svg> },
+    roles: ['FERMIER', 'ADMIN','VETERINAIRE'],
+     items: [
+      { to: '/', label: 'Dashboard', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/></svg> },
     ]
   },
   {
@@ -88,29 +88,46 @@ const allNavItems = [
     ]
   },
   {
-    section:'Vétérianire',
+    section: 'Vétérinaire',
     roles: ['FERMIER', 'ADMIN'],
-    items:[
+    items: [
       {
-        to: '/veterinairesproches', label: 'Trouver un vétérinaire'
+        to: '/veterinairesproches', 
+        label: 'Trouver un vétérinaire',
+        icon: (
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4.8 2.4A4.8 4.8 0 0 1 14.4 2.4V12a4.8 4.8 0 0 1-9.6 0Z" />
+            <path d="M14.4 7.2h4.8a2.4 2.4 0 0 1 2.4 2.4v4.8a2.4 2.4 0 0 1-2.4 2.4h-4.8" />
+            <path d="M8.4 16.8v3.6M6 21.6h4.8" />
+          </svg>
+        )
       }
     ]
   },
   {
     section: 'Communauté',
-    roles: ['FERMIER', 'ADMIN', 'VETERINAIRE'], // <--- VISIBLE PAR TOUT LE MONDE !
-    items: [
-      { 
-        to: '/forum', 
-        label: 'Forum', 
-        icon: (
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
-            <rect x="1" y="3" width="14" height="10" rx="2" strokeLinecap="round" />
-            <path d="M1 5l7 5 7-5" strokeLinecap="round" />
-          </svg>
-        ) 
-      },
-    ]
+    roles: ['FERMIER', 'ADMIN', 'VETERINAIRE'], 
+   items: [
+  { 
+    to: '/forum', 
+    label: 'Forum', 
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
+        <rect x="1" y="3" width="14" height="10" rx="2" strokeLinecap="round" />
+        <path d="M1 5l7 5 7-5" strokeLinecap="round" />
+      </svg>
+    ) 
+  },
+  { 
+    to: '/vigilance', 
+    label: 'Vigilance Sanitaire',
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+    )
+  }
+]
   },
   {
     section: 'Paramètres',
@@ -142,10 +159,10 @@ const SubMenu = ({ items, visible, collapsed }) => (
     {items.map(child => (
       <NavLink key={child.to} to={child.to}
         className="sb-sub"
-        end // Évite l'activation croisée des sous-onglets
+        end 
         style={({ isActive }) => ({
           display: 'flex', alignItems: 'center', gap: '7px',
-          padding: '6px 8px 6px 33px', fontSize: '12px',
+          padding: '6px 8px 6px 36px', fontSize: '13px',
           color: isActive ? '#1a1a18' : '#7a7a74',
           fontWeight: isActive ? '500' : '400',
           textDecoration: 'none', borderRadius: '7px', marginBottom: '1px',
@@ -159,7 +176,7 @@ const SubMenu = ({ items, visible, collapsed }) => (
   </div>
 );
 
-const W_OPEN   = 200;
+const W_OPEN   = 240; // Augmenté de 200 à 240 pour l'espace de lecture
 const W_CLOSED = 56;
 
 const Sidebar = () => {
@@ -199,7 +216,9 @@ const Sidebar = () => {
         width: `${collapsed ? W_CLOSED : W_OPEN}px`,
         minWidth: `${collapsed ? W_CLOSED : W_OPEN}px`,
         maxWidth: `${collapsed ? W_CLOSED : W_OPEN}px`,
-        minHeight: '100vh',
+        height: '100vh', // Fige la hauteur à la taille du viewport
+        position: 'sticky', // Rend la sidebar collante
+        top: 0, // La colle tout en haut de l'écran
         backgroundImage: COW_PATTERN,
         backgroundSize: '140px 140px',
         backgroundRepeat: 'repeat',
@@ -211,7 +230,6 @@ const Sidebar = () => {
         flexGrow: 0,
         transition: 'width 0.28s cubic-bezier(.4,0,.2,1), min-width 0.28s cubic-bezier(.4,0,.2,1), max-width 0.28s cubic-bezier(.4,0,.2,1)',
         overflow: 'hidden',
-        position: 'relative',
       }}>
 
         <div style={{
@@ -223,7 +241,7 @@ const Sidebar = () => {
 
           {/* ── Header ── */}
           <div style={{
-            padding: '13px 11px 11px',
+            padding: '16px 14px 12px',
             display: 'flex', alignItems: 'center',
             justifyContent: collapsed ? 'center' : 'space-between',
             borderBottom: '1px solid rgba(26,26,24,0.07)',
@@ -238,7 +256,6 @@ const Sidebar = () => {
               <>
                 <div style={{ overflow: 'hidden', minWidth: 0 }}>
                   <div style={{ fontSize: '13.5px', fontWeight: '600', color: '#1a1a18', letterSpacing: '-0.3px', whiteSpace: 'nowrap' }}>FirmaTrack</div>
-                  <div style={{ fontSize: '10px', color: '#9a9a90', marginTop: '1px', whiteSpace: 'nowrap' }}>Ferme El Baraka</div>
                 </div>
                 <button className="sb-ibtn" onClick={() => setCollapsed(true)} title="Réduire"
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#b0afa8', padding: '5px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'opacity 0.15s' }}>
@@ -288,9 +305,9 @@ const Sidebar = () => {
                           title={collapsed ? item.label : undefined}
                           style={{
                             display: 'flex', alignItems: 'center', gap: '7px',
-                            padding: collapsed ? '8px 0' : '7px 7px',
+                            padding: collapsed ? '8px 0' : '8px 12px',
                             justifyContent: collapsed ? 'center' : 'flex-start',
-                            borderRadius: '7px', fontSize: '12.5px',
+                            borderRadius: '7px', fontSize: '13.5px',
                             fontWeight: isActive ? '500' : '400',
                             color: isActive ? '#1a1a18' : '#6a6a64',
                             cursor: 'pointer', marginBottom: '1px',
@@ -312,13 +329,13 @@ const Sidebar = () => {
 
                   return (
                     <NavLink key={item.to} to={item.to} className="sb-link"
-                      end // <--- FORCE L'EXACT MATCH POUR LES LIENS À PLAT (Économie)
+                      end // FORCE L'EXACT MATCH
                       title={collapsed ? item.label : undefined}
                       style={({ isActive }) => ({
                         display: 'flex', alignItems: 'center', gap: '7px',
-                        padding: collapsed ? '8px 0' : '7px 7px',
+                        padding: collapsed ? '8px 0' : '8px 12px',
                         justifyContent: collapsed ? 'center' : 'flex-start',
-                        borderRadius: '7px', fontSize: '12.5px',
+                        borderRadius: '7px', fontSize: '13.5px',
                         fontWeight: isActive ? '500' : '400',
                         color: isActive ? '#fff' : '#6a6a64',
                         background: isActive ? '#1a1a18' : 'transparent',
@@ -352,7 +369,7 @@ const Sidebar = () => {
             {/* 1. Bloc Profil */}
             <div style={{
               display: 'flex', alignItems: 'center', gap: '8px',
-              padding: collapsed ? '7px 0' : '7px 7px',
+              padding: collapsed ? '7px 0' : '8px 12px',
               justifyContent: collapsed ? 'center' : 'flex-start',
               marginBottom: '4px'
             }}>
@@ -365,7 +382,7 @@ const Sidebar = () => {
                 {userInitial}
               </div>
               {!collapsed && (
-                  <div style={{ overflow: 'hidden', minWidth: 0 }}>
+                <div style={{ overflow: 'hidden', minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <div style={{ fontSize: '11.5px', fontWeight: '500', color: '#1a1a18', whiteSpace: 'nowrap' }}>
                       {userName}
@@ -376,7 +393,7 @@ const Sidebar = () => {
                     )}
                   </div>
                   <div style={{ fontSize: '10px', color: '#a0a098', whiteSpace: 'nowrap' }}>
-                    {userRole === 'VETERINAIRE' ? ' Vétérinaire Expert' : ' Éleveur Producteur'}
+                    {userRole === 'VETERINAIRE' ? ' Vétérinaire Expert' : ' Éleveur Producer'}
                   </div>
                 </div>
               )}
@@ -388,7 +405,7 @@ const Sidebar = () => {
                  title="Se déconnecter"
                  style={{
                    display: 'flex', alignItems: 'center', gap: '8px',
-                   padding: collapsed ? '8px 0' : '7px 7px',
+                   padding: collapsed ? '8px 0' : '8px 12px',
                    justifyContent: collapsed ? 'center' : 'flex-start',
                    borderRadius: '7px', cursor: 'pointer', transition: 'all 0.12s',
                    color: '#ef4444',

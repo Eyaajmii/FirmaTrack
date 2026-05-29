@@ -46,3 +46,7 @@ export const appelerVeterinaire = (telephone) => {
   if (!telephone) return alert("Aucun numéro disponible.");
   window.location.href = `tel:${telephone}`;
 };
+
+export const signalerEpidemie = (data) => API.post("/epidemies/signaler", data);
+export const getAllEpidemies = () => API.get("/epidemies");
+export const getMesSignalements = () => API.get("/epidemies/mes-signalements");

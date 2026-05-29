@@ -39,6 +39,11 @@ const forumService = {
   validerSolution: async (commentId) => {
     const response = await api.put(`/forum/commentaires/${commentId}/solution`);
     return response.data;
+  },
+
+    getCarnetByAnimalId: async (animalId) => {
+    const response = await api.get(`/carnetsante/animal/${animalId}`);
+    return response.data;
   }
 };
 

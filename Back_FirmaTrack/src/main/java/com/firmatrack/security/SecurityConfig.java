@@ -13,33 +13,26 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    // <--- LA DÉCLARATION DU FILTRE QUI MANQUAIT
     @Autowired
     private JwtAuthenticationFilter jwtAuthFilter;
 
-    // 1. Déclaration du Hachage BCrypt
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // 2. Configuration des portes ouvertes et fermées
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // On désactive ça pour les API REST
-            .cors(cors -> cors.configure(http)) // Autorise React à parler au serveur
+            .csrf(csrf -> csrf.disable()) 
+            .cors(cors -> cors.configure(http)) 
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Bonne pratique pour JWT
-         // ... (garder le début du fichier identique)
             .authorizeHttpRequests(auth -> auth
-            	    // 1. Routes ouvertes (Auth et Swagger)
             	    .requestMatchers("/api/auth/**").permitAll() 
             	    .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             	    .requestMatchers("/uploads/**").permitAll() 
             	    
-            	    // 2. Ton module Finance (ouvert pour l'instant pour les tests)
             	    .requestMatchers("/api/finance/**").hasAnyRole("FERMIER", "ADMIN")
-            	    // 3. Leurs modules avec sécurité par Rôle (Code de Aya/Mariem)
                     .requestMatchers("/api/users/**", "/api/fermier/**", "/api/veterinaires/**").permitAll() 
                     .requestMatchers("/api/cheptel/**").hasAnyRole("ADMIN", "FERMIER")
                     .requestMatchers("/api/lots/**").hasAnyRole("ADMIN", "FERMIER")
@@ -49,8 +42,9 @@ public class SecurityConfig {
                     .requestMatchers("/api/stock/**").hasAnyRole("ADMIN", "FERMIER")
                     .requestMatchers("/api/production-lait/**").hasAnyRole("ADMIN", "FERMIER")
                     .requestMatchers("/api/production-oeufs/**").hasAnyRole("ADMIN", "FERMIER")
+                    .requestMatchers("/api/epidemies/**").hasAnyRole("FERMIER","VETERINAIRE", "ADMIN")
+                    .requestMatchers("/api/notifications/**").hasAnyRole("FERMIER", "ADMIN", "VETERINAIRE", "ELEVEUR")
 
-            	    // 4. Protection globale
             	    .anyRequest().authenticated()
             	)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); 

@@ -62,8 +62,15 @@ function CarnetSanteDetail() {
     <div style={{ minHeight: "100vh", background: "#f7f6f4", padding: "2rem" }}>
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
         <div style={{ marginBottom: "2rem" }}>
-          <button onClick={() => navigate("/carnetsante")}>← Retour</button>
-
+        <button 
+          onClick={() => navigate(-1)} 
+          style={{
+            background: 'none', border: 'none', color: '#1a1a18', 
+            fontWeight: '700', cursor: 'pointer', fontSize: '13px'
+          }}
+        >
+          ← Retour
+        </button>
           <div style={{ fontSize: "11px", color: "#b0afa9" }}>
             Carnets / <span style={{ color: "#1a1a18" }}>Détails</span>
           </div>

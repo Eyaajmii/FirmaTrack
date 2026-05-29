@@ -1,5 +1,6 @@
 package com.firmatrack.controller;
 
+import com.firmatrack.model.Cheptel;
 import com.firmatrack.model.ForumComment;
 import com.firmatrack.model.ForumPost;
 import com.firmatrack.model.User;
@@ -22,6 +23,8 @@ public class ForumController {
 
     @Autowired private ForumService forumService;
     @Autowired private UserService userService;
+    @Autowired 
+    private com.firmatrack.service.CheptelService cheptelService;
 
     // Fonction utilitaire pour récupérer l'utilisateur connecté via le Token JWT
     private User getCurrentUser() {
@@ -39,10 +42,18 @@ public class ForumController {
             @RequestParam("titre") String titre,
             @RequestParam("contenu") String contenu,
             @RequestParam("categorie") String categorie,
+            @RequestParam(value = "cheptelId", required = false) Long cheptelId, // <--- REÇOIT L'ID DE REACT
             @RequestParam(value = "image", required = false) MultipartFile image
     ) {
         User auteur = getCurrentUser();
-        ForumPost post = forumService.creerPost(titre, contenu, categorie, image, auteur);
+        
+        // Si l'éleveur a sélectionné une vache
+        Cheptel cheptel = null;
+        if (cheptelId != null) {
+            cheptel = cheptelService.getAnimalById(cheptelId);
+        }
+
+        ForumPost post = forumService.creerPost(titre, contenu, categorie, image, cheptel, auteur);
         return ResponseEntity.ok(post);
     }
 

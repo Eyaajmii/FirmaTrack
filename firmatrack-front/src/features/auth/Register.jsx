@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Toaster, toast } from 'react-hot-toast';
 import authService from './authService'; 
 
-// Icons
 const UserIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
 );
@@ -26,13 +25,11 @@ const Register = () => {
     telephone: '',
     nomFerme: '', 
     surfaceFerme: '', 
-    matriculeApia: '', // <--- AJOUTÉ (US 58)
+    matriculeApia: '', 
     specialite: '', 
-    diplome: '',
-    numeroOrdreVeterinaire: '' // <--- AJOUTÉ (US 58)
+    diplome: '' 
   });
 
-  // États pour le feedback visuel (comme sur le login)
   const [touched, setTouched] = useState({
     email: false, password: false, telephone: false
   });
@@ -40,9 +37,9 @@ const Register = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // Contrôle numéro : On n'accepte que les chiffres
     if (name === 'telephone') {
-      const onlyNums = value.replace(/[^0-9]/g, '');
+      // Nettoie les caractères non-numériques et limite la saisie à 8 chiffres maximum
+      const onlyNums = value.replace(/[^0-9]/g, '').slice(0, 8);
       setFormData({ ...formData, [name]: onlyNums });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -53,14 +50,15 @@ const Register = () => {
     setTouched({ ...touched, [field]: true });
   };
 
-  // Logique de validation
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
-  const isPasswordValid = formData.password.length >= 8; // Changé à 8 selon ta demande
-  const isPhoneValid = formData.telephone.length >= 8;
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(formData.email);
+  const isPasswordValid = formData.password.length >= 8; 
+  
+  // Validation stricte à 8 chiffres pour la Tunisie
+  const isPhoneValid = formData.telephone.length === 8;
 
   const isFormValid = isEmailValid && isPasswordValid && isPhoneValid && formData.name.length > 2;
 
-const handleRegister = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     if (!isFormValid) {
         toast.error("Veuillez remplir correctement tous les champs.");
@@ -71,9 +69,7 @@ const handleRegister = async (e) => {
     setError('');
 
     try {
-      // --- APPEL DE TON SERVICE PROPRE ---
       await authService.register({ ...formData, role });
-      
       toast.success("Compte créé et validé avec succès ! 🎉");
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
@@ -92,6 +88,7 @@ const handleRegister = async (e) => {
         .fade-up { animation: fadeInUp 0.6s ease-out; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         input:focus { border-color: #1a1a18 !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(26, 26, 24, 0.06) !important; outline: none; }
+        select:focus { border-color: #1a1a18 !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(26, 26, 24, 0.06) !important; outline: none; }
         .error-input { border-color: #ef4444 !important; background-color: #fff5f5 !important; }
       `}</style>
 
@@ -189,12 +186,23 @@ const handleRegister = async (e) => {
               ) : (
                 <div style={styles.grid} className="fade-up">
                   <div style={styles.inputGroup}>
-                    <label style={styles.label}>Spécialité</label>
-                    <input name="specialite" placeholder="Bovins" style={styles.inputSpecVeto} onChange={handleChange} required />
+                    <label style={styles.label}>Spécialité principale</label>
+                    <select 
+                      name="specialite" 
+                      style={styles.inputSpecVeto} 
+                      value={formData.specialite} 
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">-- Choisir --</option>
+                      <option value="Bovins">Bovins (Vaches, Veaux)</option>
+                      <option value="Volailles">Volailles (Poulets, Dindes)</option>
+                      <option value="Ovins">Ovins (Moutons, Chèvres)</option>
+                    </select>
                   </div>
                   <div style={styles.inputGroup}>
                     <label style={styles.label}>N° Ordre CNOMVT</label>
-                    <input name="numeroOrdreVeterinaire" placeholder="VT-2026-XXXX" style={styles.inputSpecVeto} onChange={handleChange} required />
+                    <input name="diplome" placeholder="VT-2026-XXXX" style={styles.inputSpecVeto} onChange={handleChange} required />
                   </div>
                 </div>
               )}
@@ -238,7 +246,7 @@ const styles = {
   label: { fontSize: '13px', fontWeight: '600', color: '#1a1a18', display: 'flex', alignItems: 'center', gap: '6px' },
   input: { padding: '14px', borderRadius: '12px', border: '1.5px solid #e8e7e2', background: '#f9f9f7', fontSize: '14px', transition: '0.2s', outline: 'none' },
   inputSpec: { padding: '14px', borderRadius: '12px', border: '1.5px solid #dcfce7', background: '#f0fdf4', fontSize: '14px', outline: 'none' },
-  inputSpecVeto: { padding: '14px', borderRadius: '12px', border: '1.5px solid #dbeafe', background: '#eff6ff', fontSize: '14px', outline: 'none' },
+  inputSpecVeto: { width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #dbeafe', background: '#eff6ff', fontSize: '14px', outline: 'none' },
   dynamicWrapper: { minHeight: '80px' },
   button: { padding: '16px', borderRadius: '14px', border: 'none', background: '#1a1a18', color: '#fff', fontSize: '15px', fontWeight: '600', marginTop: '10px', cursor: 'pointer' },
   errorBox: { padding: '12px', borderRadius: '12px', background: '#fef2f2', color: '#ef4444', fontSize: '13px', fontWeight: '600', textAlign: 'center' },
