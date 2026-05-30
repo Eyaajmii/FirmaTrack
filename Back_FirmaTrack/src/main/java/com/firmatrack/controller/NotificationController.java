@@ -29,10 +29,25 @@ public class NotificationController {
                 .orElseThrow(() -> new RuntimeException("Profil Fermier introuvable !"));
     }
 
-    // GET : Toutes mes alertes (Sécurisé par Token)
     @GetMapping
-    public ResponseEntity<List<Notification>> getMyNotifications() {
-        Fermier fermier = getCurrentFermier();
+    public ResponseEntity<?> getMyNotifications() {
+        // 1. Récupérer l'utilisateur connecté
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByEmail(email);
+        
+        if (user == null) {
+            return ResponseEntity.status(403).body("Utilisateur non trouvé !");
+        }
+
+        // 2. SÉCURITÉ DOUBLE RÔLE : Si c'est un Vétérinaire, on renvoie une liste vide !
+        if ("VETERINAIRE".equalsIgnoreCase(user.getRole())) {
+            return ResponseEntity.ok(java.util.Collections.emptyList()); // Pas de crash !
+        }
+
+        // 3. Si c'est un Fermier, on récupère ses vraies alertes régionales
+        Fermier fermier = fermierRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Profil Fermier introuvable !"));
+                
         return ResponseEntity.ok(notificationRepo.findByFermierIdOrderByCreatedAtDesc(fermier.getId()));
     }
 

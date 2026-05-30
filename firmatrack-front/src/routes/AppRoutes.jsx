@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import CheptelPage from "../features/cheptel/pages/CheptelPage";
@@ -27,6 +28,8 @@ import VigilanceSanitaire from "../features/veterinaire/pages/VigilanceSanitaire
 
 import NotificationsPage from "../features/notifications/pages/NotificationsPage";
 
+import AdminDashboard from "../features/auth/AdminDashboard"; 
+
 const AppRoutes = () => {
   const userRole = localStorage.getItem("user_role");
 
@@ -38,8 +41,10 @@ const AppRoutes = () => {
       <Route
         path="/"
         element={
-          isVeterinaire ? (
-            <Navigate to="/veterinaire-dashboard" replace />
+          userRole === "ADMIN" ? (
+            <Navigate to="/admin-dashboard" replace />
+          ) : isVeterinaire ? (
+            <Navigate to="/veterinaire-dashboard" replace /> // Correction de l'espace indésirable
           ) : (
             <Navigate to="/cheptel" replace />
           )
@@ -169,10 +174,13 @@ const AppRoutes = () => {
 
       <Route
         path="/profile"
-        element={isFermier || isVeterinaire ? <ProfilePage /> : <Navigate to="/" />}
+        element={isFermier || isVeterinaire || userRole === "ADMIN" ? <ProfilePage /> : <Navigate to="/" />}
       />
       <Route path="/vigilance" element={isFermier || isVeterinaire || userRole === "ADMIN" ? <VigilanceSanitaire /> : <Navigate to="/" />} />
-
+      <Route 
+        path="/admin-dashboard" 
+        element={userRole === "ADMIN" ? <AdminDashboard /> : <Navigate to="/" />} 
+      />
       <Route path="/notifications" element={isFermier || isVeterinaire || userRole === "ADMIN" ? <NotificationsPage /> : <Navigate to="/" />} />
       {/* 7. Page 404 - Fallback */}
       <Route

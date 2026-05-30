@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import api from '../../api/api';
 
 const ChevronIcon = ({ open }) => (
   <svg
@@ -35,7 +36,7 @@ const allNavItems = [
   },
   {
     section: "Gestion",
-    roles: ["FERMIER", "ADMIN"],
+    roles: ["FERMIER"],
     items: [
       {
         to: "/cheptel",
@@ -121,7 +122,7 @@ const allNavItems = [
   },
   {
     section: "Production",
-    roles: ["FERMIER", "ADMIN"],
+    roles: ["FERMIER"],
     items: [
       {
         to: "/production-lait",
@@ -174,7 +175,7 @@ const allNavItems = [
   },
   {
     section: "Santé",
-    roles: ["FERMIER", "ADMIN", "VETERINAIRE"],
+    roles: ["FERMIER","VETERINAIRE"],
     items: [
       {
         to: "/carnetsante",
@@ -227,7 +228,7 @@ const allNavItems = [
   },
   {
     section: "Économie",
-    roles: ["FERMIER", "ADMIN"],
+    roles: ["FERMIER"],
     items: [
       {
         to: "/finance",
@@ -270,7 +271,7 @@ const allNavItems = [
   },
   {
     section: "Vétérianire",
-    roles: ["FERMIER", "ADMIN"],
+    roles: ["FERMIER"],
     items: [
       {
         to: "/veterinairesproches",
@@ -297,7 +298,7 @@ const allNavItems = [
   },
   {
     section: "Communauté",
-    roles: ["FERMIER", "ADMIN", "VETERINAIRE"],
+    roles: ["FERMIER", "VETERINAIRE"],
     items: [
       {
         to: "/forum",
@@ -336,7 +337,7 @@ const allNavItems = [
   },
   {
     section: "Paramètres",
-    roles: ["FERMIER", "ADMIN", "VETERINAIRE"],
+    roles: ["FERMIER","VETERINAIRE"],
     items: [
       {
         to: "/profile",
@@ -358,7 +359,6 @@ const allNavItems = [
       {
         to: "/notifications",
         label: "Notifications",
-        badge: "02",
         icon: (
           <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
             <path
@@ -400,6 +400,13 @@ const allNavItems = [
       },
     ],
   },
+  {
+    section: 'Administration',
+    roles: ['ADMIN'],
+    items: [
+      { to: '/profile', label: 'Mon Profil Admin', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> }
+    ]
+  }
 ];
 
 const SubMenu = ({ items, visible, collapsed }) => (
@@ -438,7 +445,6 @@ const W_CLOSED = 56;
 
 const Sidebar = () => {
   const location = useLocation();
-  //const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.clear();
@@ -451,6 +457,26 @@ const Sidebar = () => {
   ).toUpperCase();
   const [collapsed, setCollapsed] = useState(false);
   const [openMenus, setOpenMenus] = useState({ "/lots": true });
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const token = localStorage.getItem('user_token');
+        if (token && userRole === 'FERMIER') { // Seul le fermier a des alertes de ferme
+          const res = await api.get('/notifications');
+          // On filtre les notifications non lues (lu === false)
+          const unread = res.data.filter(n => !n.lu).length;
+          setUnreadCount(unread);
+        }
+      } catch (e) {
+        console.error("Erreur compteur notifications", e);
+      }
+    };
+
+    fetchUnreadCount();
+  }, [userRole, location.pathname]);
+
   const toggleMenu = (key) =>
     setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
 
@@ -458,6 +484,7 @@ const Sidebar = () => {
     group.roles.includes(userRole)
   );
   const userInitial = userName.charAt(0).toUpperCase();
+
 
   return (
     <>
@@ -703,6 +730,10 @@ const Sidebar = () => {
                     );
                   }
 
+                  {/* --- LOGIQUE DE BADGE DYNAMIQUE --- */}
+                  const isNotificationLink = item.to === '/notifications';
+                  const showDynamicBadge = isNotificationLink && unreadCount > 0;
+
                   return (
                     <NavLink key={item.to} to={item.to} className="sb-link"
                       end // FORCE L'EXACT MATCH
@@ -721,46 +752,18 @@ const Sidebar = () => {
                       <span style={{ flexShrink: 0 }}>{item.icon}</span>
                       {!collapsed && (
                         <>
-                          <span
-                            style={{
-                              flex: 1,
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                            }}
-                          >
-                            {item.label}
-                          </span>
-                          {item.badge && (
-                            <span
-                              style={{
-                                background: "#e8453c",
-                                color: "#fff",
-                                fontSize: "9px",
-                                fontWeight: "700",
-                                padding: "1px 5px",
-                                borderRadius: "20px",
-                                lineHeight: "14px",
-                                flexShrink: 0,
-                              }}
-                            >
-                              {item.badge}
+                          <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>{item.label}</span>
+                          {/* S'affiche uniquement s'il y a des alertes non lues ! */}
+                          {showDynamicBadge && (
+                            <span style={{ background: '#e8453c', color: '#fff', fontSize: '9px', fontWeight: '700', padding: '1px 6px', borderRadius: '20px', lineHeight: '14px', flexShrink: 0 }}>
+                              {unreadCount < 10 ? `0${unreadCount}` : unreadCount}
                             </span>
                           )}
                         </>
                       )}
-                      {collapsed && item.badge && (
-                        <span
-                          style={{
-                            position: "absolute",
-                            top: "5px",
-                            right: "4px",
-                            width: "6px",
-                            height: "6px",
-                            borderRadius: "50%",
-                            background: "#e8453c",
-                            border: "1.5px solid #faf9f6",
-                          }}
-                        />
+                      {/* Petit point rouge si la Sidebar est réduite */}
+                      {collapsed && showDynamicBadge && (
+                        <span style={{ position: "absolute", top: "5px", right: "4px", width: "6px", height: "6px", borderRadius: "50%", background: "#e8453c", border: "1.5px solid #faf9f6" }}/>
                       )}
                     </NavLink>
                   );
@@ -809,8 +812,10 @@ const Sidebar = () => {
                     )}
                   </div>
                   <div style={{ fontSize: '10px', color: '#a0a098', whiteSpace: 'nowrap' }}>
-                    {userRole === 'VETERINAIRE' ? ' Vétérinaire Expert' : ' Éleveur Producer'}
-                  </div>
+                  {userRole === 'VETERINAIRE' 
+                    ? ' Vétérinaire Expert' 
+                    : (userRole === 'ADMIN' ? ' Administrateur' : ' Éleveur Producteur')
+                  }</div>
                 </div>
               )}
             </div>

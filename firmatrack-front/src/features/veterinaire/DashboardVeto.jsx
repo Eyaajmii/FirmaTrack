@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
-// ── الستيل العام للمشروع (موضّع بالأعلى لتفادي أي أخطاء برمجية) ──
 const s = {
   card: {
     background: '#fff',
@@ -169,10 +168,8 @@ const DashboardVeto = () => {
           </div>
         </header>
 
-        {/* --- تصميم الصفحة بعمود واحد متناسق كامل العرض ── */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           
-          {/* KPI CARDS (3 الأعمدة تأخذ كامل العرض بشكل مريح) */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '12px' }}>
             
             {/* Consultations */}
