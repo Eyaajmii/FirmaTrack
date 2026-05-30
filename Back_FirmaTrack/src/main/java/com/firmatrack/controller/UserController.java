@@ -147,6 +147,8 @@ public class UserController {
             if (dto.getTarifConsultation() != null) v.setTarifConsultation(dto.getTarifConsultation());
             if (dto.getMoyenTransport() != null) v.setMoyenTransport(dto.getMoyenTransport());
             if (dto.getLocalisationCabinet() != null) v.setLocalisation(dto.getLocalisationCabinet());
+            if (dto.getLatitudeCabinet() != null) v.setLatitude(dto.getLatitudeCabinet());
+            if (dto.getLongitudeCabinet() != null) v.setLongitude(dto.getLongitudeCabinet());
             vetRepo.save(v);
         }
 

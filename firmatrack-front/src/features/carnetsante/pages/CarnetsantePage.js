@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import * as service from "../services/CarnetsanteService";
 import CarnetsanteList from "../components/CarnetsanteList";
 import CarnetsanteForm from "../components/CarnetsanteForm";
+import { useToast, ToastContainer } from "../../../components/common/Toast";
 
 function CarnetsantePage() {
   const [carnets, setCarnets] = useState([]);
-  const [selectedCarnet, setSelectedCarnet] = useState(null);
+  const [ setSelectedCarnet] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const { toasts, removeToast, toast } = useToast();
 
   const fetchCarnets = async () => {
     const res = await service.getAllcarnet();
@@ -17,24 +19,29 @@ function CarnetsantePage() {
     fetchCarnets();
   }, []);
 
-const handleAdd = async (data) => {
-  try {
-    await service.createCarnet(data);
-    fetchCarnets();
-    return { success: true };
-  } catch (err) {
-    const msg = err.response?.data || "Erreur lors de l'ajout";
-    return { success: false, message: msg };
-  }
-};
-
-  // 🔴 DELETE
-  const handleDelete = async (id) => {
-    await service.deleteCarnet(id);
-    fetchCarnets();
+  const handleAdd = async (data) => {
+    try {
+      await service.createCarnet(data);
+      fetchCarnets();
+      toast.success(`Carnet ajouté avec succès.`);
+      return { success: true };
+    } catch (err) {
+      toast.error("Échec de l'ajout. Veuillez réessayer.");
+      const msg = err.response?.data || "Erreur lors de l'ajout";
+      return { success: false, message: msg };
+    }
   };
 
-  // 📊 stats
+  const handleDelete = async (id) => {
+    try {
+      await service.deleteCarnet(id);
+      fetchCarnets();
+      toast.success("Carnet supprimé avec succès.");
+    } catch (err) {
+      toast.error("Échec de la suppression. Veuillez réessayer.");
+    }
+  };
+
   const stats = {
     total: carnets.length,
     avecMaladies: carnets.filter((c) => c.maladies?.length > 0).length,
@@ -42,145 +49,154 @@ const handleAdd = async (data) => {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f7f6f4", padding: "2rem" }}>
-      <div style={{ maxWidth: "960px", margin: "0 auto" }}>
-        {/* HEADER */}
-        <div style={{ marginBottom: "2rem" }}>
-          <div
-            style={{ fontSize: "11px", color: "#b0afa9", marginBottom: "6px" }}
-          >
-            Ferme El Baraka /{" "}
-            <span style={{ color: "#1a1a18" }}>Carnet de santé</span>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <h1 style={{ fontSize: "22px", fontWeight: "500" }}>
-              Carnet de santé des animaux
-            </h1>
-
-            {/* ➕ ADD BUTTON */}
-            <button
-              onClick={() => setShowForm(true)}
+    <>
+      <ToastContainer toasts={toasts} onClose={removeToast} />
+      <div
+        style={{ minHeight: "100vh", background: "#f7f6f4", padding: "2rem" }}
+      >
+        <div style={{ maxWidth: "960px", margin: "0 auto" }}>
+          <div style={{ marginBottom: "2rem" }}>
+            <div
               style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "10px",
-                background: "#EAF3DE",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              +
-            </button>
-          </div>
-        </div>
-
-        {/* STATS */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3,1fr)",
-            gap: "12px",
-            marginBottom: "1.5rem",
-          }}
-        >
-          <StatCard
-            label="Total carnets"
-            value={stats.total}
-            icon="heart"
-            color="#3B6D11"
-          />
-          <StatCard
-            label="Maladies"
-            value={stats.avecMaladies}
-            icon="virus"
-            color="#A32D2D"
-          />
-          <StatCard
-            label="Vaccins"
-            value={stats.avecVaccins}
-            icon="syringe"
-            color="#854F0B"
-          />
-        </div>
-
-        {/* TABLE */}
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: "14px",
-            border: "0.5px solid #e8e7e2",
-            padding: "1.5rem",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "1rem",
-            }}
-          >
-            <span style={{ fontSize: "14px", fontWeight: "500" }}>
-              Liste des carnets
-            </span>
-
-            <span
-              style={{
-                background: "#f1f0ec",
-                padding: "3px 10px",
-                borderRadius: "20px",
                 fontSize: "11px",
+                color: "#b0afa9",
+                marginBottom: "6px",
               }}
             >
-              {carnets.length} carnets
-            </span>
+              Ferme El Baraka /{" "}
+              <span style={{ color: "#1a1a18" }}>Carnet de santé</span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <h1 style={{ fontSize: "22px", fontWeight: "500" }}>
+                Carnet de santé des animaux
+              </h1>
+              <button
+                onClick={() => setShowForm(true)}
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "10px",
+                  background: "#EAF3DE",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M8 3v10M3 8h10"
+                    stroke="#3B6D11"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
 
-          <CarnetsanteList
-            carnets={carnets}
-            onDelete={handleDelete}
-            onSelect={setSelectedCarnet}
-          />
-        </div>
-      </div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3,1fr)",
+              gap: "12px",
+              marginBottom: "1.5rem",
+            }}
+          >
+            <StatCard
+              label="Total carnets"
+              value={stats.total}
+              icon="heart"
+              color="#3B6D11"
+            />
+            <StatCard
+              label="Maladies"
+              value={stats.avecMaladies}
+              icon="virus"
+              color="#A32D2D"
+            />
+            <StatCard
+              label="Vaccins"
+              value={stats.avecVaccins}
+              icon="syringe"
+              color="#854F0B"
+            />
+          </div>
 
-      {/* 🟢 FORM MODAL */}
-      {showForm && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowForm(false);
-          }}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.35)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 50,
-          }}
-        >
-          <div style={{ width: "100%", maxWidth: "480px" }}>
-            <CarnetsanteForm
-              onAdd={(data) => {
-                handleAdd(data);
-                setShowForm(false);
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "14px",
+              border: "0.5px solid #e8e7e2",
+              padding: "1.5rem",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "1rem",
               }}
+            >
+              <span style={{ fontSize: "14px", fontWeight: "500" }}>
+                Liste des carnets
+              </span>
+              <span
+                style={{
+                  background: "#f1f0ec",
+                  padding: "3px 10px",
+                  borderRadius: "20px",
+                  fontSize: "11px",
+                }}
+              >
+                {carnets.length} carnets
+              </span>
+            </div>
+            <CarnetsanteList
+              carnets={carnets}
+              onDelete={handleDelete}
+              onSelect={setSelectedCarnet}
             />
           </div>
         </div>
-      )}
-    </div>
+
+        {showForm && (
+          <div
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setShowForm(false);
+            }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.35)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 50,
+            }}
+          >
+            <div style={{ width: "100%", maxWidth: "480px" }}>
+              <CarnetsanteForm
+                onAdd={(data) => {
+                  handleAdd(data);
+                  setShowForm(false);
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
-/* ================= STAT CARD ================= */
 const StatCard = ({ label, value, icon, color }) => {
   const icons = {
     heart: (
@@ -224,9 +240,7 @@ const StatCard = ({ label, value, icon, color }) => {
           {icons[icon]}
         </svg>
       </div>
-
       <div style={{ fontSize: "11px", color: "#999" }}>{label}</div>
-
       <div style={{ fontSize: "22px", fontWeight: "500" }}>{value}</div>
     </div>
   );

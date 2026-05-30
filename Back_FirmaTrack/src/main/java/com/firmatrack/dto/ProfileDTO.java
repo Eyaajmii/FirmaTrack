@@ -28,6 +28,8 @@ public class ProfileDTO {
     private Double tarifConsultation;
     private String moyenTransport;
     private String localisationCabinet; 
+    private Double latitudeCabinet;
+    private Double longitudeCabinet;
 
     // Sécurité - US 65
     private String nouveauPassword;

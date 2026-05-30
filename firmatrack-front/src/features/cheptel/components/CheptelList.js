@@ -165,12 +165,22 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
                     </button>
                     {isConfirm ? (
                       <>
-                        <button onClick={() => onDelete(animal.id)}>Oui</button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation(); // ← ajouté
+                            onDelete(animal.id);
+                            setConfirmDeleteId(null); // ← ajouté
+                          }}
+                          style={actionBtn("confirm")}
+                        >
+                          Oui
+                        </button>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setConfirmDeleteId(null);
                           }}
+                          style={actionBtn()}
                         >
                           Non
                         </button>
@@ -181,15 +191,7 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
                           e.stopPropagation();
                           setConfirmDeleteId(animal.id);
                         }}
-                        style={{
-                          padding: "4px 10px",
-                          borderRadius: "7px",
-                          fontSize: "11px",
-                          border: "0.5px solid #e8e7e2",
-                          background: "#fff",
-                          cursor: "pointer",
-                          color: "red",
-                        }}
+                        style={actionBtn("danger")}
                       >
                         Supprimer
                       </button>
