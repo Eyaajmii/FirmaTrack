@@ -123,8 +123,6 @@ const ProfilePage = () => {
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
           );
           const data = await res.json();
-
-          // ✅ Setter fonctionnel => toujours le state le plus récent
           setFormData((prev) => ({
             ...prev,
             latitudeCabinet: lat,
@@ -134,7 +132,6 @@ const ProfilePage = () => {
 
           toast.success("📍 Position GPS enregistrée !", { id: "gps" });
         } catch (err) {
-          // Si Nominatim échoue, on enregistre quand même lat/lng
           setFormData((prev) => ({
             ...prev,
             latitudeCabinet: lat,
@@ -182,50 +179,50 @@ const ProfilePage = () => {
         </header>
 
         {/* CARD PRINCIPALE */}
-        <div style={s.card}>
-          <form onSubmit={handleSubmit} style={s.form}>
+        <div style={styles.card}>
+          <form onSubmit={handleSubmit} style={styles.form}>
             
             {/* SECTION 1 : INFOS PERSOS (US 64) */}
             <div>
-              <div style={s.sectionHeader}>Informations personnelles</div>
-              <div style={s.grid}>
+              <div style={styles.sectionHeader}>Informations personnelles</div>
+              <div style={styles.grid}>
                 <div>
-                  <label style={s.label}>Nom complet</label>
-                  <input type="text" name="name" style={s.input} value={formData.name} onChange={handleChange} required />
+                  <label style={styles.label}>Nom complet</label>
+                  <input type="text" name="name" style={styles.input} value={formData.name} onChange={handleChange} required />
                 </div>
                 <div>
-                  <label style={s.label}>Téléphone</label>
-                  <input type="text" name="telephone" style={s.input} value={formData.telephone} onChange={handleChange} required />
+                  <label style={styles.label}>Téléphone</label>
+                  <input type="text" name="telephone" style={styles.input} value={formData.telephone} onChange={handleChange} required />
                 </div>
               </div>
               <div style={{ maxWidth: '400px', marginTop: '1.25rem' }}>
-                <label style={s.label}>Adresse / Ville</label>
-                <input type="text" name="adresse" placeholder="Ex: Tunis, Ariana..." style={s.input} value={formData.adresse} onChange={handleChange} />
+                <label style={styles.label}>Adresse / Ville</label>
+                <input type="text" name="adresse" placeholder="Ex: Tunis, Ariana..." style={styles.input} value={formData.adresse} onChange={handleChange} />
               </div>
             </div>
 
             {/* SECTION 2 : ÉLEVEUR (US 62) */}
             {(userRole === 'FERMIER' || userRole === 'ELEVEUR') && (
               <div>
-                <div style={s.sectionHeaderFermer}>Détails de la Ferme</div>
-                <div style={s.grid}>
+                <div style={styles.sectionHeaderFermer}>Détails de la Ferme</div>
+                <div style={styles.grid}>
                   <div>
-                    <label style={s.label}>Nom de la Ferme</label>
-                    <input type="text" name="nomFerme" style={s.inputSpec} value={formData.nomFerme} onChange={handleChange} />
+                    <label style={styles.label}>Nom de la Ferme</label>
+                    <input type="text" name="nomFerme" style={styles.inputSpec} value={formData.nomFerme} onChange={handleChange} />
                   </div>
                   <div>
-                    <label style={s.label}>Surface (Hectares)</label>
-                    <input type="number" name="surfaceFerme" style={s.inputSpec} value={formData.surfaceFerme} onChange={handleChange} />
+                    <label style={styles.label}>Surface (Hectares)</label>
+                    <input type="number" name="surfaceFerme" style={styles.inputSpec} value={formData.surfaceFerme} onChange={handleChange} />
                   </div>
                 </div>
-                <div style={{ ...s.grid, marginTop: '1.25rem' }}>
+                <div style={{ ...styles.grid, marginTop: '1.25rem' }}>
                   <div>
-                    <label style={s.label}>Localisation de la ferme</label>
-                    <input type="text" name="localisationFerme" placeholder="Ex: Béja, Jendouba..." style={s.inputSpec} value={formData.localisationFerme} onChange={handleChange} />
+                    <label style={styles.label}>Localisation de la ferme</label>
+                    <input type="text" name="localisationFerme" placeholder="Ex: Béja, Jendouba..." style={styles.inputSpec} value={formData.localisationFerme} onChange={handleChange} />
                   </div>
                   <div>
-                    <label style={s.label}>Date de création de la ferme</label>
-                    <input type="date" name="dateCreationFerme" style={s.inputSpec} value={formData.dateCreationFerme} onChange={handleChange} />
+                    <label style={styles.label}>Date de création de la ferme</label>
+                    <input type="date" name="dateCreationFerme" style={styles.inputSpec} value={formData.dateCreationFerme} onChange={handleChange} />
                   </div>
                 </div>
               </div>
@@ -275,7 +272,6 @@ const ProfilePage = () => {
                   onChange={handleChange}
                 />
 
-                {/* Affichage lat/lng en temps réel sous l'input */}
                 {(formData.latitudeCabinet || formData.longitudeCabinet) && (
                   <p style={{ fontSize: "11px", color: "#6b7280", marginTop: "4px" }}>
                     📌 Lat : {formData.latitudeCabinet?.toFixed(6)} | Lng :{" "}
@@ -284,7 +280,6 @@ const ProfilePage = () => {
                 )}
 
                 <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-                  {/* ✅ Bouton GPS Auto corrigé */}
                   <button
                     type="button"
                     onClick={handleGPSDirect}
@@ -301,7 +296,6 @@ const ProfilePage = () => {
                   >
                     📍 Auto GPS (rapide)
                   </button>
-
                   {/* Bouton Ouvrir Map */}
                   <button
                     type="button"
@@ -321,8 +315,6 @@ const ProfilePage = () => {
                   </button>
                 </div>
               </div>
-
-              {/* ✅ Modal carte corrigée */}
               {showMap && (
                 <div
                   style={{
@@ -375,8 +367,6 @@ const ProfilePage = () => {
                         ✕ Fermer
                       </button>
                     </div>
-
-                    {/* ✅ onSelect corrigé avec setter fonctionnel */}
                     <LocationPicker
                       onSelect={({ position, address }) => {
                         setFormData((prev) => ({
@@ -519,11 +509,12 @@ const ProfilePage = () => {
         </form>
       </div>
     </div>
+    </div>
   );
 };
 
 // ── SYSTÈME DE STYLES HARMONISÉ ET ÉPURÉ ──
-const s = {
+const styles = {
   card: {
     background: '#fff',
     border: '0.5px solid #e8e7e2',

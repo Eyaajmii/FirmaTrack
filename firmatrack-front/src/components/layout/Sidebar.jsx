@@ -324,14 +324,14 @@ const allNavItems = [
         ),
       },
       { 
-    to: '/vigilance', 
-    label: 'Vigilance Sanitaire',
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      </svg>
-    )
-  }
+        to: '/vigilance', 
+        label: 'Vigilance Sanitaire',
+        icon: (
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+        )
+      },
     ],
   },
   {
@@ -499,7 +499,6 @@ const Sidebar = () => {
           background: 'rgba(250,249,246,0.35)',
         }}/>
 
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
 
         <div
           style={{
