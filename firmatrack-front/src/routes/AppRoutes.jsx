@@ -27,6 +27,7 @@ import VetDetailPage from "../features/veterinaire/pages/VetDetailPage";
 import VigilanceSanitaire from "../features/veterinaire/pages/VigilanceSanitaire";
 
 import NotificationsPage from "../features/notifications/pages/NotificationsPage";
+import CheptelArchivePage from "../features/cheptel/pages/CheptelArchivePage";
 
 import AdminDashboard from "../features/auth/AdminDashboard"; 
 
@@ -78,7 +79,10 @@ const AppRoutes = () => {
         path="/cheptel"
         element={isFermier ? <CheptelPage /> : <Navigate to="/" />}
       />
-
+      <Route
+        path="/cheptelarchive"
+        element={isFermier ? <CheptelArchivePage /> : <Navigate to="/" />}
+      />
       <Route
         path="/production-lait"
         element={isFermier ? <ProductionListPage /> : <Navigate to="/" />}

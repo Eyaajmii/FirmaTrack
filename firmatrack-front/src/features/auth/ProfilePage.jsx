@@ -171,6 +171,7 @@ const s = {
 };
 
 const ProfilePage = () => {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const userRole = localStorage.getItem("user_role");
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
@@ -317,7 +318,7 @@ const ProfilePage = () => {
       <div style={{ minHeight: '100vh', background: '#f7f6f4', padding: '2rem', fontFamily: "'DM Sans', sans-serif" }}>
         
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
-          <span>Ferme El Baraka</span>
+          <span>{farmName}</span>
           <span>/</span>
           <span style={{ color: '#1a1a18' }}>Mon Profil & Configuration</span>
         </div>

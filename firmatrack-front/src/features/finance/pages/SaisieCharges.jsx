@@ -23,6 +23,7 @@ const IconPlus = () => (
 );
 
 const SaisieCharges = () => {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [activeTab, setActiveTab] = useState('EAU_ELEC'); 
   const [loading, setLoading] = useState(false);
   const [allDepenses, setAllDepenses] = useState([]); 
@@ -128,15 +129,14 @@ const SaisieCharges = () => {
 
       <div style={{ minHeight: '100vh', background: '#f7f6f4', padding: '2rem', fontFamily: "'DM Sans', sans-serif" }}>
         
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          
-          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
-            <span>Ferme El Baraka</span>
-            <span>/</span>
-            <span>Analyse Financière</span>
-            <span>/</span>
-            <span style={{ color: '#1a1a18' }}>Enregistrer des charges</span>
-          </div>
+        {/* Breadcrumb */}
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
+          <span> {farmName} </span>
+          <span>/</span>
+          <span>Analyse Financière</span>
+          <span>/</span>
+          <span style={{ color: '#1a1a18' }}>Enregistrer des charges</span>
+        </div>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
             <div>

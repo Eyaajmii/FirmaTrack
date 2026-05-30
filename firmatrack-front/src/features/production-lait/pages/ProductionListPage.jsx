@@ -52,6 +52,7 @@ const signed = (n) => n === 0 ? '0 ce mois' : n > 0 ? `+${n} ce mois` : `${n} ce
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 const ProductionListPage = () => {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [activeTab, setActiveTab] = useState('all');
   const [showForm, setShowForm]   = useState(false);
 
@@ -112,7 +113,7 @@ const ProductionListPage = () => {
         {/* Breadcrumb + title */}
         <div style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
-            <span>Ferme El Baraka</span>
+            <span>{farmName}</span>
             <span>/</span>
             <span style={{ color: '#1a1a18' }}>Production</span>
           </div>

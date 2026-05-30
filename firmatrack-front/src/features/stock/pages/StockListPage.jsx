@@ -6,7 +6,7 @@ import StockForm from '../components/StockForm';
 const StockListPage = () => {
   const [showForm, setShowForm] = useState(false);
   const { stocks, alertes, loading, error, fetchAllStock, fetchAlertes } = useStock();
-
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   useEffect(() => {
     fetchAllStock();
     fetchAlertes();
@@ -28,7 +28,7 @@ const StockListPage = () => {
         {/* Header */}
         <div style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
-            <span>Ferme El Baraka</span> <span>/</span> <span style={{ color: '#1a1a18' }}>Gestion des Stocks</span>
+            <span>{farmName}</span> <span>/</span> <span style={{ color: '#1a1a18' }}>Gestion des Stocks</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <h1 style={{ fontSize: '22px', fontWeight: '500', color: '#1a1a18' }}>Inventaire & Intrants</h1>

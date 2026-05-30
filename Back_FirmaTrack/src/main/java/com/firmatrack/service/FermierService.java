@@ -5,6 +5,7 @@ import com.firmatrack.repository.FermierRepository;
 import com.firmatrack.model.Fermier;
 
 import java.util.List;
+import java.util.Optional;
 @Service
 public class FermierService {
 	@Autowired
@@ -28,5 +29,8 @@ public class FermierService {
 
     public void deleteFarmer(Long id) {
         farmerRepository.deleteById(id);
+    }
+    public Optional<Fermier> getFermierByUserId(Long userId) {
+        return farmerRepository.findByUserId(userId);
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -140,7 +141,12 @@ public class AuthController {
         response.put("userId", user.getId());
         response.put("nom", user.getName());
         response.put("status", user.getStatus());
-        
+        if ("FERMIER".equalsIgnoreCase(user.getRole())) {
+            Optional<Fermier> fermier = fermierService.getFermierByUserId(user.getId());
+            if (fermier.isPresent()) {                             // ← FIX 2
+                response.put("nomFerme", fermier.get().getNomFerme());
+            }
+        }  
         return ResponseEntity.ok(response);
     }
 }

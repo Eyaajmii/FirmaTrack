@@ -127,6 +127,7 @@ const FinanceStatCard = ({ colorKey, label, value, unit, sub, borderColor, icon:
 };
 
 const FinancePage = () => {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [typeFiliere, setTypeFiliere] = useState('LAIT');
   const [analyse, setAnalyse] = useState(null);
   const [repartition, setRepartition] = useState({});
@@ -264,12 +265,22 @@ const FinancePage = () => {
 
       <div style={{ minHeight: '100vh', background: '#f7f6f4', padding: '2rem', fontFamily: "'DM Sans', sans-serif" }}>
         
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          
-          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
-            <span>Ferme El Baraka</span>
-            <span>/</span>
-            <span style={{ color: '#1a1a18' }}>Analyse Financière</span>
+        {/* Breadcrumb */}
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
+          <span>{farmName}</span>
+          <span>/</span>
+          <span style={{ color: '#1a1a18' }}>Analyse Financière</span>
+        </div>
+
+        {/* Titre + actions */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+          <div>
+            <h1 style={{ fontSize: '22px', fontWeight: '500', color: '#1a1a18', letterSpacing: '-0.4px', margin: 0 }}>
+              Analyse Financière
+            </h1>
+            <p style={{ fontSize: '12px', color: '#9a9a96', marginTop: '4px', margin: '4px 0 0' }}>
+              Pilotez la rentabilité de votre exploitation agricole.
+            </p>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>

@@ -17,4 +17,5 @@ public interface cheptelRepository extends JpaRepository<Cheptel, Long> {
     List<Cheptel> findByZoneId(Long zoneId);
     // Filtrer par catégorie
     List<Cheptel> findByCategorieId(Long categorieId);
+    List<Cheptel> findByStatutNot(String statut);
 }

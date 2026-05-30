@@ -5,6 +5,7 @@ import RendezVousFilter from "../components/RendezVousFilter";
 import RendezVousList from "../components/RendezVousList";
 
 function RendezVousPage() {
+    const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [rendezvous, setRendezvous] = useState([]);
   const [selectedRdv, setSelectedRdv] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -111,7 +112,7 @@ function RendezVousPage() {
           <div
             style={{ fontSize: "11px", color: "#b0afa9", marginBottom: "6px" }}
           >
-            Ferme El Baraka /{" "}
+            {farmName} /{" "}
             <span style={{ color: "#1a1a18" }}>Rendez-vous</span>
           </div>
 
