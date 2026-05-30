@@ -61,6 +61,7 @@ const IconAlert = () => (
 );
 
 const NotificationsPage = () => {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -92,7 +93,7 @@ const NotificationsPage = () => {
       <div style={{ maxWidth: '850px', margin: '0 auto' }}>
         
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
-          <span>Ferme El Baraka</span>
+          <span> {farmName} </span>
           <span>/</span>
           <span style={{ color: '#1a1a18' }}>Notifications</span>
         </div>

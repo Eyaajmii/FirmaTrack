@@ -10,9 +10,11 @@ public class CheptelService {
 	@Autowired
 	private cheptelRepository cheptelrepository;
 	public List<Cheptel> getAllAnimals() {
-        return cheptelrepository.findAll();
+	    return cheptelrepository.findByStatutNot("ARCHIVED");
     }
-
+	public List<Cheptel> getArchivedAnimals() {
+	    return cheptelrepository.findByStatut("ARCHIVED");
+	}
     public Cheptel getAnimalById(Long id) {
         return cheptelrepository.findById(id).orElse(null);
     }
@@ -41,7 +43,22 @@ public class CheptelService {
         return cheptelrepository.save(ch);
     }
 
-    public void deleteAnimal(Long id) {
-    	cheptelrepository.deleteById(id);
+    public void archiveAnimal(Long id) {
+
+        Cheptel animal = cheptelrepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Animal introuvable"));
+
+        animal.setStatut("ARCHIVED");
+
+        cheptelrepository.save(animal);
+    }
+    public Cheptel restoreAnimal(Long id) {
+
+        Cheptel animal = cheptelrepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Animal introuvable"));
+
+        animal.setStatut("ALIVE");
+
+        return cheptelrepository.save(animal);
     }
 }

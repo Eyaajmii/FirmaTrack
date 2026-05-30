@@ -349,6 +349,7 @@ const iStyle = {
 };
 
 function CheptelEditPage() {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -467,7 +468,7 @@ function CheptelEditPage() {
                 marginBottom: "6px",
               }}
             >
-              <span>Ferme El Baraka</span>
+              <span>{farmName}</span>
               <span>/</span>
               <span
                 onClick={() => navigate("/cheptel")}

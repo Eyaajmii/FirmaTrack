@@ -1,179 +1,129 @@
 import { useEffect, useState } from "react";
 import * as service from "../services/CheptelService";
-import CheptelForm from "../components/CheptelForm";
-import CheptelFilter from "../components/CheptelFilter";
-import CheptelList from "../components/CheptelList";
+import ListeCheptelArchive from "../components/ListeCheptelArchive";
 import { useToast, ToastContainer } from "../../../components/common/Toast";
 
-function CheptelPage() {
+function CheptelArchivePage() {
   const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [animals, setAnimals] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [search, setSearch] = useState("");
   const [selectedAnimal, setSelectedAnimal] = useState(null);
-  const [showForm, setShowForm] = useState(false);
+
   const { toasts, removeToast, toast } = useToast();
 
-  const fetchAnimals = async () => {
+  const fetchArchives = async () => {
     try {
-      const res = await service.getAllAnimals();
-
-      console.log("API RESPONSE:", res.data);
-
+      const res = await service.getArchivedAnimals();
       const data = res?.data;
 
       if (Array.isArray(data)) {
         setAnimals(data);
+        setFiltered(data);
       } else {
         setAnimals([]);
-        console.error("Invalid API response:", data);
+        setFiltered([]);
       }
     } catch (err) {
       console.error(err);
       setAnimals([]);
+      setFiltered([]);
     }
   };
 
   useEffect(() => {
-    fetchAnimals();
+    fetchArchives();
   }, []);
+  const handleSearch = (value) => {
+    setSearch(value);
 
-  const handleAdd = async (data) => {
-    try {
-      await service.createAnimal(data);
-      fetchAnimals();
-      toast.success(`"${data.nom}" ajouté aux cheptels avec succès.`);
-    } catch (err) {
-      toast.error("Échec de l'enregistrement. Veuillez réessayer.");
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await service.deleteAnimal(id);
-      fetchAnimals();
-      toast.success("Animal archivé avec succès.");
-    } catch (err) {
-      toast.error("Échec de la archive. Veuillez réessayer.");
-    }
-  };
-
-  const handleFilter = async (status) => {
-    if (!status) {
-      fetchAnimals();
-      return;
-    }
-    const res = await service.getByStatus(status);
-    setAnimals(res.data);
-  };
-
-  const handleSearch = async (value) => {
     if (!value) {
-      fetchAnimals();
+      setFiltered(animals);
       return;
     }
-    try {
-      const res = await service.getByNumber(value);
-      setAnimals([res.data]);
-    } catch {
-      setAnimals([]);
-    }
+
+    const v = value.toLowerCase();
+
+    const result = animals.filter(
+      (a) =>
+        a.nom?.toLowerCase().includes(v) ||
+        a.chepnumber?.toLowerCase().includes(v)
+    );
+
+    setFiltered(result);
+  };
+  const handleReset = () => {
+    setSearch("");
+    setFiltered(animals);
   };
 
+  const handleRestore = async (id) => {
+    try {
+      await service.restoreAnimal(id);
+      toast.success("Animal restauré avec succès");
+      fetchArchives();
+    } catch (err) {
+      toast.error("Erreur lors de la restauration");
+    }
+  };
   const statuts = {
-    ALIVE: animals.filter((a) => a.statut === "ALIVE").length,
-    SOLD: animals.filter((a) => a.statut === "SOLD").length,
-    DEAD: animals.filter((a) => a.statut === "DEAD").length,
+    TOTAL: animals.length,
+    FILTERED: filtered.length,
   };
 
   return (
     <>
       <ToastContainer toasts={toasts} onClose={removeToast} />
+
       <div
-        style={{ minHeight: "100vh", background: "#f7f6f4", padding: "2rem" }}
+        style={{
+          minHeight: "100vh",
+          background: "#f7f6f4",
+          padding: "2rem",
+        }}
       >
         <div style={{ maxWidth: "960px", margin: "0 auto" }}>
           <div style={{ marginBottom: "2rem" }}>
             <div
               style={{
-                display: "flex",
-                gap: "6px",
-                alignItems: "center",
                 fontSize: "11px",
                 color: "#b0afa9",
                 marginBottom: "6px",
               }}
             >
-              <span>{farmName}</span>
-              <span>/</span>
-              <span style={{ color: "#1a1a18" }}>Cheptel</span>
+              {farmName} / Cheptel / Archives
             </div>
-            <div
+
+            <h1
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
+                fontSize: "22px",
+                fontWeight: "500",
+                color: "#1a1a18",
               }}
             >
-              <h1
-                style={{
-                  fontSize: "22px",
-                  fontWeight: "500",
-                  color: "#1a1a18",
-                  letterSpacing: "-0.4px",
-                }}
-              >
-                Cheptel
-              </h1>
-              <button
-                onClick={() => setShowForm(true)}
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "10px",
-                  background: "#EAF3DE",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                title="Ajouter un animal"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M8 3v10M3 8h10"
-                    stroke="#3B6D11"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button>
-            </div>
+              Cheptel archivé
+            </h1>
           </div>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, minmax(0,1fr))",
+              gridTemplateColumns: "repeat(2,1fr)",
               gap: "12px",
-              marginBottom: "1.5rem",
+              marginBottom: "1.25rem",
             }}
           >
             <StatCard
               color="green"
-              label="Vivants"
-              value={statuts.ALIVE}
-              sub={`sur ${animals.length} animaux`}
+              label="Total archives"
+              value={statuts.TOTAL}
+              sub="animaux archivés"
             />
+
             <StatCard
               color="amber"
-              label="Vendus"
-              value={statuts.SOLD}
-              sub="cette période"
-            />
-            <StatCard
-              color="red"
-              label="Décédés"
-              value={statuts.DEAD}
-              sub="cette période"
+              label="Résultats affichés"
+              value={statuts.FILTERED}
+              sub="après filtre"
             />
           </div>
           <div
@@ -187,9 +137,9 @@ function CheptelPage() {
             <div
               style={{
                 display: "flex",
-                alignItems: "center",
                 justifyContent: "space-between",
-                marginBottom: "1.25rem",
+                alignItems: "center",
+                marginBottom: "1rem",
               }}
             >
               <span
@@ -199,8 +149,9 @@ function CheptelPage() {
                   color: "#1a1a18",
                 }}
               >
-                Cheptels
+                Archives
               </span>
+
               <span
                 style={{
                   background: "#f1f0ec",
@@ -208,79 +159,53 @@ function CheptelPage() {
                   padding: "3px 10px",
                   borderRadius: "20px",
                   fontSize: "11px",
-                  fontWeight: "500",
                 }}
               >
-                {animals.length} animaux
+                {filtered.length} animaux
               </span>
             </div>
-
-            <CheptelFilter
-              onFilter={handleFilter}
-              onSearch={handleSearch}
-              onReset={fetchAnimals}
-            />
-
-            <div style={{ marginTop: "1.25rem" }}>
-              <CheptelList
-                animals={animals}
-                onDelete={handleDelete}
-                onSelect={setSelectedAnimal}
-              />
-            </div>
-          </div>
-        </div>
-        {showForm && (
-          <div
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setShowForm(false);
-            }}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(26,26,24,0.35)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 50,
-              padding: "1rem",
-            }}
-          >
             <div
-              style={{ width: "100%", maxWidth: "480px", position: "relative" }}
+              style={{
+                display: "flex",
+                gap: "10px",
+                marginBottom: "1.25rem",
+              }}
             >
+              <div style={{ position: "relative", flex: 1 }}>
+                <input
+                  value={search}
+                  placeholder="Rechercher par nom ou numéro..."
+                  onChange={(e) => handleSearch(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "10px 10px",
+                    borderRadius: "10px",
+                    border: "0.5px solid #e8e7e2",
+                    fontSize: "13px",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
               <button
-                onClick={() => setShowForm(false)}
+                onClick={handleReset}
                 style={{
-                  position: "absolute",
-                  top: "-12px",
-                  right: "-12px",
-                  width: "28px",
-                  height: "28px",
-                  borderRadius: "50%",
-                  background: "#fff",
+                  padding: "9px 14px",
                   border: "0.5px solid #e8e7e2",
+                  borderRadius: "9px",
+                  fontSize: "12px",
+                  background: "#fff",
                   cursor: "pointer",
-                  fontSize: "16px",
-                  color: "#6b6b67",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  zIndex: 1,
                 }}
               >
-                ×
+                Réinitialiser
               </button>
-              <CheptelForm
-                onAdd={(data) => {
-                  handleAdd(data);
-                  setShowForm(false);
-                }}
-              />
             </div>
+            <ListeCheptelArchive animals={filtered} onRestore={handleRestore} onSelect={setSelectedAnimal}/>
           </div>
-        )}
-        {selectedAnimal && (
+        </div>
+      </div>
+      {selectedAnimal && (
           <div
             onClick={(e) => {
               if (e.target === e.currentTarget) setSelectedAnimal(null);
@@ -480,19 +405,17 @@ function CheptelPage() {
             </div>
           </div>
         )}
-      </div>
     </>
   );
 }
-
 const colors = {
   green: { bg: "#EAF3DE", stroke: "#3B6D11", sub: "#2f7c4d" },
   amber: { bg: "#FAEEDA", stroke: "#854F0B", sub: "#854F0B" },
-  red: { bg: "#FCEBEB", stroke: "#A32D2D", sub: "#A32D2D" },
+  red:   { bg: "#FCEBEB", stroke: "#A32D2D", sub: "#A32D2D" },
 };
+const StatCard = ({ color = "green", label, value, sub }) => {
+  const c = colors[color] ?? colors.green;
 
-const StatCard = ({ color, label, value, sub }) => {
-  const c = colors[color];
   return (
     <div
       style={{
@@ -524,6 +447,7 @@ const StatCard = ({ color, label, value, sub }) => {
           />
         </svg>
       </div>
+
       <div
         style={{
           fontSize: "11px",
@@ -534,6 +458,7 @@ const StatCard = ({ color, label, value, sub }) => {
       >
         {label}
       </div>
+
       <div
         style={{
           fontSize: "24px",
@@ -544,6 +469,7 @@ const StatCard = ({ color, label, value, sub }) => {
       >
         {value}
       </div>
+
       <div style={{ fontSize: "11px", color: c.sub, marginTop: "6px" }}>
         {sub}
       </div>
@@ -551,31 +477,31 @@ const StatCard = ({ color, label, value, sub }) => {
   );
 };
 function Row({ label, value }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "8px 0",
-        borderBottom: "0.5px solid #f0efe9",
-      }}
-    >
-      <span
+    return (
+      <div
         style={{
-          fontSize: "11px",
-          color: "#9a9a96",
-          fontWeight: "500",
-          textTransform: "uppercase",
-          letterSpacing: "0.04em",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "8px 0",
+          borderBottom: "0.5px solid #f0efe9",
         }}
       >
-        {label}
-      </span>
-      <span style={{ fontSize: "12px", color: "#1a1a18", fontWeight: "500" }}>
-        {value}
-      </span>
-    </div>
-  );
+        <span
+          style={{
+            fontSize: "11px",
+            color: "#9a9a96",
+            fontWeight: "500",
+            textTransform: "uppercase",
+            letterSpacing: "0.04em",
+          }}
+        >
+          {label}
+        </span>
+        <span style={{ fontSize: "12px", color: "#1a1a18", fontWeight: "500" }}>
+          {value}
+        </span>
+      </div>
+    );
 }
-export default CheptelPage;
+export default CheptelArchivePage;

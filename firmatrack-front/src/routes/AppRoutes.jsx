@@ -26,6 +26,7 @@ import VetDetailPage from "../features/veterinaire/pages/VetDetailPage";
 import VigilanceSanitaire from "../features/veterinaire/pages/VigilanceSanitaire";
 
 import NotificationsPage from "../features/notifications/pages/NotificationsPage";
+import CheptelArchivePage from "../features/cheptel/pages/CheptelArchivePage";
 
 const AppRoutes = () => {
   const userRole = localStorage.getItem("user_role");
@@ -73,7 +74,10 @@ const AppRoutes = () => {
         path="/cheptel"
         element={isFermier ? <CheptelPage /> : <Navigate to="/" />}
       />
-
+      <Route
+        path="/cheptelarchive"
+        element={isFermier ? <CheptelArchivePage /> : <Navigate to="/" />}
+      />
       <Route
         path="/production-lait"
         element={isFermier ? <ProductionListPage /> : <Navigate to="/" />}

@@ -4,6 +4,7 @@ import { lotService } from "../Services/LotService";
 import LotList from "../Components/LotList";
 
 function LotPage() {
+    const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [lots, setLots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedLot, setSelectedLot] = useState(null);
@@ -56,7 +57,7 @@ function LotPage() {
               marginBottom: "6px",
             }}
           >
-            <span>Ferme El Baraka</span>
+            <span>{farmName}</span>
             <span>/</span>
             <span style={{ color: "#1a1a18" }}>Lots</span>
           </div>

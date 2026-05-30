@@ -167,9 +167,9 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
                       <>
                         <button
                           onClick={(e) => {
-                            e.stopPropagation(); // ← ajouté
+                            e.stopPropagation(); 
                             onDelete(animal.id);
-                            setConfirmDeleteId(null); // ← ajouté
+                            setConfirmDeleteId(null); 
                           }}
                           style={actionBtn("confirm")}
                         >
@@ -193,7 +193,7 @@ const CheptelList = ({ animals, onDelete, onSelect }) => {
                         }}
                         style={actionBtn("danger")}
                       >
-                        Supprimer
+                        Archiver
                       </button>
                     )}
                   </div>

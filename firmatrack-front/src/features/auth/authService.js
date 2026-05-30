@@ -23,6 +23,11 @@ const login = async (email, password) => {
     localStorage.setItem('user_id', response.data.userId);
     localStorage.setItem('user_status', response.data.status); 
   }
+  if (response.data.role === "FERMIER" && response.data.nomFerme) {
+    localStorage.setItem("farm_name", response.data.nomFerme);
+  } else {
+    localStorage.removeItem("farm_name");
+  }
   return response.data;
 };
 
@@ -32,6 +37,7 @@ const logout = () => {
   localStorage.removeItem('user_role');
   localStorage.removeItem('user_name');
   localStorage.removeItem('user_id');
+  localStorage.removeItem("farm_name");
   // Nraja3 l-user lel login
   window.location.href = '/login';
 };

@@ -35,12 +35,38 @@ public class CheptelController {
         // FERMIER → voir seulement ses animaux
         if ("FERMIER".equalsIgnoreCase(user.getRole())) {
             Fermier fermier = user.getFermier();
-            return fermier.getCheptels();
+            return fermier.getCheptels()
+                    .stream()
+                    .filter(c -> !"ARCHIVED".equalsIgnoreCase(c.getStatut()))
+                    .toList();
         }
 
         throw new RuntimeException("Accès refusé !");
     }
+    @GetMapping("/archives")
+    public List<Cheptel> getArchivedAnimals() {
 
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByEmail(email);
+
+        // ADMIN → voit toutes les archives
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            return cheptelservice.getArchivedAnimals();
+        }
+
+        // FERMIER → voit uniquement ses archives
+        if ("FERMIER".equalsIgnoreCase(user.getRole())) {
+
+            Fermier fermier = user.getFermier();
+
+            return fermier.getCheptels()
+                    .stream()
+                    .filter(c -> "ARCHIVED".equalsIgnoreCase(c.getStatut()))
+                    .toList();
+        }
+
+        throw new RuntimeException("Accès refusé !");
+    }
     @GetMapping("/{id}")
     public Cheptel getAnimalById(@PathVariable Long id) {
         return cheptelservice.getAnimalById(id);
@@ -125,7 +151,7 @@ public class CheptelController {
 
         // ADMIN → delete tout
         if ("ADMIN".equalsIgnoreCase(user.getRole())) {
-            cheptelservice.deleteAnimal(id);
+            cheptelservice.archiveAnimal(id);
             return;
         }
 
@@ -136,8 +162,37 @@ public class CheptelController {
                 throw new RuntimeException("Accès refusé !");
             }
 
-            cheptelservice.deleteAnimal(id);
+            cheptelservice.archiveAnimal(id);
             return;
+        }
+
+        throw new RuntimeException("Accès refusé !");
+    }
+    @PutMapping("/restore/{id}")
+    public Cheptel restoreAnimal(@PathVariable Long id) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByEmail(email);
+
+        Cheptel animal = cheptelservice.getAnimalById(id);
+
+        if (animal == null) {
+            throw new RuntimeException("Animal introuvable !");
+        }
+
+        // ADMIN
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            return cheptelservice.restoreAnimal(id);
+        }
+
+        // FERMIER
+        if ("FERMIER".equalsIgnoreCase(user.getRole())) {
+
+            if (!animal.getFermier().getId().equals(user.getFermier().getId())) {
+                throw new RuntimeException("Accès refusé !");
+            }
+
+            return cheptelservice.restoreAnimal(id);
         }
 
         throw new RuntimeException("Accès refusé !");

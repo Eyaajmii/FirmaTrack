@@ -5,6 +5,7 @@ import CarnetsanteForm from "../components/CarnetsanteForm";
 import { useToast, ToastContainer } from "../../../components/common/Toast";
 
 function CarnetsantePage() {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [carnets, setCarnets] = useState([]);
   const [ setSelectedCarnet] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -63,7 +64,7 @@ function CarnetsantePage() {
                 marginBottom: "6px",
               }}
             >
-              Ferme El Baraka /{" "}
+              {farmName} /{" "}
               <span style={{ color: "#1a1a18" }}>Carnet de santé</span>
             </div>
             <div

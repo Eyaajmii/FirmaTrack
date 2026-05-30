@@ -5,7 +5,6 @@ import financeService from '../services/financeService';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-// --- الأيقونات الخاصة بكروت الإحصائيات (KPI Icons) ---
 const IconProduction = ({ color }) => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
     <path d="M3 5.5h10v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7zM5.5 5.5V3a2.5 2.5 0 015 0v2.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
@@ -33,7 +32,6 @@ const IconTotal = ({ color }) => (
   </svg>
 );
 
-// --- الأيقونات العامة للصفحة ---
 const IconPlus = () => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
     <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -73,7 +71,6 @@ const IconStar = ({ filled }) => (
   </svg>
 );
 
-// MAPPING DES CATÉGORIES (couleurs cohérentes avec le projet)
 const CATEGORY_MAP = {
   ALIMENTATION:      { label: 'Alimentation / Fourrage', color: '#d97706', bg: '#FAEEDA' },
   SANTE_VETERINAIRE: { label: 'Santé & Vétérinaire',     color: '#2563eb', bg: '#eff6ff' },
@@ -92,7 +89,6 @@ const renderStars = (score) => {
   );
 };
 
-// --- STAT CARD (pattern CheptelPage) ---
 const FinanceStatCard = ({ colorKey, label, value, unit, sub, borderColor, icon: IconComponent }) => {
   const colorMap = {
     green:  { bg: '#EAF3DE', stroke: '#3B6D11', sub: '#2a7a4b' },
@@ -132,6 +128,7 @@ const FinanceStatCard = ({ colorKey, label, value, unit, sub, borderColor, icon:
 };
 
 const FinancePage = () => {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [typeFiliere, setTypeFiliere] = useState('LAIT');
   const [analyse, setAnalyse] = useState(null);
   const [repartition, setRepartition] = useState({});
@@ -279,7 +276,7 @@ const FinancePage = () => {
         
         {/* Breadcrumb */}
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
-          <span>Ferme El Baraka</span>
+          <span>{farmName}</span>
           <span>/</span>
           <span style={{ color: '#1a1a18' }}>Analyse Financière</span>
         </div>

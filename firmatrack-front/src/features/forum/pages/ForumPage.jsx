@@ -50,6 +50,7 @@ const CATEGORIES = [
 ];
 
 const ForumPage = () => {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [posts, setPosts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [showForm, setShowForm] = useState(false);
@@ -134,7 +135,7 @@ const ForumPage = () => {
 
         {/* Breadcrumb */}
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
-          <span>Ferme El Baraka</span>
+          <span> {farmName} </span>
           <span>/</span>
           <span style={{ color: '#1a1a18' }}>Forum d'Entraide</span>
         </div>

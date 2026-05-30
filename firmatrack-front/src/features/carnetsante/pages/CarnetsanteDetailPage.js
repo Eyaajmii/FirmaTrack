@@ -11,6 +11,7 @@ import VaccinationList from "../Vaccination/components/VaccinationList";
 import RendezVousList from "../RendezVous/components/RendezVousList";
 
 function CarnetSanteDetail() {
+    const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -72,7 +73,7 @@ function CarnetSanteDetail() {
           ← Retour
         </button>
           <div style={{ fontSize: "11px", color: "#b0afa9" }}>
-            Carnets / <span style={{ color: "#1a1a18" }}>Détails</span>
+            {farmName} / Carnets / <span style={{ color: "#1a1a18" }}>Détails</span>
           </div>
 
           <h1 style={{ fontSize: "22px", fontWeight: "500" }}>

@@ -4,6 +4,7 @@ import authService from "./authService";
 import LocationPicker from "../veterinaire/components/LocationPicker";
 
 const ProfilePage = () => {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const userRole = localStorage.getItem("user_role");
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
@@ -163,7 +164,7 @@ const ProfilePage = () => {
         
         {/* Breadcrumb */}
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
-          <span>Ferme El Baraka</span>
+          <span>{farmName}</span>
           <span>/</span>
           <span style={{ color: '#1a1a18' }}>Mon Profil & Configuration</span>
         </div>

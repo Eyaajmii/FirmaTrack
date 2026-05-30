@@ -9,7 +9,7 @@ export const getByNumber = (chepnumber) =>
   API.get(`/cheptel/number/${chepnumber}`);
 
 export const createAnimal = (data) => API.post("/cheptel", data);
-
 export const updateAnimal = (id, data) => API.put(`/cheptel/${id}`, data);
-
 export const deleteAnimal = (id) => API.delete(`/cheptel/${id}`);
+export const getArchivedAnimals = () => API.get("/cheptel/archives");
+export const restoreAnimal = (id) => API.put(`/cheptel/restore/${id}`);

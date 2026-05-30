@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
 import financeService from '../services/financeService';
 
-// --- SVGs cohérents avec le projet ---
 const IconBack = () => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
     <path d="M11 3L6 8l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -24,6 +23,7 @@ const IconPlus = () => (
 );
 
 const SaisieCharges = () => {
+  const farmName = localStorage.getItem("farm_name") || "Ma Ferme";
   const [activeTab, setActiveTab] = useState('EAU_ELEC'); 
   const [loading, setLoading] = useState(false);
   const [allDepenses, setAllDepenses] = useState([]); // Pour l'historique
@@ -126,7 +126,7 @@ const SaisieCharges = () => {
         
         {/* Breadcrumb */}
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
-          <span>Ferme El Baraka</span>
+          <span> {farmName} </span>
           <span>/</span>
           <span>Analyse Financière</span>
           <span>/</span>
