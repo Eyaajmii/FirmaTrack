@@ -23,6 +23,9 @@ import PostDetail from "../features/forum/pages/PostDetail";
 import ProfilePage from "../features/auth/ProfilePage";
 import VetListMapPage from "../features/veterinaire/pages/VetListMapPage";
 import VetDetailPage from "../features/veterinaire/pages/VetDetailPage";
+import VigilanceSanitaire from "../features/veterinaire/pages/VigilanceSanitaire";
+
+import NotificationsPage from "../features/notifications/pages/NotificationsPage";
 
 const AppRoutes = () => {
   const userRole = localStorage.getItem("user_role");
@@ -164,10 +167,13 @@ const AppRoutes = () => {
       <Route path="/veterinairesproches" element={isFermier || userRole === "ADMIN"? <VetListMapPage /> : <Navigate to="/" />} />
       <Route path="/veterinairesproche/:id" element={isFermier || userRole === "ADMIN"? <VetDetailPage /> : <Navigate to="/" />} />
 
- <Route
+      <Route
         path="/profile"
         element={isFermier || isVeterinaire ? <ProfilePage /> : <Navigate to="/" />}
       />
+      <Route path="/vigilance" element={isFermier || isVeterinaire || userRole === "ADMIN" ? <VigilanceSanitaire /> : <Navigate to="/" />} />
+
+      <Route path="/notifications" element={isFermier || isVeterinaire || userRole === "ADMIN" ? <NotificationsPage /> : <Navigate to="/" />} />
       {/* 7. Page 404 - Fallback */}
       <Route
         path="*"

@@ -18,22 +18,23 @@ public class ForumPost {
 
     private String titre;
 
-    @Column(columnDefinition = "TEXT") // Pour permettre des longs messages
+    @Column(columnDefinition = "TEXT") 
     private String contenu;
 
-    // Catégorie : ALIMENTATION, SANTE, PRIX_MARCHE, GENERAL
     private String categorie;
 
-    private String imageUrl; // Optionnel : pour illustrer un problème visuel (US 71)
+    private String imageUrl; 
 
     private LocalDateTime createdAt;
 
-    // L'auteur du post (Éleveur ou Vétérinaire)
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User auteur;
+    
+    @ManyToOne
+    @JoinColumn(name = "cheptel_id") 
+    private Cheptel cheptel;
 
-    // Une question peut avoir plusieurs réponses (commentaires)
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ForumComment> commentaires;
 

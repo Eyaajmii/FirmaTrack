@@ -62,4 +62,5 @@ public class VeterinaireController {
         @RequestParam(defaultValue = "20") Double rayonKm) {
         return ResponseEntity.ok(veterinaireService.getProches(lat, lng, rayonKm));
     }
+    
 }

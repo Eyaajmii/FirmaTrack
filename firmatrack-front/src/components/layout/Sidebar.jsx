@@ -28,53 +28,10 @@ const COW_PATTERN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200
 const allNavItems = [
   {
     section: null,
-    roles: ["FERMIER", "ADMIN"],
-    items: [
-      {
-        to: "/dashboard",
-        label: "Dashboard",
-        icon: (
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-            <rect
-              x="1"
-              y="1"
-              width="6"
-              height="6"
-              rx="1.5"
-              stroke="currentColor"
-              strokeWidth="1.3"
-            />
-            <rect
-              x="9"
-              y="1"
-              width="6"
-              height="6"
-              rx="1.5"
-              stroke="currentColor"
-              strokeWidth="1.3"
-            />
-            <rect
-              x="1"
-              y="9"
-              width="6"
-              height="6"
-              rx="1.5"
-              stroke="currentColor"
-              strokeWidth="1.3"
-            />
-            <rect
-              x="9"
-              y="9"
-              width="6"
-              height="6"
-              rx="1.5"
-              stroke="currentColor"
-              strokeWidth="1.3"
-            />
-          </svg>
-        ),
-      },
-    ],
+    roles: ['FERMIER', 'ADMIN','VETERINAIRE'],
+     items: [
+      { to: '/', label: 'Dashboard', icon: <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/></svg> },
+    ]
   },
   {
     section: "Gestion",
@@ -366,6 +323,15 @@ const allNavItems = [
           </svg>
         ),
       },
+      { 
+    to: '/vigilance', 
+    label: 'Vigilance Sanitaire',
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+    )
+  }
     ],
   },
   {
@@ -450,39 +416,24 @@ const SubMenu = ({ items, visible, collapsed }) => (
         key={child.to}
         to={child.to}
         className="sb-sub"
-        end // Évite l'activation croisée des sous-onglets
+        end 
         style={({ isActive }) => ({
-          display: "flex",
-          alignItems: "center",
-          gap: "7px",
-          padding: "6px 8px 6px 33px",
-          fontSize: "12px",
-          color: isActive ? "#1a1a18" : "#7a7a74",
-          fontWeight: isActive ? "500" : "400",
-          textDecoration: "none",
-          borderRadius: "7px",
-          marginBottom: "1px",
-          background: isActive ? "rgba(255,255,255,0.8)" : "transparent",
-          transition: "all 0.12s",
-        })}
-      >
-        <span
-          style={{
-            width: "3px",
-            height: "3px",
-            borderRadius: "50%",
-            background: "currentColor",
-            flexShrink: 0,
-            opacity: 0.5,
-          }}
-        />
+          display: 'flex', alignItems: 'center', gap: '7px',
+          padding: '6px 8px 6px 36px', fontSize: '13px',
+          color: isActive ? '#1a1a18' : '#7a7a74',
+          fontWeight: isActive ? '500' : '400',
+          textDecoration: 'none', borderRadius: '7px', marginBottom: '1px',
+          background: isActive ? 'rgba(255,255,255,0.8)' : 'transparent',
+          transition: 'all 0.12s',
+        })}>
+        <span style={{ width: '3px', height: '3px', borderRadius: '50%', background: 'currentColor', flexShrink: 0, opacity: 0.5 }}/>
         {child.label}
       </NavLink>
     ))}
   </div>
 );
 
-const W_OPEN = 200;
+const W_OPEN   = 240; // Augmenté de 200 à 240 pour l'espace de lecture
 const W_CLOSED = 56;
 
 const Sidebar = () => {
@@ -523,36 +474,32 @@ const Sidebar = () => {
         ::-webkit-scrollbar-thumb { background: rgba(26,26,24,0.1); border-radius: 4px; }
       `}</style>
 
-      <aside
-        style={{
-          width: `${collapsed ? W_CLOSED : W_OPEN}px`,
-          minWidth: `${collapsed ? W_CLOSED : W_OPEN}px`,
-          maxWidth: `${collapsed ? W_CLOSED : W_OPEN}px`,
-          minHeight: "100vh",
-          backgroundImage: COW_PATTERN,
-          backgroundSize: "140px 140px",
-          backgroundRepeat: "repeat",
-          backgroundColor: "#faf9f6",
-          borderRight: "1px solid rgba(26,26,24,0.09)",
-          display: "flex",
-          flexDirection: "column",
-          flexShrink: 0,
-          flexGrow: 0,
-          transition:
-            "width 0.28s cubic-bezier(.4,0,.2,1), min-width 0.28s cubic-bezier(.4,0,.2,1), max-width 0.28s cubic-bezier(.4,0,.2,1)",
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            zIndex: 0,
-            pointerEvents: "none",
-            background: "rgba(250,249,246,0.35)",
-          }}
-        />
+      <aside style={{
+        width: `${collapsed ? W_CLOSED : W_OPEN}px`,
+        minWidth: `${collapsed ? W_CLOSED : W_OPEN}px`,
+        maxWidth: `${collapsed ? W_CLOSED : W_OPEN}px`,
+        height: '100vh', // Fige la hauteur à la taille du viewport
+        position: 'sticky', // Rend la sidebar collante
+        top: 0, // La colle tout en haut de l'écran
+        backgroundImage: COW_PATTERN,
+        backgroundSize: '140px 140px',
+        backgroundRepeat: 'repeat',
+        backgroundColor: '#faf9f6',
+        borderRight: '1px solid rgba(26,26,24,0.09)',
+        display: 'flex',
+        flexDirection: 'column',
+        flexShrink: 0,
+        flexGrow: 0,
+        transition: 'width 0.28s cubic-bezier(.4,0,.2,1), min-width 0.28s cubic-bezier(.4,0,.2,1), max-width 0.28s cubic-bezier(.4,0,.2,1)',
+        overflow: 'hidden',
+      }}>
+
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
+          background: 'rgba(250,249,246,0.35)',
+        }}/>
+
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
 
         <div
           style={{
@@ -565,17 +512,13 @@ const Sidebar = () => {
           }}
         >
           {/* ── Header ── */}
-          <div
-            style={{
-              padding: "13px 11px 11px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: collapsed ? "center" : "space-between",
-              borderBottom: "1px solid rgba(26,26,24,0.07)",
-              minHeight: "54px",
-              flexShrink: 0,
-            }}
-          >
+          <div style={{
+            padding: '16px 14px 12px',
+            display: 'flex', alignItems: 'center',
+            justifyContent: collapsed ? 'center' : 'space-between',
+            borderBottom: '1px solid rgba(26,26,24,0.07)',
+            minHeight: '54px', flexShrink: 0,
+          }}>
             {collapsed ? (
               <button
                 className="sb-ibtn"
@@ -602,28 +545,8 @@ const Sidebar = () => {
               </button>
             ) : (
               <>
-                <div style={{ overflow: "hidden", minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: "13.5px",
-                      fontWeight: "600",
-                      color: "#1a1a18",
-                      letterSpacing: "-0.3px",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    FirmaTrack
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "10px",
-                      color: "#9a9a90",
-                      marginTop: "1px",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    Ferme El Baraka
-                  </div>
+                <div style={{ overflow: 'hidden', minWidth: 0 }}>
+                  <div style={{ fontSize: '13.5px', fontWeight: '600', color: '#1a1a18', letterSpacing: '-0.3px', whiteSpace: 'nowrap' }}>FirmaTrack</div>
                 </div>
                 <button
                   className="sb-ibtn"
@@ -745,24 +668,16 @@ const Sidebar = () => {
                           onClick={() => !collapsed && toggleMenu(item.to)}
                           title={collapsed ? item.label : undefined}
                           style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "7px",
-                            padding: collapsed ? "8px 0" : "7px 7px",
-                            justifyContent: collapsed ? "center" : "flex-start",
-                            borderRadius: "7px",
-                            fontSize: "12.5px",
-                            fontWeight: isActive ? "500" : "400",
-                            color: isActive ? "#1a1a18" : "#6a6a64",
-                            cursor: "pointer",
-                            marginBottom: "1px",
-                            transition: "all 0.12s",
-                            userSelect: "none",
-                            background: isActive
-                              ? "rgba(255,255,255,0.72)"
-                              : "transparent",
-                          }}
-                        >
+                            display: 'flex', alignItems: 'center', gap: '7px',
+                            padding: collapsed ? '8px 0' : '8px 12px',
+                            justifyContent: collapsed ? 'center' : 'flex-start',
+                            borderRadius: '7px', fontSize: '13.5px',
+                            fontWeight: isActive ? '500' : '400',
+                            color: isActive ? '#1a1a18' : '#6a6a64',
+                            cursor: 'pointer', marginBottom: '1px',
+                            transition: 'all 0.12s', userSelect: 'none',
+                            background: isActive ? 'rgba(255,255,255,0.72)' : 'transparent',
+                          }}>
                           <span style={{ flexShrink: 0 }}>{item.icon}</span>
                           {!collapsed && (
                             <>
@@ -790,30 +705,20 @@ const Sidebar = () => {
                   }
 
                   return (
-                    <NavLink
-                      key={item.to}
-                      to={item.to}
-                      className="sb-link"
-                      end // <--- FORCE L'EXACT MATCH POUR LES LIENS À PLAT (Économie)
+                    <NavLink key={item.to} to={item.to} className="sb-link"
+                      end // FORCE L'EXACT MATCH
                       title={collapsed ? item.label : undefined}
                       style={({ isActive }) => ({
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "7px",
-                        padding: collapsed ? "8px 0" : "7px 7px",
-                        justifyContent: collapsed ? "center" : "flex-start",
-                        borderRadius: "7px",
-                        fontSize: "12.5px",
-                        fontWeight: isActive ? "500" : "400",
-                        color: isActive ? "#fff" : "#6a6a64",
-                        background: isActive ? "#1a1a18" : "transparent",
-                        textDecoration: "none",
-                        marginBottom: "1px",
-                        transition: "all 0.12s",
-                        whiteSpace: "nowrap",
-                        position: "relative",
-                      })}
-                    >
+                        display: 'flex', alignItems: 'center', gap: '7px',
+                        padding: collapsed ? '8px 0' : '8px 12px',
+                        justifyContent: collapsed ? 'center' : 'flex-start',
+                        borderRadius: '7px', fontSize: '13.5px',
+                        fontWeight: isActive ? '500' : '400',
+                        color: isActive ? '#fff' : '#6a6a64',
+                        background: isActive ? '#1a1a18' : 'transparent',
+                        textDecoration: 'none', marginBottom: '1px',
+                        transition: 'all 0.12s', whiteSpace: 'nowrap', position: 'relative',
+                      })}>
                       <span style={{ flexShrink: 0 }}>{item.icon}</span>
                       {!collapsed && (
                         <>
@@ -874,50 +779,24 @@ const Sidebar = () => {
             }}
           >
             {/* 1. Bloc Profil */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: collapsed ? "7px 0" : "7px 7px",
-                justifyContent: collapsed ? "center" : "flex-start",
-                marginBottom: "4px",
-              }}
-            >
-              <div
-                style={{
-                  width: "26px",
-                  height: "26px",
-                  borderRadius: "7px",
-                  background: "#1a1a18",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "10px",
-                  fontWeight: "700",
-                  color: "#fff",
-                  flexShrink: 0,
-                }}
-              >
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              padding: collapsed ? '7px 0' : '8px 12px',
+              justifyContent: collapsed ? 'center' : 'flex-start',
+              marginBottom: '4px'
+            }}>
+              <div style={{ 
+                width: '26px', height: '26px', borderRadius: '7px', 
+                background: '#1a1a18', 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                fontSize: '10px', fontWeight: '700', color: '#fff', flexShrink: 0 
+              }}>
                 {userInitial}
               </div>
               {!collapsed && (
-                <div style={{ overflow: "hidden", minWidth: 0 }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "5px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: "11.5px",
-                        fontWeight: "500",
-                        color: "#1a1a18",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
+                <div style={{ overflow: 'hidden', minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <div style={{ fontSize: '11.5px', fontWeight: '500', color: '#1a1a18', whiteSpace: 'nowrap' }}>
                       {userName}
                     </div>
                     {/* Badge de validation automatique (Coche verte) */}
@@ -930,56 +809,26 @@ const Sidebar = () => {
                       </span>
                     )}
                   </div>
-                  <div
-                    style={{
-                      fontSize: "10px",
-                      color: "#a0a098",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {userRole === "VETERINAIRE"
-                      ? " Vétérinaire Expert"
-                      : " Éleveur Producteur"}
+                  <div style={{ fontSize: '10px', color: '#a0a098', whiteSpace: 'nowrap' }}>
+                    {userRole === 'VETERINAIRE' ? ' Vétérinaire Expert' : ' Éleveur Producer'}
                   </div>
                 </div>
               )}
             </div>
 
             {/* 2. Bouton Déconnexion */}
-            <div
-              className="sb-logout"
-              onClick={handleLogout}
-              title="Se déconnecter"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: collapsed ? "8px 0" : "7px 7px",
-                justifyContent: collapsed ? "center" : "flex-start",
-                borderRadius: "7px",
-                cursor: "pointer",
-                transition: "all 0.12s",
-                color: "#ef4444",
-              }}
-            >
-              <div
-                style={{
-                  width: "26px",
-                  display: "flex",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                }}
-              >
-                <svg
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+            <div className="sb-logout" 
+                 onClick={handleLogout}
+                 title="Se déconnecter"
+                 style={{
+                   display: 'flex', alignItems: 'center', gap: '8px',
+                   padding: collapsed ? '8px 0' : '8px 12px',
+                   justifyContent: collapsed ? 'center' : 'flex-start',
+                   borderRadius: '7px', cursor: 'pointer', transition: 'all 0.12s',
+                   color: '#ef4444',
+                 }}>
+              <div style={{ width: '26px', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                   <polyline points="16 17 21 12 16 7" />
                   <line x1="21" y1="12" x2="9" y2="12" />
