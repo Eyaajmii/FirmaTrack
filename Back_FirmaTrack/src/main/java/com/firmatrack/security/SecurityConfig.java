@@ -32,6 +32,7 @@ public class SecurityConfig {
             	    .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             	    .requestMatchers("/uploads/**").permitAll() 
             	    
+            	    .requestMatchers("/api/admin/**").hasRole("ADMIN")
             	    .requestMatchers("/api/finance/**").hasAnyRole("FERMIER", "ADMIN")
                     .requestMatchers("/api/users/**", "/api/fermier/**", "/api/veterinaires/**").permitAll() 
                     .requestMatchers("/api/cheptel/**").hasAnyRole("ADMIN", "FERMIER")

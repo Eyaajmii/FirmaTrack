@@ -1,21 +1,15 @@
 // src/features/auth/authService.js
-import api from '../../api/api'; // Nasta3mlou l-instance mta3 lebnet
+import api from '../../api/api'; 
 
-// Fonction pour l'inscription (Register)
 const register = async (userData) => {
-  // Nasta3mlou api.post mouch axios.post
-  // El path ywalli juste '/auth/register' 5ater el Base URL dja fih /api
   const response = await api.post('/auth/register', userData);
   return response.data;
 };
 
-// Fonction pour la connexion (Login)
 const login = async (email, password) => {
-  // Nab3thou email w password kima l-back-end yestanna
   const response = await api.post('/auth/login', { email, password });
-  console.log("Réponse du serveur :", response.data); // <--- AJOUTE ÇA POUR VOIR
+  console.log("Réponse du serveur :", response.data); 
 
-  // Ken el Back-end b3ath Token, nkhabiweh
   if (response.data.token) {
     localStorage.setItem('user_token', response.data.token);
     localStorage.setItem('user_role', response.data.role);
@@ -31,7 +25,6 @@ const login = async (email, password) => {
   return response.data;
 };
 
-// Fonction pour se déconnecter (Logout)
 const logout = () => {
   localStorage.removeItem('user_token');
   localStorage.removeItem('user_role');
@@ -42,17 +35,52 @@ const logout = () => {
   window.location.href = '/login';
 };
 
-// US 62/63/64 : Récupérer mon profil complet
 const getMyProfile = async () => {
-  // On appelle l'API pour lire le user connecté
-  // (Le token est géré automatiquement par les intercepteurs configurés sur l'instance "api")
   const response = await api.get('/users/profile/me'); 
   return response.data;
 };
 
-// US 62/63/64/65 : Mettre à jour mon profil
 const updateProfile = async (profileData) => {
   const response = await api.put('/users/profile', profileData);
+  return response.data;
+};
+
+const addFermierWhitelist = async (data) => {
+  const response = await api.post('/admin/whitelist/fermier', data);
+  return response.data;
+};
+
+const addVetWhitelist = async (data) => {
+  const response = await api.post('/admin/whitelist/veterinaire', data);
+  return response.data;
+};
+const getAdminStats = async () => {
+  const response = await api.get('/admin/stats');
+  return response.data;
+};
+
+const deletePostAdmin = async (id) => {
+  const response = await api.delete(`/admin/forum/posts/${id}`);
+  return response.data;
+};
+
+const getFermiersWhitelist = async () => {
+  const response = await api.get('/admin/whitelist/fermiers');
+  return response.data;
+};
+
+const getVetsWhitelist = async () => {
+  const response = await api.get('/admin/whitelist/veterinaires');
+  return response.data;
+};
+
+const deleteFermierWhitelist = async (matricule) => {
+  const response = await api.delete(`/admin/whitelist/fermier/${matricule}`);
+  return response.data;
+};
+
+const deleteVetWhitelist = async (numero) => {
+  const response = await api.delete(`/admin/whitelist/veterinaire/${numero}`);
   return response.data;
 };
 
@@ -62,6 +90,14 @@ const authService = {
   logout,
   getMyProfile,
   updateProfile,
+  addFermierWhitelist,
+  addVetWhitelist,
+  getAdminStats,
+  deletePostAdmin,
+  getFermiersWhitelist,   
+  getVetsWhitelist,       
+  deleteFermierWhitelist, 
+  deleteVetWhitelist, 
 };
 
 export default authService;

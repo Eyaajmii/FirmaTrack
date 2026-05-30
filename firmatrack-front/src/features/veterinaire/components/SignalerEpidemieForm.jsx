@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { toast } from 'react-hot-toast';
+import { useToast } from '../../../components/common/Toast';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { signalerEpidemie } from '../services/VeterinaireService';
@@ -11,11 +11,10 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 let DefaultIcon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// ── الستيل الموحد والوقائي للإنذار الصحّي ──
 const s = {
   card: {
     background: '#fff',
-    border: '0.5px solid #A32D2D33', // إطار أحمر ناعم وشفاف
+    border: '0.5px solid #A32D2D33', 
     borderRadius: '14px',
     padding: '1.25rem',
     boxSizing: 'border-box'
@@ -26,7 +25,7 @@ const s = {
     gap: '8px',
     padding: '10px 12px',
     borderRadius: '10px',
-    background: '#FCEBEB', // خلفية حمراء دافئة وخفيفة
+    background: '#FCEBEB', 
     border: '0.5px solid #A32D2D22',
     color: '#A32D2D',
     marginBottom: '1rem',
@@ -129,11 +128,11 @@ const SignalerEpidemieForm = ({ onAlerteCree }) => {
   const [hasClicked, setHasClicked] = useState(false);
   const [formData, setFormData] = useState({ maladie: 'Rage', gouvernorat: 'Tunis', description: '' });
 
+  const { toast } = useToast();
+
   const maladies = ['Rage', 'Fièvre Aphteuse', 'Grippe Aviaire', 'Brucellose', 'Autre épidémie'];
 
-  // --- ALGORITHME DE GEOLOCALISATION INTERNE (GEOFENCING) ---
   const detecterGouvernorat = (lat, lng) => {
-    // On définit les "boîtes" géographiques de la Tunisie
     if (lat >= 36.7 && lat <= 36.9 && lng >= 10.0 && lng <= 10.3) {
       return 'TUNIS';
     } else if (lat >= 36.8 && lat <= 37.0 && lng >= 10.0 && lng <= 10.3) {
@@ -145,42 +144,36 @@ const SignalerEpidemieForm = ({ onAlerteCree }) => {
     } else if (lat >= 36.2 && lat <= 36.9 && lng >= 8.3 && lng <= 8.8) {
       return 'JENDOUBA';
     }
-    return 'TUNIS'; // Valeur par défaut si hors zone
+    return 'TUNIS';
   };
 
-  // Fonction appelée quand le véto clique sur la carte (US 75)
-   const handleMapClick = async (lat, lng) => {
+  const handleMapClick = async (lat, lng) => {
     setPosition([lat, lng]);
     setHasClicked(true);
 
     try {
-      // 1. Appel à l'API publique et gratuite d'OpenStreetMap (Nominatim)
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&accept-language=fr&lat=${lat}&lon=${lng}`
       );
       const data = await response.json();
 
       if (data && data.address) {
-        // En Tunisie, le gouvernorat est stocké dans le champ 'state' de l'adresse
         const govName = data.address.state || data.address.county || data.address.province || 'TUNIS';
         
-        // Nettoyage du texte (ex: "Gouvernorat de Nabeul" devient "Nabeul")
         const govNettoye = govName
           .replace("Gouvernorat de", "")
           .replace("Gouvernorat", "")
           .trim();
 
-        // 2. Remplissage automatique et instantané du champ (ex: "NABEUL")
         setFormData(prev => ({
           ...prev,
           gouvernorat: govNettoye.toUpperCase()
         }));
 
-        toast.success(` Région détectée : ${govNettoye}`, { id: 'geo-success' });
+        toast.success(`Région détectée : ${govNettoye}`);
       }
     } catch (err) {
-      console.error("Erreur lors de la géolocalisation inversée :", err);
-      // Fallback par défaut en cas de coupure internet
+      console.error(err);
       setFormData(prev => ({ ...prev, gouvernorat: 'TUNIS' }));
     }
   };
@@ -188,7 +181,7 @@ const SignalerEpidemieForm = ({ onAlerteCree }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!hasClicked) {
-      toast.error("Cliquez sur la carte pour localiser l'épidémie (US 75) !");
+      toast.error("Cliquez sur la carte pour localiser l'épidémie.");
       return;
     }
     setLoading(true);
@@ -200,7 +193,7 @@ const SignalerEpidemieForm = ({ onAlerteCree }) => {
       };
 
       await signalerEpidemie(payload);
-      toast.success("ALERTE SANITAIRE PUBLIÉE SUR LA CARTE !");
+      toast.success("Alerte sanitaire publiée sur la carte.");
       
       setFormData({ maladie: 'Rage', gouvernorat: 'Tunis', description: '' });
       setHasClicked(false);
@@ -214,10 +207,7 @@ const SignalerEpidemieForm = ({ onAlerteCree }) => {
 
   return (
     <div style={s.card}>
-      
-      {/* BANNER D'ALERTE NET */}
       <div style={s.alertBanner}>
-        {/* Assurez-vous que <IconAlert /> est bien importé ou défini dans votre fichier, sinon vous aurez une erreur */}
         <IconAlert /> 
         <div>
           <span style={{ display: 'block', fontWeight: '600', fontSize: '13px', marginBottom: '2px' }}>
@@ -230,8 +220,6 @@ const SignalerEpidemieForm = ({ onAlerteCree }) => {
       </div>
 
       <form onSubmit={handleSubmit} style={s.form}>
-        
-        {/* الخريطة المؤطرة والمنسقة */}
         <div style={s.mapContainerWrapper}>
           <MapContainer center={[36.8065, 10.1815]} zoom={11} style={{ height: '100%', width: '100%' }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -240,7 +228,6 @@ const SignalerEpidemieForm = ({ onAlerteCree }) => {
           </MapContainer>
         </div>
 
-        {/* الحقول مرتبة عمودياً بمساحة ممتازة */}
         <div style={s.verticalGroup}>
           <div>
             <label style={s.label}>Maladie</label>
@@ -260,7 +247,7 @@ const SignalerEpidemieForm = ({ onAlerteCree }) => {
         </div>
 
         <button type="submit" disabled={loading} style={s.btnDanger}>
-          {loading ? 'Publication de l\'alerte...' : 'Publier l\'Alerte'}
+          {loading ? "Publication de l'alerte..." : "Publier l'Alerte"}
         </button>
       </form>
     </div>

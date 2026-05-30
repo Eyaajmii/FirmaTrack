@@ -73,14 +73,11 @@ const Login = () => {
 
     setLoading(true);
     try {
-      // --- APPEL DE TON SERVICE PROPRE ---
-      // Le service s'occupe déjà de faire le POST et de remplir le localStorage !
+    
       const response = await authService.login(email, password);
 
-      // ✅ Redirection et rafraîchissement
       window.location.href = '/';
     } catch (err) {
-      // On attrape le message d'erreur proprement
       const msg = err.response?.data?.message || err.response?.data || 'Identifiants invalides.';
       setError(typeof msg === 'object' ? JSON.stringify(msg) : msg);
       setLoading(false);

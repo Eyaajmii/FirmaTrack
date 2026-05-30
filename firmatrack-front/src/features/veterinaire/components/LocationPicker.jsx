@@ -1,5 +1,63 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet";
+
+const s = {
+  textMsg: {
+    margin: "0 0 10px",
+    fontSize: "12.5px",
+    color: "#9a9a96",
+    fontWeight: "500"
+  },
+  mapContainer: {
+    height: "380px",
+    borderRadius: "10px",
+    border: "0.5px solid #e8e7e2",
+    zIndex: 0
+  },
+  addressBox: {
+    marginTop: "12px",
+    padding: "10px 14px",
+    background: "#EAF3DE",
+    border: "0.5px solid #3B6D1122",
+    borderRadius: "10px",
+    fontSize: "12px",
+    color: "#2a7a4b",
+    minHeight: "38px",
+    boxSizing: "border-box"
+  },
+  latLngBox: {
+    marginTop: "6px",
+    fontSize: "11px",
+    color: "#9a9a96"
+  },
+  btnConfirm: {
+    marginTop: "14px",
+    background: "#1a1a18",
+    color: "white",
+    padding: "12px 24px",
+    borderRadius: "10px",
+    border: "none",
+    fontWeight: "500",
+    cursor: "pointer",
+    fontSize: "13px",
+    width: "100%",
+    fontFamily: "'DM Sans', sans-serif",
+    transition: "opacity 0.15s"
+  },
+  btnDisabled: {
+    marginTop: "14px",
+    background: "#f1f0ec",
+    color: "#9a9a96",
+    padding: "12px 24px",
+    borderRadius: "10px",
+    border: "0.5px solid #e8e7e2",
+    fontWeight: "500",
+    cursor: "not-allowed",
+    fontSize: "13px",
+    width: "100%",
+    fontFamily: "'DM Sans', sans-serif"
+  }
+};
 
 function FlyToPosition({ position }) {
   const map = useMap();
@@ -38,7 +96,6 @@ function DraggableMarker({ position, onPick }) {
   );
 }
 
-
 export default function LocationPicker({ onSelect }) {
   const [position, setPosition] = useState({ lat: 36.8, lng: 10.1 });
   const [address, setAddress] = useState("");
@@ -60,18 +117,16 @@ export default function LocationPicker({ onSelect }) {
 
         setPosition(newPos);
         setFlyTarget(newPos); 
-        fetchAddress(lat, lng); // récupère l'adresse initiale
+        fetchAddress(lat, lng);
         setLoadingGps(false);
       },
       () => {
-        // GPS refusé → on reste sur Tunis par défaut
         setLoadingGps(false);
       },
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
     );
   }, []);
 
-  //  Fetch adresse depuis lat/lng (Nominatim)
   const fetchAddress = async (lat, lng) => {
     setLoadingAddress(true);
     try {
@@ -96,7 +151,6 @@ export default function LocationPicker({ onSelect }) {
 
   const handleConfirm = () => {
     if (!address && !loadingAddress) {
-      // Si address encore vide (ex: Nominatim lent), on envoie les coords brutes
       onSelect({
         position,
         address: `${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}`,
@@ -108,74 +162,52 @@ export default function LocationPicker({ onSelect }) {
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      <p style={{ margin: "0 0 10px", fontSize: "13px", color: "#6b7280", fontWeight: "500" }}>
+      <p style={s.textMsg}>
         {loadingGps
-          ? "📡 Récupération de votre position GPS..."
-          : "📍 Cliquez sur la carte ou déplacez le marqueur"}
+          ? "Recupération de votre position GPS..."
+          : "Cliquez sur la carte ou déplacez le marqueur"}
       </p>
 
-      <MapContainer
-        center={[position.lat, position.lng]}
-        zoom={13}
-        style={{ height: "380px", borderRadius: "10px", zIndex: 0 }}
-      >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      <div style={s.mapContainer}>
+        <MapContainer
+          center={[position.lat, position.lng]}
+          zoom={13}
+          style={{ height: "100%", width: "100%", borderRadius: "10px", zIndex: 0 }}
+        >
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-        {flyTarget && <FlyToPosition position={flyTarget} />}
+          {flyTarget && <FlyToPosition position={flyTarget} />}
 
-        <LocationMarker onPick={handlePick} />
+          <LocationMarker onPick={handlePick} />
 
-        <DraggableMarker position={position} onPick={handlePick} />
-      </MapContainer>
+          <DraggableMarker position={position} onPick={handlePick} />
+        </MapContainer>
+      </div>
 
-      <div
-        style={{
-          marginTop: "12px",
-          padding: "10px 14px",
-          background: "#f0fdf4",
-          border: "1.5px solid #dcfce7",
-          borderRadius: "10px",
-          fontSize: "12px",
-          color: "#166534",
-          minHeight: "38px",
-        }}
-      >
+      <div style={s.addressBox}>
         {loadingAddress ? (
-          <span style={{ color: "#6b7280" }}>⏳ Chargement de l'adresse...</span>
+          <span style={{ color: "#6b6b67" }}>Chargement de l'adresse...</span>
         ) : address ? (
           <>
-            <b>📍 Adresse :</b> {address}
+            <strong>Adresse :</strong> {address}
           </>
         ) : (
-          <span style={{ color: "#9ca3af" }}>Aucune adresse sélectionnée</span>
+          <span style={{ color: "#9a9a96" }}>Aucune adresse sélectionnée</span>
         )}
       </div>
 
-      <div style={{ marginTop: "6px", fontSize: "11px", color: "#9ca3af" }}>
-        <b>Lat :</b> {position.lat.toFixed(6)} &nbsp;|&nbsp;
-        <b>Lng :</b> {position.lng.toFixed(6)}
+      <div style={s.latLngBox}>
+        <strong>Lat :</strong> {position.lat.toFixed(6)} &nbsp;|&nbsp;
+        <strong>Lng :</strong> {position.lng.toFixed(6)}
       </div>
 
       <button
         type="button"
         onClick={handleConfirm}
         disabled={loadingAddress}
-        style={{
-          marginTop: "14px",
-          background: loadingAddress
-            ? "#9ca3af"
-            : "linear-gradient(135deg, #059669, #047857)",
-          color: "white",
-          padding: "12px 24px",
-          borderRadius: "10px",
-          border: "none",
-          fontWeight: "700",
-          cursor: loadingAddress ? "not-allowed" : "pointer",
-          fontSize: "13px",
-          width: "100%",
-        }}
+        style={loadingAddress ? s.btnDisabled : s.btnConfirm}
       >
-        {loadingAddress ? "⏳ Chargement adresse..." : "💾 Confirmer cette localisation"}
+        {loadingAddress ? "Chargement de l'adresse..." : "Confirmer cette localisation"}
       </button>
     </div>
   );

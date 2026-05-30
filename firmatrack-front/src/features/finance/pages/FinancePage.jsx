@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Toaster, toast } from 'react-hot-toast';
+import { useToast, ToastContainer } from '../../../components/common/Toast';
 import financeService from '../services/financeService';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -107,7 +107,6 @@ const FinanceStatCard = ({ colorKey, label, value, unit, sub, borderColor, icon:
       borderTop: `3px solid ${borderColor || c.stroke}`,
       transition: 'box-shadow 0.18s',
     }}>
-      {/* أيقونات ديناميكية ومخصصة لكل كارت إحصائي */}
       <div style={{
         width: '30px', height: '30px', borderRadius: '8px',
         background: c.bg, display: 'flex', alignItems: 'center',
@@ -141,6 +140,8 @@ const FinancePage = () => {
 
   const navigate = useNavigate();
 
+  const { toasts, removeToast, toast } = useToast();
+
   const handleFiliereChange = (filiere) => {
     setTypeFiliere(filiere);
     setPrixEtat(filiere === 'LAIT' ? 1.340 : 0.340);
@@ -156,15 +157,9 @@ const FinancePage = () => {
       setAnalyse(resAnalyse);
 
       if (resAnalyse?.messageStatus === 'EN PERTE') {
-        toast.error(`Alerte : Filière ${typeFiliere === 'LAIT' ? 'Lait' : 'Œufs'} produit à perte !`, {
-          duration: 6000, id: 'alerte-crise-' + typeFiliere,
-          style: { border: '0.5px solid #A32D2D', padding: '14px', color: '#991b1b', background: '#FCEBEB', fontWeight: '500', fontSize: '13px' }
-        });
+        toast.error(`Alerte : Filière ${typeFiliere === 'LAIT' ? 'Lait' : 'Œufs'} produit à perte !`);
       } else if (resAnalyse?.messageStatus === 'RENTABLE') {
-        toast.success(`Filière ${typeFiliere === 'LAIT' ? 'Lait' : 'Œufs'} rentable ce mois.`, {
-          id: 'alerte-succes-' + typeFiliere,
-          style: { border: '0.5px solid #3B6D11', padding: '14px', color: '#14532d', background: '#EAF3DE', fontWeight: '500' }
-        });
+        toast.success(`Filière ${typeFiliere === 'LAIT' ? 'Lait' : 'Œufs'} rentable ce mois.`);
       }
 
       setRepartition(await financeService.getRepartition(selectedMonth));
@@ -179,9 +174,6 @@ const FinancePage = () => {
 
   useEffect(() => {
     loadData();
-    return () => {
-      toast.dismiss();
-    };
   }, [loadData]);
 
   const totalRep = Object.values(repartition).reduce((a, b) => a + b, 0);
@@ -268,11 +260,10 @@ const FinancePage = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f7f6f4', padding: '2rem', fontFamily: "'DM Sans', sans-serif" }}>
-      <Toaster position="top-center" />
+    <>
+      <ToastContainer toasts={toasts} onClose={removeToast} />
 
-      {/* ── HEADER ── */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ minHeight: '100vh', background: '#f7f6f4', padding: '2rem', fontFamily: "'DM Sans', sans-serif" }}>
         
         {/* Breadcrumb */}
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px', color: '#b0afa9', marginBottom: '6px' }}>
@@ -291,308 +282,303 @@ const FinancePage = () => {
               Pilotez la rentabilité de votre exploitation agricole.
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            
-            {/* Filière pill selector */}
-            <div style={s.pillSelector}>
-              {['LAIT', 'OEUFS'].map(f => (
-                <button key={f} onClick={() => handleFiliereChange(f)} style={{
-                  ...s.pillBtn,
-                  background: typeFiliere === f ? '#1a1a18' : 'transparent',
-                  color: typeFiliere === f ? '#fff' : '#9a9a96'
-                }}>{f === 'LAIT' ? 'Lait' : 'Œufs'}</button>
-              ))}
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+            <div>
+              <h1 style={{ fontSize: '22px', fontWeight: '500', color: '#1a1a18', letterSpacing: '-0.4px', margin: 0 }}>
+                Analyse Financière
+              </h1>
+              <p style={{ fontSize: '12px', color: '#9a9a96', marginTop: '4px', margin: '4px 0 0' }}>
+                Pilotez la rentabilité de votre exploitation agricole.
+              </p>
             </div>
-
-            {/* Mois */}
-            <div style={s.statePriceBox}>
-              <span style={{ color: '#9a9a96', fontSize: '11px', fontWeight: '500' }}>Mois</span>
-              <select value={selectedMonth} onChange={e => setSelectedMonth(parseInt(e.target.value))}
-                style={{ border: 'none', background: 'none', fontWeight: '500', fontSize: '12px', outline: 'none', cursor: 'pointer', color: '#1a1a18', fontFamily: "'DM Sans', sans-serif" }}>
-                {monthsList.map(m => <option key={m.val} value={m.val}>{m.label}</option>)}
-              </select>
-            </div>
-
-            {/* Prix État */}
-            <div style={s.statePriceBox}>
-              <span style={{ color: '#9a9a96', fontSize: '11px', fontWeight: '500' }}>Prix État</span>
-              <input type="number" step="0.010" value={prixEtat} onChange={e => setPrixEtat(parseFloat(e.target.value) || 0)}
-                style={s.stateInput} />
-              <span style={{ color: '#9a9a96', fontSize: '11px' }}>DT</span>
-            </div>
-
-            {/* Export */}
-            <button onClick={exportToPDF} style={s.btnSecondary}>
-              <IconExport /> Exporter
-            </button>
-
-            {/* Saisir charges */}
-            <button onClick={() => navigate('/finance/enregistrer')} style={s.btnPrimary}>
-              <IconPlus /> Saisir charges
-            </button>
-          </div>
-        </div>
-
-        {/* Bandeau statut */}
-        {!loading && analyse && (
-          <div style={{
-            ...s.headerAdvice,
-            background: isNoProd ? '#f1f0ec' : (isLoss ? '#FCEBEB' : '#EAF3DE'),
-            border: `0.5px solid ${isNoProd ? '#e8e7e2' : (isLoss ? '#A32D2D33' : '#3B6D1133')}`,
-            color: isNoProd ? '#6b6b67' : (isLoss ? '#A32D2D' : '#2a7a4b'),
-          }}>
-            {isNoProd ? <IconInfo /> : (isLoss ? <IconAlert /> : (
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.4"/>
-                <path d="M5 8l2 2 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            ))}
-            {isNoProd
-              ? "Aucune production enregistrée pour ce mois-ci."
-              : isLoss
-              ? "Attention : votre coût global dépasse le prix de vente fixé par l'État."
-              : "Bonne gestion : votre marge réelle est positive ce mois."}
-          </div>
-        )}
-
-        {/* ── KPI CARDS (أيقونات مخصصة لكل كارت تفاديًا للتكرار) ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px', marginBottom: '1.5rem' }}>
-          <FinanceStatCard
-            colorKey={isProdRentable ? 'green' : 'red'}
-            borderColor={isProdRentable ? '#3B6D11' : '#A32D2D'}
-            label={`COÛT PRODUCTION / ${typeFiliere === 'LAIT' ? 'L' : 'U'}`}
-            value={analyse?.coutProductionParUnite?.toFixed(3) ?? '—'}
-            unit="DT"
-            sub={!isNoProd ? `Marge : ${margeProd} DT` : 'Pas de production'}
-            icon={IconProduction}
-          />
-          <FinanceStatCard
-            colorKey={isExploitRentable ? 'green' : isNoProd ? 'neutral' : 'red'}
-            borderColor={isExploitRentable ? '#3B6D11' : isNoProd ? '#9a9a96' : '#A32D2D'}
-            label={`COÛT GLOBAL / ${typeFiliere === 'LAIT' ? 'L' : 'U'}`}
-            value={analyse?.coutGlobalParUnite?.toFixed(3) ?? '—'}
-            unit="DT"
-            sub="Charges fixes incluses"
-            icon={IconGlobal}
-          />
-          <FinanceStatCard
-            colorKey={isNoProd ? 'neutral' : isExploitRentable ? 'green' : 'red'}
-            borderColor={isNoProd ? '#9a9a96' : isExploitRentable ? '#3B6D11' : '#A32D2D'}
-            label="RENTABILITÉ GLOBALE"
-            value={isNoProd ? '—' : margeGlobale}
-            unit={isNoProd ? '' : 'DT'}
-            sub={!isNoProd ? `${analyse?.messageStatus}  ·  ${margeReelle} DT/U` : analyse?.messageStatus}
-            icon={IconTrendUp}
-          />
-          <FinanceStatCard
-            colorKey="blue"
-            borderColor="#1d4ed8"
-            label={`PRODUCTION TOTALE`}
-            value={analyse?.totalProduction ?? 0}
-            unit={typeFiliere === 'LAIT' ? 'Litres' : 'Œufs'}
-            sub={`Dépenses : ${analyse?.totalToutesDepenses?.toFixed(2) ?? '0.00'} DT`}
-            icon={IconTotal}
-          />
-        </div>
-
-        {/* ── GRILLE PRINCIPALE 2 COLONNES ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1.25rem', alignItems: 'start' }}>
-
-          {/* COLONNE GAUCHE */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-
-            {/* Impact des charges */}
-            <div style={s.card}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-                <span style={s.cardTitle}>Impact sur le Coût de Production</span>
-                <span style={s.badge}>Mois en cours</span>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              
+              <div style={s.pillSelector}>
+                {['LAIT', 'OEUFS'].map(f => (
+                  <button key={f} onClick={() => handleFiliereChange(f)} style={{
+                    ...s.pillBtn,
+                    background: typeFiliere === f ? '#1a1a18' : 'transparent',
+                    color: typeFiliere === f ? '#fff' : '#9a9a96'
+                  }}>{f === 'LAIT' ? 'Lait' : 'Œufs'}</button>
+                ))}
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {Object.keys(repartition).length === 0 ? (
-                  <span style={{ fontSize: '12.5px', color: '#9a9a96' }}>Aucune charge enregistrée ce mois.</span>
-                ) : Object.entries(repartition).map(([cat, val]) => {
-                  const cfg = CATEGORY_MAP[cat] || CATEGORY_MAP.AUTRES;
-                  const pct = totalRep > 0 ? (val / totalRep) * 100 : 0;
-                  const impact = (analyse?.totalProduction > 0) ? (val / analyse.totalProduction).toFixed(3) : '0.000';
-                  return (
-                    <div key={cat} style={{ borderLeft: `2.5px solid ${cfg.color}`, paddingLeft: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
-                        <div>
-                          <div style={{ fontSize: '13px', fontWeight: '500', color: '#1a1a18' }}>{cfg.label}</div>
-                          <div style={{ fontSize: '11px', color: cfg.color, fontWeight: '500', marginTop: '1px' }}>
-                            Impact : {impact} DT / {typeFiliere === 'LAIT' ? 'L' : 'U'}
+
+              <div style={s.statePriceBox}>
+                <span style={{ color: '#9a9a96', fontSize: '11px', fontWeight: '500' }}>Mois</span>
+                <select value={selectedMonth} onChange={e => setSelectedMonth(parseInt(e.target.value))}
+                  style={{ border: 'none', background: 'none', fontWeight: '500', fontSize: '12px', outline: 'none', cursor: 'pointer', color: '#1a1a18', fontFamily: "'DM Sans', sans-serif" }}>
+                  {monthsList.map(m => <option key={m.val} value={m.val}>{m.label}</option>)}
+                </select>
+              </div>
+
+              <div style={s.statePriceBox}>
+                <span style={{ color: '#9a9a96', fontSize: '11px', fontWeight: '500' }}>Prix État</span>
+                <input type="number" step="0.010" value={prixEtat} onChange={e => setPrixEtat(parseFloat(e.target.value) || 0)}
+                  style={s.stateInput} />
+                <span style={{ color: '#9a9a96', fontSize: '11px' }}>DT</span>
+              </div>
+
+              <button onClick={exportToPDF} style={s.btnSecondary}>
+                <IconExport /> Exporter
+              </button>
+
+              <button onClick={() => navigate('/finance/enregistrer')} style={s.btnPrimary}>
+                <IconPlus /> Saisir charges
+              </button>
+            </div>
+          </div>
+
+          {!loading && analyse && (
+            <div style={{
+              ...s.headerAdvice,
+              background: isNoProd ? '#f1f0ec' : (isLoss ? '#FCEBEB' : '#EAF3DE'),
+              border: `0.5px solid ${isNoProd ? '#e8e7e2' : (isLoss ? '#A32D2D33' : '#3B6D1133')}`,
+              color: isNoProd ? '#6b6b67' : (isLoss ? '#A32D2D' : '#2a7a4b'),
+            }}>
+              {isNoProd ? <IconInfo /> : (isLoss ? <IconAlert /> : (
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.4"/>
+                  <path d="M5 8l2 2 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ))}
+              {isNoProd
+                ? "Aucune production enregistrée pour ce mois-ci."
+                : isLoss
+                ? "Attention : votre coût global dépasse le prix de vente fixé par l'État."
+                : "Bonne gestion : votre marge réelle est positive ce mois."}
+            </div>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px', marginBottom: '1.5rem' }}>
+            <FinanceStatCard
+              colorKey={isProdRentable ? 'green' : 'red'}
+              borderColor={isProdRentable ? '#3B6D11' : '#A32D2D'}
+              label={`COÛT PRODUCTION / ${typeFiliere === 'LAIT' ? 'L' : 'U'}`}
+              value={analyse?.coutProductionParUnite?.toFixed(3) ?? '—'}
+              unit="DT"
+              sub={!isNoProd ? `Marge : ${margeProd} DT` : 'Pas de production'}
+              icon={IconProduction}
+            />
+            <FinanceStatCard
+              colorKey={isExploitRentable ? 'green' : isNoProd ? 'neutral' : 'red'}
+              borderColor={isExploitRentable ? '#3B6D11' : isNoProd ? '#9a9a96' : '#A32D2D'}
+              label={`COÛT GLOBAL / ${typeFiliere === 'LAIT' ? 'L' : 'U'}`}
+              value={analyse?.coutGlobalParUnite?.toFixed(3) ?? '—'}
+              unit="DT"
+              sub="Charges fixes incluses"
+              icon={IconGlobal}
+            />
+            <FinanceStatCard
+              colorKey={isNoProd ? 'neutral' : isExploitRentable ? 'green' : 'red'}
+              borderColor={isNoProd ? '#9a9a96' : isExploitRentable ? '#3B6D11' : '#A32D2D'}
+              label="RENTABILITÉ GLOBALE"
+              value={isNoProd ? '—' : margeGlobale}
+              unit={isNoProd ? '' : 'DT'}
+              sub={!isNoProd ? `${analyse?.messageStatus}  ·  ${margeReelle} DT/U` : analyse?.messageStatus}
+              icon={IconTrendUp}
+            />
+            <FinanceStatCard
+              colorKey="blue"
+              borderColor="#1d4ed8"
+              label={`PRODUCTION TOTALE`}
+              value={analyse?.totalProduction ?? 0}
+              unit={typeFiliere === 'LAIT' ? 'Litres' : 'Œufs'}
+              sub={`Dépenses : ${analyse?.totalToutesDepenses?.toFixed(2) ?? '0.00'} DT`}
+              icon={IconTotal}
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1.25rem', alignItems: 'start' }}>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+
+              <div style={s.card}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                  <span style={s.cardTitle}>Impact sur le Coût de Production</span>
+                  <span style={s.badge}>Mois en cours</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {Object.keys(repartition).length === 0 ? (
+                    <span style={{ fontSize: '12.5px', color: '#9a9a96' }}>Aucune charge enregistrée ce mois.</span>
+                  ) : Object.entries(repartition).map(([cat, val]) => {
+                    const cfg = CATEGORY_MAP[cat] || CATEGORY_MAP.AUTRES;
+                    const pct = totalRep > 0 ? (val / totalRep) * 100 : 0;
+                    const impact = (analyse?.totalProduction > 0) ? (val / analyse.totalProduction).toFixed(3) : '0.000';
+                    return (
+                      <div key={cat} style={{ borderLeft: `2.5px solid ${cfg.color}`, paddingLeft: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+                          <div>
+                            <div style={{ fontSize: '13px', fontWeight: '500', color: '#1a1a18' }}>{cfg.label}</div>
+                            <div style={{ fontSize: '11px', color: cfg.color, fontWeight: '500', marginTop: '1px' }}>
+                              Impact : {impact} DT / {typeFiliere === 'LAIT' ? 'L' : 'U'}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: '13px', fontWeight: '500', color: '#1a1a18' }}>{val.toFixed(2)} DT</div>
+                            <div style={{ fontSize: '10.5px', color: '#9a9a96' }}>{pct.toFixed(1)}%</div>
                           </div>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: '13px', fontWeight: '500', color: '#1a1a18' }}>{val.toFixed(2)} DT</div>
-                          <div style={{ fontSize: '10.5px', color: '#9a9a96' }}>{pct.toFixed(1)}%</div>
+                        <div style={{ width: '100%', height: '4px', background: '#f1f0ec', borderRadius: '10px', overflow: 'hidden' }}>
+                          <div style={{ width: `${pct}%`, height: '100%', background: cfg.color, borderRadius: '10px', transition: 'width 0.8s ease' }} />
                         </div>
                       </div>
-                      <div style={{ width: '100%', height: '4px', background: '#f1f0ec', borderRadius: '10px', overflow: 'hidden' }}>
-                        <div style={{ width: `${pct}%`, height: '100%', background: cfg.color, borderRadius: '10px', transition: 'width 0.8s ease' }} />
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div style={s.card}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                  <span style={s.cardTitle}>Évolution mensuelle — Budget Alimentation</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: '#d97706' }}>
+                    <IconTrend /> Historique
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                  {Object.keys(evolutionAliment).length > 0 ? (
+                    Object.entries(evolutionAliment)
+                      .sort((a, b) => a[0].localeCompare(b[0]))
+                      .map(([mois, total], i, arr) => (
+                        <div key={mois} style={{
+                          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                          padding: '10px 0',
+                          borderBottom: i < arr.length - 1 ? '0.5px solid #f1f0ec' : 'none'
+                        }}>
+                          <span style={{ fontSize: '12.5px', fontWeight: '500', color: '#6b6b67' }}>Mois {mois}</span>
+                          <span style={{ fontSize: '13px', fontWeight: '500', color: '#d97706' }}>
+                            {(total || 0).toFixed(2)} DT
+                          </span>
+                        </div>
+                      ))
+                  ) : (
+                    <span style={{ fontSize: '12.5px', color: '#9a9a96' }}>Aucun historique disponible.</span>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Évolution mensuelle alimentation */}
-            <div style={s.card}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-                <span style={s.cardTitle}>Évolution mensuelle — Budget Alimentation</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: '#d97706' }}>
-                  <IconTrend /> Historique
+            <aside style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'sticky', top: '1.5rem' }}>
+
+              <div style={{
+                background: '#1a1a18', borderRadius: '14px', padding: '1.25rem',
+                border: '0.5px solid rgba(255,255,255,0.06)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1rem' }}>
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f59e0b' }} />
+                  <span style={{ fontSize: '11px', fontWeight: '600', color: '#f59e0b', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                    Simulation de Crise
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '12px', color: '#8a8a80' }}>Hausse prix aliments</span>
+                  <span style={{ fontSize: '20px', fontWeight: '500', color: '#f59e0b' }}>+{inflationAliment}%</span>
+                </div>
+
+                <input type="range" min="0" max="100" step="5" value={inflationAliment}
+                  onChange={e => setInflationAliment(parseInt(e.target.value))}
+                  style={{ width: '100%', accentColor: '#f59e0b', cursor: 'pointer', marginBottom: '1rem', height: '4px' }} />
+
+                <div style={{ padding: '10px 14px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', border: '0.5px solid rgba(255,255,255,0.08)' }}>
+                  <div style={{ fontSize: '10px', color: '#6b6b64', marginBottom: '4px', fontWeight: '500', letterSpacing: '0.04em' }}>
+                    MARGE ESTIMÉE APRÈS HAUSSE
+                  </div>
+                  <div style={{ fontSize: '22px', fontWeight: '500', color: isNoProd ? '#6b6b64' : (isRentableSimule ? '#4ade80' : '#f87171') }}>
+                    {isNoProd ? '—' : `${parseFloat(margeSimulee) >= 0 ? '+' : ''}${margeSimulee}`}
+                    <span style={{ fontSize: '11px', color: '#6b6b64', marginLeft: '4px' }}>DT / U</span>
+                  </div>
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                {Object.keys(evolutionAliment).length > 0 ? (
-                  Object.entries(evolutionAliment)
-                    .sort((a, b) => a[0].localeCompare(b[0]))
-                    .map(([mois, total], i, arr) => (
-                      <div key={mois} style={{
-                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        padding: '10px 0',
-                        borderBottom: i < arr.length - 1 ? '0.5px solid #f1f0ec' : 'none'
-                      }}>
-                        <span style={{ fontSize: '12.5px', fontWeight: '500', color: '#6b6b67' }}>Mois {mois}</span>
-                        <span style={{ fontSize: '13px', fontWeight: '500', color: '#d97706' }}>
-                          {(total || 0).toFixed(2)} DT
-                        </span>
-                      </div>
-                    ))
-                ) : (
-                  <span style={{ fontSize: '12.5px', color: '#9a9a96' }}>Aucun historique disponible.</span>
-                )}
+
+              <div style={{ background: '#FAEEDA', borderRadius: '14px', padding: '1.25rem', border: '0.5px solid #d97706' + '33' }}>
+                <div style={{ fontSize: '12px', fontWeight: '600', color: '#854F0B', marginBottom: '8px' }}>
+                  Analyse Prédictive Inflation
+                </div>
+                <p style={{ fontSize: '12.5px', color: '#b45309', lineHeight: 1.6, margin: 0 }}>
+                  {isNoProd
+                    ? "Aucune production enregistrée. La simulation sera disponible dès la saisie des rendements."
+                    : <>
+                      Une hausse de <strong>{inflationAliment}%</strong> porterait le coût global à <strong>{coutGlobalSimule.toFixed(3)} DT / U</strong>, 
+                      résultant en une marge de <strong style={{ color: isRentableSimule ? '#2a7a4b' : '#A32D2D' }}>{margeSimulee} DT / U</strong>.
+                    </>
+                  }
+                </p>
               </div>
-            </div>
+
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '10px 14px', background: '#fff', borderRadius: '12px', border: '0.5px solid #e8e7e2' }}>
+                <div style={{ color: '#9a9a96', flexShrink: 0, marginTop: '1px' }}><IconInfo /></div>
+                <p style={{ margin: 0, fontSize: '11.5px', color: '#6b6b67', lineHeight: 1.5 }}>
+                  Ajustez le curseur pour simuler l'impact d'une hausse mondiale du soja ou du maïs sur votre ferme.
+                </p>
+              </div>
+            </aside>
           </div>
 
-          {/* COLONNE DROITE */}
-          <aside style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'sticky', top: '1.5rem' }}>
-
-            {/* Simulation de Crise (dark card) */}
-            <div style={{
-              background: '#1a1a18', borderRadius: '14px', padding: '1.25rem',
-              border: '0.5px solid rgba(255,255,255,0.06)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1rem' }}>
-                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f59e0b' }} />
-                <span style={{ fontSize: '11px', fontWeight: '600', color: '#f59e0b', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  Simulation de Crise
-                </span>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '12px', color: '#8a8a80' }}>Hausse prix aliments</span>
-                <span style={{ fontSize: '20px', fontWeight: '500', color: '#f59e0b' }}>+{inflationAliment}%</span>
-              </div>
-
-              <input type="range" min="0" max="100" step="5" value={inflationAliment}
-                onChange={e => setInflationAliment(parseInt(e.target.value))}
-                style={{ width: '100%', accentColor: '#f59e0b', cursor: 'pointer', marginBottom: '1rem', height: '4px' }} />
-
-              <div style={{ padding: '10px 14px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', border: '0.5px solid rgba(255,255,255,0.08)' }}>
-                <div style={{ fontSize: '10px', color: '#6b6b64', marginBottom: '4px', fontWeight: '500', letterSpacing: '0.04em' }}>
-                  MARGE ESTIMÉE APRÈS HAUSSE
-                </div>
-                <div style={{ fontSize: '22px', fontWeight: '500', color: isNoProd ? '#6b6b64' : (isRentableSimule ? '#4ade80' : '#f87171') }}>
-                  {isNoProd ? '—' : `${parseFloat(margeSimulee) >= 0 ? '+' : ''}${margeSimulee}`}
-                  <span style={{ fontSize: '11px', color: '#6b6b64', marginLeft: '4px' }}>DT / U</span>
+          <div style={{ ...s.card, marginTop: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div>
+                <div style={s.cardTitle}>Classement de Rentabilité par Animal</div>
+                <div style={{ fontSize: '11.5px', color: '#9a9a96', marginTop: '3px' }}>
+                  Identifiez vos animaux les plus performants et ceux en perte.
                 </div>
               </div>
+              <span style={s.badge}>Score de performance</span>
             </div>
 
-            {/* Analyse prédictive */}
-            <div style={{ background: '#FAEEDA', borderRadius: '14px', padding: '1.25rem', border: '0.5px solid #d97706' + '33' }}>
-              <div style={{ fontSize: '12px', fontWeight: '600', color: '#854F0B', marginBottom: '8px' }}>
-                Analyse Prédictive Inflation
-              </div>
-              <p style={{ fontSize: '12.5px', color: '#b45309', lineHeight: 1.6, margin: 0 }}>
-                {isNoProd
-                  ? "Aucune production enregistrée. La simulation sera disponible dès la saisie des rendements."
-                  : <>
-                    Une hausse de <strong>{inflationAliment}%</strong> porterait le coût global à <strong>{coutGlobalSimule.toFixed(3)} DT / U</strong>, 
-                    résultant en une marge de <strong style={{ color: isRentableSimule ? '#2a7a4b' : '#A32D2D' }}>{margeSimulee} DT / U</strong>.
-                  </>
-                }
-              </p>
-            </div>
-
-            {/* Note */}
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '10px 14px', background: '#fff', borderRadius: '12px', border: '0.5px solid #e8e7e2' }}>
-              <div style={{ color: '#9a9a96', flexShrink: 0, marginTop: '1px' }}><IconInfo /></div>
-              <p style={{ margin: 0, fontSize: '11.5px', color: '#6b6b67', lineHeight: 1.5 }}>
-                Ajustez le curseur pour simuler l'impact d'une hausse mondiale du soja ou du maïs sur votre ferme.
-              </p>
-            </div>
-          </aside>
-        </div>
-
-        {/* ── TABLEAU CLASSEMENT ── */}
-        <div style={{ ...s.card, marginTop: '1.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-            <div>
-              <div style={s.cardTitle}>Classement de Rentabilité par Animal</div>
-              <div style={{ fontSize: '11.5px', color: '#9a9a96', marginTop: '3px' }}>
-                Identifiez vos animaux les plus performants et ceux en perte.
-              </div>
-            </div>
-            <span style={s.badge}>Score de performance</span>
-          </div>
-
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '0.5px solid #e8e7e2' }}>
-                {['Animal', 'Type', 'Numéro ID', `Production (${typeFiliere === 'LAIT' ? 'L' : 'U'})`, 'Marge estimée', 'Score'].map(h => (
-                  <th key={h} style={{ padding: '10px 8px', fontSize: '11px', fontWeight: '500', color: '#9a9a96', textAlign: h === 'Score' ? 'right' : 'left', letterSpacing: '0.03em' }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {classement.length > 0 ? classement.map((animal, i) => {
-                const isAnimalLoss = (animal.margeNette || 0) < 0;
-                return (
-                  <tr key={animal.id || i} style={{ borderBottom: '0.5px solid #f1f0ec', transition: 'background 0.14s' }}
-                    onMouseEnter={e => e.currentTarget.style.background = '#faf9f7'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    <td style={s.td}><span style={{ fontWeight: '500', color: '#1a1a18' }}>{animal.nom || 'Anonyme'}</span></td>
-                    <td style={s.td}>
-                      <span style={{ fontSize: '11px', background: '#f1f0ec', color: '#6b6b67', borderRadius: '20px', padding: '2px 9px', fontWeight: '500', textTransform: 'uppercase', border: '0.5px solid #e8e7e2' }}>
-                        {animal.type?.toUpperCase() ?? 'N/A'}
-                      </span>
-                    </td>
-                    <td style={s.td}>
-                      <span style={{ background: '#f1f0ec', color: '#1a1a18', borderRadius: '6px', padding: '3px 8px', fontWeight: '600', fontSize: '12px', fontFamily: 'monospace' }}>
-                        {animal.chepnumber}
-                      </span>
-                    </td>
-                    <td style={s.td}>{(animal.totalProduction || 0).toFixed(1)}</td>
-                    <td style={{ ...s.td, fontWeight: '500', color: isAnimalLoss ? '#A32D2D' : '#2a7a4b' }}>
-                      {isAnimalLoss ? '' : '+'}{(animal.margeNette || 0).toFixed(3)} DT
-                    </td>
-                    <td style={{ ...s.td, textAlign: 'right' }}>{renderStars(animal.scoreEtoiles)}</td>
-                  </tr>
-                );
-              }) : (
-                <tr>
-                  <td colSpan={6} style={{ ...s.td, textAlign: 'center', color: '#9a9a96', padding: '2rem' }}>
-                    Aucun animal enregistré pour l'évaluation ce mois.
-                  </td>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '0.5px solid #e8e7e2' }}>
+                  {['Animal', 'Type', 'Numéro ID', `Production (${typeFiliere === 'LAIT' ? 'L' : 'U'})`, 'Marge estimée', 'Score'].map(h => (
+                    <th key={h} style={{ padding: '10px 8px', fontSize: '11px', fontWeight: '500', color: '#9a9a96', textAlign: h === 'Score' ? 'right' : 'left', letterSpacing: '0.03em' }}>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {classement.length > 0 ? classement.map((animal, i) => {
+                  const isAnimalLoss = (animal.margeNette || 0) < 0;
+                  return (
+                    <tr key={animal.id || i} style={{ borderBottom: '0.5px solid #f1f0ec', transition: 'background 0.14s' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#faf9f7'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                      <td style={s.td}><span style={{ fontWeight: '500', color: '#1a1a18' }}>{animal.nom || 'Anonyme'}</span></td>
+                      <td style={s.td}>
+                        <span style={{ fontSize: '11px', background: '#f1f0ec', color: '#6b6b67', borderRadius: '20px', padding: '2px 9px', fontWeight: '500', textTransform: 'uppercase', border: '0.5px solid #e8e7e2' }}>
+                          {animal.type?.toUpperCase() ?? 'N/A'}
+                        </span>
+                      </td>
+                      <td style={s.td}>
+                        <span style={{ background: '#f1f0ec', color: '#1a1a18', borderRadius: '6px', padding: '3px 8px', fontWeight: '600', fontSize: '12px', fontFamily: 'monospace' }}>
+                          {animal.chepnumber}
+                        </span>
+                      </td>
+                      <td style={s.td}>{(animal.totalProduction || 0).toFixed(1)}</td>
+                      <td style={{ ...s.td, fontWeight: '500', color: isAnimalLoss ? '#A32D2D' : '#2a7a4b' }}>
+                        {isAnimalLoss ? '' : '+'}{(animal.margeNette || 0).toFixed(3)} DT
+                      </td>
+                      <td style={{ ...s.td, textAlign: 'right' }}>{renderStars(animal.scoreEtoiles)}</td>
+                    </tr>
+                  );
+                }) : (
+                  <tr>
+                    <td colSpan={6} style={{ ...s.td, textAlign: 'center', color: '#9a9a96', padding: '2rem' }}>
+                      Aucun animal enregistré pour l'évaluation ce mois.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
 
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
-// ── STYLES SYSTÈME (alignés CheptelPage + VetCard) ──
+// ── STYLES SYSTÈME ──
 const s = {
   card: {
     background: '#fff',
