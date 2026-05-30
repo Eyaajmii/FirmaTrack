@@ -158,12 +158,22 @@ const CarnetSanteList = ({ carnets, onDelete, onSelect }) => {
                     </button>
                     {isConfirm ? (
                       <>
-                        <button onClick={() => onDelete(carnet.id)}>Oui</button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation(); 
+                            onDelete(carnet.id);
+                            setConfirmDeleteId(null);
+                          }}
+                          style={actionBtn("confirm")}
+                        >
+                          Oui
+                        </button>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setConfirmDeleteId(null);
                           }}
+                          style={actionBtn()}
                         >
                           Non
                         </button>
@@ -174,15 +184,7 @@ const CarnetSanteList = ({ carnets, onDelete, onSelect }) => {
                           e.stopPropagation();
                           setConfirmDeleteId(carnet.id);
                         }}
-                        style={{
-                          padding: "4px 10px",
-                          borderRadius: "7px",
-                          fontSize: "11px",
-                          border: "0.5px solid #e8e7e2",
-                          background: "#fff",
-                          cursor: "pointer",
-                          color: "red",
-                        }}
+                        style={actionBtn("danger")}
                       >
                         Supprimer
                       </button>
